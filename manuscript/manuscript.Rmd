@@ -1,0 +1,76 @@
+---
+title: Forecasting for emergency medcine
+author:
+  - name: Author1
+    email: emaail@example.com
+    affiliation: University1
+    footnote: 1
+  - name: Author2
+    email: email2@example.com
+    affiliation: University2
+    footnote: 2
+address:
+  - code: University1
+    address: adress1
+  - code: University2
+    address: adress2
+footnote:
+  - code: 1
+    text: "Corresponding Author"
+    
+abstract: |
+   The Objective of this paper
+keywords:  ""
+journal: "Which journal?"
+date: "`r Sys.Date()`"
+geometry: "top=25mm, left=30mm, right=30mm, bottom=25mm,headsep=10mm, footskip=12mm"
+#linenumbers: true
+numbersections: true
+#output: rticles::elsevier_article
+header-includes:  
+ \usepackage{adjustbox, float,lscape} #use the 'float' package
+output: 
+  bookdown::pdf_book:
+    base_format: rticles::elsevier_article
+    extra_dependencies: ["flafter"]
+    keep_tex: true
+bibliography: mybibfile.bib
+biblio-style: authoryear
+#csl: elsevier-without-titles.csl
+#biblio-style: abbrevnat
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = FALSE, cache=TRUE, message = FALSE, warning = FALSE)
+# Make sure you have the latest versions of rmarkdown and rticle
+library(tidyverse)
+library(lubridate)
+library(patchwork)
+library(tsibble)
+library(kableExtra)
+library(fable)
+library(ggthemes)
+library(readxl)
+```
+
+```{r, include=FALSE, cache=FALSE}
+
+```
+
+# Introduction
+
+# Research background {#lit}
+
+
+# Experimental design {#design}
+
+
+# Result and discussion {#result}
+
+
+# Conclusion {#conclusion}
+
+
+
+# References {#references .unnumbered}
