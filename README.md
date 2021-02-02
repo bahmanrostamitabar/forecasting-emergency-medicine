@@ -1,4 +1,4 @@
-# Forecasting-emergency-medcine
+# Forecasting emergency medicine
 
 ## Count series paper:
 
