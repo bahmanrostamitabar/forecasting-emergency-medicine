@@ -189,7 +189,7 @@ left_join(stl_fit, incidents) %>%
 # time series cross validation
 # add more models!
 # report accuracy in all levels
-# check lower quantile for potetnial negative values in bottom level
+# check lower quantile for potential negative values in bottom level
 
 f_horizon <- 28
 train <- incidents_gts %>% filter(date < max(date) - f_horizon)
