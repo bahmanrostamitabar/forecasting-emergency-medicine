@@ -25,6 +25,7 @@ temperatures <- fs::dir_ls("data", regex = "midas*") %>%
   ) %>%
   ungroup()
 
+
 incidents <- readxl::read_excel("data/Nature_of_Incidents_Attended.xlsx") %>%
   mutate(date = as_date(Incident_Date)) %>%
   janitor::clean_names() %>%
@@ -38,6 +39,7 @@ incidents <- readxl::read_excel("data/Nature_of_Incidents_Attended.xlsx") %>%
   left_join(temperatures, by="date") %>%
   as_tsibble(index = date, key = c(lhb_name, category, mpds_priority)) %>%
   fill_gaps(incidents = 0)
+
 
 incidents_gts <- incidents %>%
   aggregate_key(category/mpds_priority * lhb_name, incidents = sum(incidents))

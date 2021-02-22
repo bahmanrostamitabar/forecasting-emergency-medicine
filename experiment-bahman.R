@@ -2,188 +2,240 @@ library(tidyverse)
 library(lubridate)
 library(tsibble)
 library(fable)
-library(readxl)
 library(fable)
 library(feasts)
-library(janitor)
-library(ggthemes)
+library(ggrepel)
 
-# preparation------------------------------------------
-wast_data <- read_excel("data/Nature_of_Incidents_Attended.xlsx")
-incidents <- wast_data %>% 
-  mutate(Incident_Date=as_date(Incident_Date)) %>% 
-  janitor::clean_names() %>% 
-  force_tz(incident_date, tz="GB") %>% 
-  select(-lhb_name,-nature_of_incident, -nature_of_incident_description)
+# Read data -------------------------------------------------------------------
 
-incidents <- incidents %>% 
-count(lhb_code, category, mpds_priority,incident_date, name = "incidents") %>% 
-  as_tsibble(index = incident_date, key = c(lhb_code, category, mpds_priority)) %>% 
-  fill_gaps(incidents=0)
+temperatures <- fs::dir_ls("data", regex = "midas*") %>%
+  purrr::map_dfr(read_csv, skip=90, col_types="cccccccccccccccccccccc") %>%
+  filter(ob_end_time != "end data") %>%
+  transmute(
+    date = as.Date(ob_end_time),
+    hour = as.numeric(ob_hour_count),
+    min_air_temp = as.numeric(min_air_temp),
+    max_air_temp = as.numeric(max_air_temp)
+  ) %>%
+  group_by(date) %>%
+  summarise(
+    date = min(date),
+    min_air_temp = min(min_air_temp),
+    max_air_temp = max(max_air_temp)
+  ) %>%
+  ungroup()
 
-incidents_gts <- incidents %>%
-  aggregate_key(mpds_priority * category * lhb_code, incidents = sum(incidents))
-
-# plot ---------------------------------------------
-
-library(dygraphs)
-dygraph(nhtemp, main = "New Haven Temperatures") %>% 
-  dyRangeSelector(dateWindow = c("1920-01-01", "1960-01-01"))
-
-library(dygraphs)
-incidents %>% group_by(category) %>% summarise(incidents=sum(incidents))->wast_cat
-tsbox::ts_xts(wast_cat) %>% 
-  dygraph() %>% 
-  dyRangeSelector(dateWindow = c("2015-10-01","2015-10-01"))
-
-incidents %>% group_by(lhb_code) %>% summarise(incidents=sum(incidents))->wast_cat
-tsbox::ts_xts(wast_cat) %>% 
-  dygraph() %>% 
-  dyRangeSelector(dateWindow = c("2015-10-01","2015-10-01"))
-
-incidents_gts_feature <- incidents_gts %>% 
-  features(incidents, feature_set(pkgs = "feasts"))
-
-# is there any seasonality/trend?
-incidents_gts_feature %>% 
-  ggplot(aes(x = trend_strength, y = seasonal_strength_week)) +
-  geom_point()
-
-# How easy is the ts to forecast?
-incidents_gts_feature %>% 
-  ggplot(aes(x = spectral_entropy, y = coef_hurst)) +
-  geom_point()
-
-# Plotting different levels
-p1 <- incidents_gts %>%
-  filter(!is_aggregated(mpds_priority), is_aggregated(category), is_aggregated(lhb_code)) %>%
-  autoplot(incidents)
-p1
-
-p2 <- incidents_gts %>%
-  filter(is_aggregated(mpds_priority), !is_aggregated(category), is_aggregated(lhb_code)) %>%
-  autoplot(incidents)
-p2
-
-p3 <- incidents_gts %>%
-  filter(is_aggregated(mpds_priority), is_aggregated(category), !is_aggregated(lhb_code)) %>%
-  autoplot(incidents)
-
-p3
-
-p4 <- incidents_gts %>%
-  filter(is_aggregated(mpds_priority), is_aggregated(category), is_aggregated(lhb_code)) %>%
-  autoplot(incidents)
+holiday_rugby <- readxl::read_excel("data/holiday_rugby.xlsx") %>% 
+  force_tz(date, tz = "GB") %>% 
+  mutate(
+    date= as_date(date)
+  ) %>% 
+  as_tsibble(index = date)
 
 
-p4
+incidents_original <- readxl::read_excel("data/Nature_of_Incidents_Attended.xlsx") %>%
+  mutate(date = as_date(Incident_Date)) %>%
+  janitor::clean_names() %>%
+  force_tz(date, tz = "GB") 
 
+incidents <- incidents_original %>%   mutate_at(.vars = "nature_of_incident", .funs=as.numeric) %>% 
+  mutate(nature_of_incident= ifelse(!is.na(nature_of_incident),nature_of_incident_description , "other")) %>% 
+  group_by(lhb_code, category, nature_of_incident, date) %>% 
+  summarise(incidents = sum(total_incidents)) %>% ungroup() %>% 
+  mutate(category = factor(category, level=c("RED","AMBER","GREEN"))) %>% 
+  left_join(temperatures, by="date") %>%
+  as_tsibble(index = date, key = c(lhb_code, category, nature_of_incident)) %>%
+  fill_gaps(incidents = 0)
+ 
+#count nature of incidents
+incidents %>% as_tibble() %>% group_by(nature_of_incident) %>% 
+  summarise(incident =sum(incidents)) %>% ungroup() %>% 
+  ggplot(aes(x=fct_reorder(nature_of_incident, incident))) +  
+  geom_point(aes( y =incident), size =3) +
+  coord_flip()+
+  labs(x ="Nature of incident")
 
-p <- incidents %>%
-  features(incidents, feat_stl) %>% 
-  ggplot(aes(x = trend_strength, y = seasonal_strength_week, 
-             col = mpds_priority)) +
-  geom_point() +
-  facet_wrap(vars(lhb_code))+
-  scale_color_colorblind()
-p
+#Top 15 incidents
+incidents %>% as_tibble() %>% group_by(nature_of_incident) %>% 
+  summarise(incident =sum(incidents)) %>% ungroup() %>% 
+slice_max(n=15, order_by = incident) %>% pull(nature_of_incident)-> selected_ni
 
-# Check trend/seasonality at bottom level
+# Seasonality in nature_of_incidents
 
-p <- incidents %>% group_by(lhb_code,category) %>% 
-  summarise(incidents = sum(incidents)) %>% 
-  features(incidents, feat_stl) %>% 
-  ggplot(aes(x = trend_strength, y = seasonal_strength_week, 
-             col = category)) +
-  geom_point() +
-  facet_wrap(vars(lhb_code))+
-  scale_color_colorblind()
-p
-
-# How noisy are the bottom series?
-
-ggplot(incidents, mapping = aes(x=incident_date, y=incidents))+
-  geom_line(aes(colour=category ))+
-  facet_grid(rows=vars(lhb_code), cols =  vars(mpds_priority), scales = "free_y")+
-  scale_colour_manual(
-    name = "Category",values=c("#FFBF00","#008000", "#FF0000")
+incidents_feature <- incidents %>%
+  filter(nature_of_incident %in% selected_ni) %>% 
+  index_by(date) %>% 
+  group_by(lhb_code,nature_of_incident) %>% summarise(incidents=sum(incidents)) %>% 
+  features(incidents, feature_set(pkgs = "feasts")) %>%
+  mutate(
+    lhb_code = factor(as.character(lhb_code), level=c(sort(unique(incidents$lhb_code)))),
+    nature_of_incident = factor(as.character(nature_of_incident), level=c(sort(selected_ni)))
   )
 
-incidents %>% 
-  group_by(lhb_code,category) %>% 
-  summarise(incidents = sum(incidents)) %>% 
-ggplot(mapping = aes(x=incident_date, y=incidents))+
-  geom_line(aes(colour=category ))+
-  facet_grid(rows=vars(lhb_code), scales = "free_y")+
-  scale_colour_manual(
-    name = "Category",values=c("#FFBF00","#008000", "#FF0000")
-  )
+incidents_feature %>%
+  ggplot(aes(x = trend_strength, y = seasonal_strength_week, col=factor(nature_of_incident))) +
+  geom_point()  +
+  geom_label_repel(data = incidents_feature %>% filter(seasonal_strength_week > 0.25),
+                   aes(label = glue::glue("{lhb_code}/{nature_of_incident}")),
+                   show.legend=FALSE)+
+  facet_grid(rows = vars(lhb_code))
 
-# how strong is the seasonality for each series at health board, category
-season_plot <- function(hb,cat) {
-incidents %>% group_by(lhb_code,category) %>% 
-  summarise(incidents = sum(incidents)) %>%
-  filter(category == cat, lhb_code == hb) %>% 
-  gg_season(incidents, period = "week") + 
-  theme(legend.position = "")
-}
+# day of week effect for top 15 nature of incident
+ incidents %>% 
+   index_by(date) %>% group_by(nature_of_incident) %>% 
+   summarise(incidents=sum(incidents)) %>% 
+   filter(nature_of_incident %in% selected_ni) %>% 
+   gg_season(period = "week") +
+   facet_wrap(vars(nature_of_incident),ncol = 3, scales = "free_y")+
+   theme(legend.position = "")
 
-subseries_plot <- function(hb,cat) {
-  incidents %>% group_by(lhb_code,category) %>% 
-    summarise(incidents = sum(incidents)) %>%
-    filter(category == cat, lhb_code == hb) %>% 
-    gg_subseries(incidents, period = "week") + 
-    theme(legend.position = "")
-}
+ # monthly seasonality for top 15 nature of incidents 
+ incidents %>% 
+   index_by(month=yearmonth(date)) %>% group_by(nature_of_incident) %>% 
+   summarise(incidents=sum(incidents)) %>% 
+   filter(nature_of_incident %in% selected_ni) %>% 
+   gg_season()+
+   facet_wrap(vars(nature_of_incident),ncol = 3, scales = "free_y")+
+   labs(x="Month", y="Number of incident")
 
-#hb == "AB"  "BC"  "CTM" "CV"  "HD"  "POW" "SB" 
-#cat == "AMBER" "GREEN" "RED"  
-season_plot("CV", "GREEN")
-subseries_plot("POW", "RED")
+ #functions to investigate seasonality of nature of incidents
+ incident_pattern_dayofweek <- function(ni) {
+   incidents %>% 
+     index_by(date) %>% group_by(nature_of_incident) %>% 
+     summarise(incidents=sum(incidents)) %>% 
+     filter(nature_of_incident == {{ ni }}) %>% 
+     gg_season(period = "week") +
+     labs(x="Day of Week", y="Number of incident", 
+          title = glue::glue("Nature of incident:{ni}"))+
+     theme(legend.position = "")
+ }
+ 
+ 
+ incident_pattern_month <- function(ni) {
+   incidents %>% 
+     index_by(month=yearmonth(date)) %>% group_by(nature_of_incident) %>% 
+     summarise(incidents=sum(incidents)) %>% 
+     filter(nature_of_incident == {{ ni }}) %>% 
+     gg_season()+
+     labs(x="Month", y="Number of incident", 
+          title = glue::glue("Nature of incident: {ni}"))+
+     theme(legend.position = "")
+ }
+ 
+ incident_pattern_week <- function(ni) {
+   incidents %>% 
+     index_by(week=yearweek(date)) %>% group_by(nature_of_incident) %>% 
+     summarise(incidents=sum(incidents)) %>% 
+     filter(nature_of_incident == {{ ni }}) %>% 
+     gg_season(period = "year")+
+     labs(x="Week", y="Number of incident", 
+          title = glue::glue("Nature of incident: {ni}"))+
+     theme(legend.position = "")
+ }
+ 
+ incident_pattern_dayofweek("BREATHING PROBLEMS")
+ incident_pattern_month("BREATHING PROBLEMS")
+ incident_pattern_week("BREATHING PROBLEMS")
 
-#--Autocorrelation-------------------------------------------------------
+# functions to investigate nature of incident & health board
+ 
+ incident_pattern_dayofweek <- function(ni, hb) {
+   incidents %>% filter(lhb_code == {{ hb }}) %>% 
+     index_by(date) %>% group_by(nature_of_incident) %>% 
+     summarise(incidents=sum(incidents)) %>% 
+     filter(nature_of_incident == {{ ni }}) %>% 
+     gg_season(period = "week") +
+     labs(x="Day of Week", y="Number of incident", 
+          title = glue::glue("Nature of incident:{ni}"))+
+     theme(legend.position = "")
+ }
+ 
+ 
+ incident_pattern_month <- function(ni,hb) {
+   incidents %>% filter(lhb_code == {{ hb }}) %>% 
+     index_by(month=yearmonth(date)) %>% 
+     group_by(nature_of_incident) %>% 
+     summarise(incidents=sum(incidents)) %>% 
+     filter(nature_of_incident == {{ ni }}) %>% 
+     gg_season()+
+     labs(x="Month", y="Number of incident", 
+          title = glue::glue("Nature of incident: {ni}"))+
+     theme(legend.position = "")
+ }
+ 
+ incident_pattern_week <- function(ni,hb) {
+   incidents %>% filter(lhb_code == {{ hb }}) %>% 
+     index_by(week=yearweek(date)) %>% group_by(nature_of_incident) %>% 
+     summarise(incidents=sum(incidents)) %>% 
+     filter(nature_of_incident == {{ ni }}) %>% 
+     gg_season(period = "year")+
+     labs(x="Week", y="Number of incident", 
+          title = glue::glue("Nature of incident: {ni}"))+
+     theme(legend.position = "")
+ }
+ 
+ incident_pattern_dayofweek("FALLS", "AB")
+ incident_pattern_month("FALLS", "AB")
+ incident_pattern_week("FALLS","AB")
+ 
+ incidents %>% filter(lhb_code == "CV") %>% 
+   index_by(date) %>% group_by(nature_of_incident) %>% 
+   summarise(incidents=sum(incidents)) %>% 
+   filter(nature_of_incident %in% selected_ni) %>% 
+   gg_season(period = "week") +
+   facet_wrap(vars(nature_of_incident),ncol = 3, scales = "free_y")+
+   theme(legend.position = "")
+ 
+# stl
+ 
+ stl_fit <- incidents %>%
+   model(
+     stl = STL(incidents)
+   ) %>%
+   components()
+ 
+ stl_incidents <- left_join(stl_fit, incidents) 
+ 
+ stl_incidents %>%
+   filter(nature_of_incident == "CARDIAC/RESPIRATORY ARREST/DEATH", lhb_code == "CV") %>% 
+   ggplot(aes(x=max_air_temp, remainder)) +
+   geom_point() +
+   geom_smooth()
+ 
+ holiday_rugby %>% 
+   mutate(remainder =0, label = as.character(date)) %>% 
+ filter(is_rugby ==1)->data_label
+ 
+ holiday_rugby %>% 
+   mutate(remainder =0, label = as.character(date)) %>% 
+   filter(!is.na(public_holiday))->data_label
+ 
+ 
+ 
+ggplot(data = stl_incidents, mapping = aes(x=date, y=remainder)) +
+geom_line() +
+geom_label_repel(data = data_label, aes(label =label))
 
-vis_acf <- function(hb, cat) {
-  incidents %>% filter(category == cat, lhb_code == hb) ->dayily_out
-  ggAcf(dayily_out$incidents, lag.max = 21)
-}
-vis_acf("POW","RED")
+ggplot(data = stl_incidents, mapping = aes(x=date, y=remainder)) +
+  geom_line() +
+  geom_label_repel(data = stl_incidents %>% 
+                     filter(remainder > 11 | remainder < -11), 
+                   aes(label = as.character(date)))
+stl_incidents %>% 
+  filter(remainder > 11 | remainder < -11) %>% pull(date)->extreme_values
 
-#Forecasting--------------------------
+holiday_rugby %>% select(public_holiday) %>% 
+filter(!is.na(public_holiday)) %>% pull(date)->public_holiday_dates
+intersect(public_holiday_dates,extreme_values)
 
-#to do:
-# time series cross validation
-# add more models!
-# report accuracy in all levels
-# check lower quantile for potential negative values in bottom level
-
-f_horizon <- 7
-train <- incidents_gts %>% filter_index(~  "2019-07-23")
-
-last(incidents_gts$incident_date)-years(1)
-last(incidents_gts$incident_date)-days(f_horizon)
-
-train <- incidents_gts %>% filter_index(. ~ "2018-07-31")
-(train$incident_date) %>% unique() %>% length()
-
-ae_tscv <- incidents_gts %>% filter_index(. ~ "2019-07-24") %>% 
-  stretch_tsibble(.init = 1035, .step = 7)
-
-ae_test <- incidents_gts %>% 
-  filter_index( "2018-08-01" ~ .) %>% 
-  slide_tsibble(.size = f_horizon, .step = 7)
-
-fit_incident <- train %>%
-  model(base = ETS(incidents ~ error("A") + trend("A") + season("N"))) %>%
-  reconcile(
-    bu = bottom_up(base),
-    ols = min_trace(base, method = "ols"),
-    mint = min_trace(base, method = "mint_shrink"),
-  )
-
-fcst_incident <- fit_incident %>% forecast(h=f_horizon)
-
-fcst_incident %>% accuracy(incidents_gts,  
-                           measures = list(rmse = RMSE, mae = MAE)) %>% 
-  group_by(.model) %>% summarise(rmse = mean(rmse), mae = mean(mae))
-
+library(ggridges)
+incidents %>% group_by(lhb_code,nature_of_incident) %>% 
+  index_by(date) %>% summarise(incidents = sum(incidents)) %>% 
+  mutate(year =year(date)) %>% 
+  ggplot(aes(x = incidents, y = as.factor(year), fill = lhb_code)) +
+  geom_density_ridges(bandwidth = 1, alpha = 0.5) +
+  facet_wrap(vars(factor(nature_of_incident)), nrow = 5, scales = "free") +
+  #theme_hc() +
+  theme(legend.position = "bottom") +
+  labs(x = "Incident", y = "", fill = "Health Board",
+       title = "Incidents by Nature & Healthboard - over the years")
