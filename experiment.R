@@ -30,8 +30,9 @@ incidents <- readxl::read_excel("data/Nature_of_Incidents_Attended.xlsx") %>%
   mutate(date = as_date(Incident_Date)) %>%
   janitor::clean_names() %>%
   force_tz(date, tz = "GB") %>%
+  group_by(lhb_code, lhb_name, category, mpds_priority, date) %>% 
+  summarise(incidents = sum(total_incidents)) %>% 
   select(-nature_of_incident, -nature_of_incident_description) %>%
-  count(lhb_code, lhb_name, category, mpds_priority, date, name = "incidents") %>%
   mutate(
     category = factor(category, level=c("RED","AMBER","GREEN")),
     mpds_priority = factor(mpds_priority, level=c("RED","AMBER1","AMBER2","GREEN2","GREEN3"))

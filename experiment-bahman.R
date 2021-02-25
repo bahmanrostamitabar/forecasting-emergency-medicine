@@ -210,8 +210,7 @@ incidents_feature %>%
    mutate(remainder =0, label = as.character(date)) %>% 
    filter(!is.na(public_holiday))->data_label
  
- 
- 
+
 ggplot(data = stl_incidents, mapping = aes(x=date, y=remainder)) +
 geom_line() +
 geom_label_repel(data = data_label, aes(label =label))
@@ -239,3 +238,7 @@ incidents %>% group_by(lhb_code,nature_of_incident) %>%
   theme(legend.position = "bottom") +
   labs(x = "Incident", y = "", fill = "Health Board",
        title = "Incidents by Nature & Healthboard - over the years")
+
+
+
+
