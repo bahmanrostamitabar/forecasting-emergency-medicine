@@ -28,21 +28,23 @@ incidents <- incidents_original %>%   mutate_at(.vars = "nature_of_incident", .f
   as_tsibble(index = date, key = c(lhb_code, category, nature_of_incident)) %>%
   fill_gaps(incidents = 0)
 
+
+
 # prepare data
 breatjing_problem_ts <- incidents %>% index_by(date) %>% 
   group_by(nature_of_incident) %>% 
   summarise(incidents = sum(incidents)) %>% 
-  filter(nature_of_incident == "BREATHING PROBLEMS") %>% 
-  select(-nature_of_incident)
+  filter(nature_of_incident == "BREATHING PROBLEMS") %>%  dplyr::select(-nature_of_incident)
+
+ggplot(breatjing_problem_ts, aes(x = incidents)) + 
+  geom_histogram(binwidth = 1, boundary = 0, color = "white")
+
 breatjing_problem_variables <- breatjing_problem_ts %>% mutate(t =row_number(), 
                                 f1_sin = sin((2*pi*t)/7), f1_cos = cos((2*pi*t)/7),
                                 f2_sin = sin((2*2*pi*t)/7), f2_cos = cos((2*2*pi*t)/7),
                                 f3_sin = sin((3*2*pi*t)/7), f3_cos = cos((3*2*pi*t)/7),
-                                f4_sin = sin((4*2*pi*t)/7), f4_cos = cos((4*2*pi*t)/7),
-                                f5_sin = sin((5*2*pi*t)/7), f5_cos = cos((5*2*pi*t)/7),
-                                f6_sin = sin((6*2*pi*t)/7), f6_cos = cos((6*2*pi*t)/7),
-                                f7_sin = sin((7*pi*t)/7), f7_cos = cos((7*2*pi*t)/7))
-
+                                holiday= if_else(incidents > 150, 1,0))
+View(breatjing_problem_variables)
 breatjing_problem_train <-breatjing_problem_variables %>% filter_index(~ "2019-07-24")
 breatjing_problem_test <-breatjing_problem_variables %>% filter_index("2019-07-25" ~ .)
 breatjing_problem_new_data <- breatjing_problem_test %>% as_tibble() %>% select(-date, -incidents)
@@ -55,9 +57,9 @@ breatjing_problem_train_ts <- ts(breatjing_problem_train$incidents, frequency = 
 breatjing_problem_fit <- tsglm(breatjing_problem_train_ts,
                       model = list(past_obs = 1), link = "log", distr = "poisson",
                       xreg = breatjing_problem_train_predictor)
-
+summary(breatjing_problem_fit)
 predict(breatjing_problem_fit, n.ahead = 7, level = 0.9, global = TRUE,
-        newxreg = breatjing_problem_new_data)
+        newxreg = breatjing_problem_new_data,method = "bootstrap", B = 1000)
   
 
 
@@ -66,11 +68,7 @@ predict(breatjing_problem_fit, n.ahead = 7, level = 0.9, global = TRUE,
 reg_7day <-  glm(incidents ~ t +
                f1_sin + f1_cos +
                f2_sin + f3_cos +
-               f3_sin + f3_cos +
-               f4_sin + f4_cos +
-               f5_sin + f5_cos +
-               f6_sin + f6_cos +
-               f7_sin + f7_cos ,
+               f3_sin + f3_cos ,
              data=breatjing_problem_train,family=poisson(link='log'))
 predict(reg_7day, newdata = breatjing_problem_new_data, type = "response")   
 
@@ -80,20 +78,53 @@ predict(reg_7day, newdata = breatjing_problem_new_data, type = "response")
 glmmalf<-glmmPQL(incidents ~ t +
                    f1_sin + f1_cos +
                    f2_sin + f3_cos +
-                   f3_sin + f3_cos +
-                   f4_sin + f4_cos +
-                   f5_sin + f5_cos +
-                   f6_sin + f6_cos +
-                   f7_sin + f7_cos ,
-                 random=~1|t,
-                 correlation=corARMA(),
+                   f3_sin + f3_cos ,
+                 random=~ 1 | holiday,
+                 correlation=corARMA(form = ~ 1 | holiday, p = 1, q = 1),
                  family=poisson(link="log"), 
                  data=breatjing_problem_train)
+predict(glmmalf, newdata = breatjing_problem_new_data)   
 
+# in random , we can put nature of incidents or category as random effect
+# we can use trend and fourier terms for the fixed efefct
 #is there a harmonic() function
 
-library(nlme) # will be loaded automatically if omitted
-summary(glmmPQL(y ~ trt + I(week > 2), random = ~ 1,
-                family = binomial, data = bacteria))
+library(forecast)
+h <- 7
+testSet <- 7
 
-# lme() in gamlss
+obs <- length(breatjing_problem_ts)
+xFourier <- fourier(msts(as.vector(breatjing_problem_ts),seasonal.periods=c(7,365.25)), K=c(3,10))
+
+breatjing_problem_variables <- breatjing_problem_ts %>% mutate(t =row_number(), 
+                                holiday= if_else(incidents > 150, 1,0)) %>% bind_cols(as_tibble(xFourier))
+
+breatjing_problem_train <-breatjing_problem_variables %>% filter_index(~ "2019-07-24") %>% select(-date)
+breatjing_problem_test <-breatjing_problem_variables %>% filter_index("2019-07-25" ~ .)
+breatjing_problem_new_data <- breatjing_problem_test %>% as_tibble() %>% select(-date, -incidents)
+
+regressionModel <- alm(incidents~., data=breatjing_problem_train,
+                       distribution="dpois", ar=1,
+                       maxeval=10000, ftol_rel=1e-10)
+summary(regressionModel)
+Acf(regressionModel$residuals)
+# nsim is needed just in case, if everything fails and bootstrap is used
+testForecast <- predict(regressionModel,newdata =breatjing_problem_test)
+
+## brm
+#https://thestudyofthehousehold.netlify.app/2018/02/13/2018-02-13-easily-made-fitted-and-predicted-values-made-easy/
+#https://paul-buerkner.github.io/blog/brms-blogposts/
+library(brms)
+data("inholidayer", package = "brms")
+head(inholidayer, n = 1)
+fit3 <- brm(formula = rating ~ treat + period + carry + (1 | subject), 
+            data = inholidayer, family = cumulative)
+### fit a stopping ratio model with equidistant thresholds 
+### and category specific effects
+fit4 <- brm(formula = rating ~ period + carry + cse(treat) + (1 | subject),
+            data = inholidayer, family = sratio(threshold = "equidistant"),
+            prior = set_prior("normal(-1,2)", coef = "treat"))
+
+### obtain model summaries and plots
+summary(fit4, waic = TRUE)
+plot(fit4, ask = FALSE)

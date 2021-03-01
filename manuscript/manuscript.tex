@@ -1,0 +1,258 @@
+\documentclass[]{elsarticle} %review=doublespace preprint=single 5p=2 column
+%%% Begin My package additions %%%%%%%%%%%%%%%%%%%
+\usepackage[hyphens]{url}
+
+  \journal{Which journal?} % Sets Journal name
+
+
+\usepackage{lineno} % add
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\usepackage{graphicx}
+\usepackage{booktabs} % book-quality tables
+%%%%%%%%%%%%%%%% end my additions to header
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \usepackage{fontspec}
+  \ifxetex
+    \usepackage{xltxtra,xunicode}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use microtype if available
+\IfFileExists{microtype.sty}{\usepackage{microtype}}{}
+\usepackage[top=25mm, left=30mm, right=30mm, bottom=25mm,headsep=10mm, footskip=12mm]{geometry}
+\bibliographystyle{elsarticle-harv}
+\usepackage{longtable}
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true]{hyperref}
+\fi
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={},
+            pdftitle={Forecasting for emergency medcine},
+            colorlinks=false,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+\urlstyle{same}  % don't use monospace font for urls
+
+\setcounter{secnumdepth}{5}
+% Pandoc toggle for numbering sections (defaults to be off)
+
+% Pandoc citation processing
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+% for Pandoc 2.8 to 2.10.1
+\newenvironment{cslreferences}%
+  {}%
+  {\par}
+% For Pandoc 2.11+
+\newenvironment{CSLReferences}[3] % #1 hanging-ident, #2 entry sp
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1 \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces\fi
+  % set line spacing
+  % set entry spacing
+  \ifnum #2 > 0
+  \setlength{\parskip}{#3\baselineskip}
+  \fi
+ }%
+ {}
+\usepackage{calc} % for \widthof, \maxof
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\maxof{\widthof{#1}}{\csllabelwidth}}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth}{#1}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+
+% Pandoc header
+\usepackage{adjustbox, float,lscape}
+\usepackage{flafter}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+
+
+
+\begin{document}
+\begin{frontmatter}
+
+  \title{Forecasting for emergency medcine}
+    \author[University1]{Author1\corref{1}}
+   \ead{emaail@example.com} 
+    \author[University2]{Author2\corref{2}}
+   \ead{email2@example.com} 
+      \address[University1]{adress1}
+    \address[University2]{adress2}
+      \cortext[1]{Corresponding Author}
+  
+  \begin{abstract}
+  The Objective of this paper
+  \end{abstract}
+  
+ \end{frontmatter}
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+An accurate demand forecasting is crucial in Emergency medicine to depict various courses of action that can result in massive savings in terms of patient lives. Inability to match the staff with the demand results in an overcrowding care system which is a serious problem causing challenging situations on patient flow. Also, it is related with increasing length of stay, low patient satisfaction, increasing health care costs, inaccuracy in electronic medical record, and reported waiting times.without incurring last-minute expenses, such as overtime or supplemental staffing {[}Reference{]}.
+
+An accurate forecasting of the daily demand enables managers to match staff to meet anticipated patients, reconfigure units and redeploy staff and vehicles. This will have many advantages for patients, staff and the quality of healthcare services provided.
+
+Daily forecasts are required to inform the short-term planning for the current and the upcoming shifts of the day. This involves the decision making related to the execution of the delivery process for various health care services such as Ambulatory ,Emergency. Daily forecasts are important at various levels:
+
+\begin{itemize}
+\item
+  \textbf{Nature of incidents}
+\item
+  \textbf{Category: Red, Amber, Green}
+\item
+  \textbf{Health board}
+\item
+  \textbf{Country level}
+\end{itemize}
+
+The combination of demand forecast, incidents being attended, resource availability and delays at hospitals, provide information on the state of the unscheduled care system across the emergency medicine services. Having this full picture enables the delivery managers to focus on the areas that require intervention to enable the most effective delivery of the service to the patients.
+
+\hypertarget{lit}{%
+\section{Research background}\label{lit}}
+
+Table \ref{tab:summarylit} summarise studies on forecasting in emergency and urgent care.
+
+\begin{table}[!h]
+
+\caption{\label{tab:summarylit}Summary of studies in hourly emergency care forecasting}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tabular}[t]{lrll>{\raggedright\arraybackslash}p{15em}l}
+\toprule
+Author & Year & Forecast variable & Forecast Horizon & Method & Measure\\
+\midrule
+McCarthy 
+2008 & 2008 & ED arrivals & 24h & Poisson log-linear regression model, including temporal factors, patient characteristics and climatic factors & 95\% CI\\
+Asheim et al. & 2019 & ED arrivals & 3h & Poisson regression with weekly and yearly cyclic 
+effects. & MAPE\\
+Cote et al. & 2013 & ED arrivals & 24h & Fourier regression & R\textasciicircum{}2,  Standard Error\\
+Kim et al. & 2014 & Hospital demand & 4h, 24h, 7days, 
+30days & Linear regression; Exponential smoothing; ARIMA; GARCH; VAR & MAPE\\
+Schweigler et al. & 2009 & ED bed occupancy & 4h and 12h & Hourly historical average; SARIMA; Sinusoidal model with autocorrelated error & RMSE\\
+Channouf et al. & 2007 & Ambulance demand & 12h,14h,17h,23h,24h,1h,3h,6h, 13h & Regression & RMSE\\
+Hertzum & 2017 & ED arrivals
+ED occupancy & 1,2,4,8,24 hours & linear regression; SARIMA; Naïve & MAE, MAPE, 
+MASE\\
+Choudhury and Urena & 2020 & ED arrivals & 1h to 24h & ARIMA; Holt-winters; TBATS; ANN & RMSE, ME\\
+Steins et al. & 2019 & Ambulance call & 24h & ZIP and ZINB regression;
+ moving average with seasonality weights & ME, MAE, RMSE\\
+Jones et al. & 2009 & ED census & 24h & VAR;  Holt winters & MAE\\
+Morzuch and Allen & 2006 & ED arrivals & 168h & Regression; ARIMA; Exponential smoothing & RMSE\\
+Chase et al. & 2012 & ED CUR & 30m
+1h, 2h, 4h, 8h, 12h & Binary regression & NA\\
+Taylor & 2008 & centre volume & 30 minutes 
+to 2 weeks & ARMA, Exponential smoothing; Dynamic harmonic regression; Seasonal random walk; Seasonal mean;
+Random walk; Mean; Median; Simple exponential smoothing & MAE
+RMSE\\
+Gijo and Balakrishna & 2016 & call volume & 168h & SARIMA & MMSE\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Gijo and Balakrishna (2016) generated a time series model to forecast the daily and hourly call volume at all centre handling emergency ambulance services. Since historical data showed seasonality, SARIMA models were investigated. Regarding the daily model, the authors generated a SARIMA model, which, however, resulted in the forecast error (MMSE) that significantly increased when the lead time exceeded 8 days. On the other hand, the SARIMA model proposed to forecast the log-calls an hourly basis. This model was found to fit well the model both for shorter and longer lead times.
+
+Forecasting at the daily level of granularity is generally use for roaster planing and deciding when to contact staff on call for instance. Luo et al. (2017) use a combination of seasonal ARIMA (SARIMA) and a single exponential smoothing (SES) model to forecast daily outpatient visits 1 week ahead.They indicate that using combinatorial model can be more effective than each model separately. Whitt and Zhang (2019) examine several alternative models to forecast the total daily arrival for 1-7 days ahead, including a linear regression based on calendar and weather variables, seasonal autoregressive integrated moving average with exogenous regressors (SARIMAX) and the multilayer perceptron (MLP) model. Using a daily ED admission for 3 years, they show that SARIMAX provides the most accurate daily forecast by MSE measure. Marcilio, Hajat, and Gouveia (2013) compare the forecast accuracy of the Generalised Linear Model (GLM), Generalised Estimating Equations (GEE), and Seasonal Autoregressive Integrated Moving Average (SARIMA) methods using total daily patient visits to an ED using MAPE. They conclud that GLM and GEE models provide more accurate forecasts than SARIMA model. Rostami-Tabar and Ziel (2020) propose a model to forecast daily ED attendance with consideration of different types of holidays, weekday effects, auto-regressive effects, long-term trends and date effects. They provide probabilistic forecasts to quantify uncertainties in future ED attendance and they show that the proposed model outperforms three time series techniques including 1) Naive, 2) AutoRegressive, AR(p), 3) exponential smoothing state space model (ETS) and a regression model without considering special events as alternatives. Zhou et al. (2018) SARIMA, NARNN and the hybrid SARIMA-NARNN to forecast the daily number of new admission inpatients. The root mean square error (RMSE), mean absolute error (MAE) and mean absolute percentage error (MAPE) were used to compare the forecasting performance among the three models. They show that NARNN model outperforms the others. Sun et al. (2009) use SARIMA model to forecast daily patient volume for each patient acuity level. MAPE is used to choose the best-fit model. They fitted separate ARIMA models to the three categories of acuity and overall data. They conclude that the ARIMA model is effective for both short term (weekly) and long term (three months) forecast horizons. Moreover, they observe that the impact of weather is not significant. Zinouri, Taaffe, and Neyens (2018) use SARIMA to develop a statistical prediction model that provides short-term forecasts of daily surgical demand. Our results suggest that the proposed SARIMA model can be useful for estimating surgical case volumes 2--4 weeks prior to the day of surgery, which can support robust and reliable staff schedules.
+Moustris et al. (2012) use Artificial Neural Network (ANN) models to forecast the total weekly(7 days) number of Childhood Asthma Admission. Three different ANN models were developed
+and trained to forecast the admission of different age subgroups
+and for the whole study population.
+McCoy, Pellegrini, and Perlis (2018) compare SARIMA, Prophet and Snaive methods for prediction 365 days of hospital discharge using a daily hospital discharge volumes at 2 large, New England academic medical centers. They show that Prophet model outperforms SARIMA and Snaive.
+
+Khaldi, El Afia, and Chiheb (2019) investigate the combination of the Artificial Neural Networks (ANNs) with a signal decomposition technique named Ensemble Empirical Mode decomposition (EEMD), to make one step ahead weekly forecasting of patients arrivals to ED. using seven years of weekly demand. The results of the proposed model were compared against ANN without signal decomposition, ANN with Discrete wavelet Transform (DWT). The results show that the combined forecasts outperform the benchmarking models.
+
+Steins, Matinrad, and Granberg (2019) aimed to develop a forecasting model for predicting the number of ambulance services calls per hour and geographical areas, to support managers in decisions-making and to investigate which ones were the factors that affected the number of calls.
+Data collected consisted of a time and location of historical ambulance call data for three counties in Sweden and a list of explanatory factors of the area, such as socioeconomic and geographic.
+In order to deal with large number of zeros in the data, authors developed zero-inflated Poisson (ZIP) and zero-inflated negative binomial (ZINB) regression models. These were then compared to the currently existing forecasting system, based on moving average with seasonality weights, using ME, MAE and RMSE. Firstly, the factors affecting the number of ambulance calls were found to be the following: population in different age groups, median income, length of road, number of nightlife spots (the number of restaurants), day of the week and hour of the day. Secondly, it was found that the older population (65-100) generated more ambulance calls and that ZIP model performs better than the current model. However, the improvement provided by the more advance model was not much greater than the one provided by the existing model. Authors suggested that it could be because the population, which was used as an independent variable in both models, was so dominant compared to the other factors.
+Moreover, both models either underestimated or overestimated the number of calls. Authors suggested that the inability to capture a positive trend resulted in underestimation, and the opposite was due to a negative trend. Therefore, authors recommended that further research should add certain temporal variables able to capture the trend.
+
+\hypertarget{design}{%
+\section{Experimental design}\label{design}}
+
+\hypertarget{result}{%
+\section{Result and discussion}\label{result}}
+
+\hypertarget{conclusion}{%
+\section{Conclusion}\label{conclusion}}
+
+\hypertarget{references}{%
+\section*{References}\label{references}}
+\addcontentsline{toc}{section}{References}
+
+\hypertarget{refs}{}
+\begin{CSLReferences}{1}{0}
+\leavevmode\hypertarget{ref-gijo2016sarima}{}%
+Gijo, EV, and N Balakrishna. 2016. {``SARIMA Models for Forecasting Call Volume in Emergency Services.''} \emph{International Journal of Business Excellence} 10 (4): 545--61.
+
+\leavevmode\hypertarget{ref-khaldi2019forecasting}{}%
+Khaldi, Rohaifa, Abdellatif El Afia, and Raddouane Chiheb. 2019. {``Forecasting of Weekly Patient Visits to Emergency Department: Real Case Study.''} \emph{Procedia Computer Science} 148: 532--41.
+
+\leavevmode\hypertarget{ref-luo2017hospital}{}%
+Luo, Li, Le Luo, Xinli Zhang, and Xiaoli He. 2017. {``Hospital Daily Outpatient Visits Forecasting Using a Combinatorial Model Based on ARIMA and SES Models.''} \emph{BMC Health Services Research} 17 (1): 469.
+
+\leavevmode\hypertarget{ref-marcilio2013forecasting}{}%
+Marcilio, Izabel, Shakoor Hajat, and Nelson Gouveia. 2013. {``Forecasting Daily Emergency Department Visits Using Calendar Variables and Ambient Temperature Readings.''} \emph{Academic Emergency Medicine} 20 (8): 769--77.
+
+\leavevmode\hypertarget{ref-mccoy2018assessment}{}%
+McCoy, Thomas H, Amelia M Pellegrini, and Roy H Perlis. 2018. {``Assessment of Time-Series Machine Learning Methods for Forecasting Hospital Discharge Volume.''} \emph{JAMA Network Open} 1 (7): e184087--87.
+
+\leavevmode\hypertarget{ref-moustris2012seven}{}%
+Moustris, Kostas P, Konstantinos Douros, Panagiotis T Nastos, Ioanna K Larissi, Michael B Anthracopoulos, Athanasios G Paliatsos, and Kostas N Priftis. 2012. {``Seven-Days-Ahead Forecasting of Childhood Asthma Admissions Using Artificial Neural Networks in Athens, Greece.''} \emph{International Journal of Environmental Health Research} 22 (2): 93--104.
+
+\leavevmode\hypertarget{ref-rostami2020anticipating}{}%
+Rostami-Tabar, Bahman, and Florian Ziel. 2020. {``Anticipating Special Events in Emergency Department Forecasting.''} \emph{International Journal of Forecasting}.
+
+\leavevmode\hypertarget{ref-steins2019forecasting}{}%
+Steins, Krisjanis, Niki Matinrad, and Tobias Granberg. 2019. {``Forecasting the Demand for Emergency Medical Services.''} In \emph{Proceedings of the 52nd Hawaii International Conference on System Sciences}.
+
+\leavevmode\hypertarget{ref-sun2009forecasting}{}%
+Sun, Yan, Bee Hoon Heng, Yian Tay Seow, and Eillyne Seow. 2009. {``Forecasting Daily Attendances at an Emergency Department to Aid Resource Planning.''} \emph{BMC Emergency Medicine} 9 (1): 1.
+
+\leavevmode\hypertarget{ref-whitt2019forecasting}{}%
+Whitt, Ward, and Xiaopei Zhang. 2019. {``Forecasting Arrivals and Occupancy Levels in an Emergency Department.''} \emph{Operations Research for Health Care} 21: 1--18.
+
+\leavevmode\hypertarget{ref-zhou2018time}{}%
+Zhou, Lingling, Ping Zhao, Dongdong Wu, Cheng Cheng, and Hao Huang. 2018. {``Time Series Model for Forecasting the Number of New Admission Inpatients.''} \emph{BMC Medical Informatics and Decision Making} 18 (1): 39.
+
+\leavevmode\hypertarget{ref-zinouri2018modelling}{}%
+Zinouri, Nazanin, Kevin M Taaffe, and David M Neyens. 2018. {``Modelling and Forecasting Daily Surgical Case Volume Using Time Series Analysis.''} \emph{Health Systems} 7 (2): 111--19.
+
+\end{CSLReferences}
+
+
+\end{document}
+
