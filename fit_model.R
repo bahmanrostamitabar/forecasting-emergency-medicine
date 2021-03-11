@@ -14,7 +14,8 @@ library(tsibble)
 library(fable)
 library(lubridate)
 library(MASS)
-
+library(fable.tscount)
+library(patchwork)
 # Read data
 incidents_original <- readxl::read_excel("data/Nature_of_Incidents_Attended.xlsx") %>%
   mutate(date = as_date(Incident_Date)) %>%
@@ -24,107 +25,129 @@ incidents <- incidents_original %>%   mutate_at(.vars = "nature_of_incident", .f
   mutate(nature_of_incident= ifelse(!is.na(nature_of_incident),nature_of_incident_description , "other")) %>% 
   group_by(lhb_code, category, nature_of_incident, date) %>% 
   summarise(incidents = sum(total_incidents)) %>% ungroup() %>% 
-  mutate(category = factor(category, level=c("RED","AMBER","GREEN"))) %>% 
   as_tsibble(index = date, key = c(lhb_code, category, nature_of_incident)) %>%
   fill_gaps(incidents = 0)
 
 
 
-# prepare data
-breatjing_problem_ts <- incidents %>% index_by(date) %>% 
+# prepare data, look at two different series 
+breathing_problem_ts <- incidents %>% index_by(date) %>% 
   group_by(nature_of_incident) %>% 
   summarise(incidents = sum(incidents)) %>% 
-  filter(nature_of_incident == "BREATHING PROBLEMS") %>%  dplyr::select(-nature_of_incident)
+  filter(nature_of_incident == "BREATHING PROBLEMS") %>%  
+  dplyr::select(-nature_of_incident) %>% ungroup()
 
-ggplot(breatjing_problem_ts, aes(x = incidents)) + 
-  geom_histogram(binwidth = 1, boundary = 0, color = "white")
+# this ts is ntermittent
+choking_ts <- incidents %>% index_by(date) %>% 
+  group_by(nature_of_incident) %>% 
+  summarise(incidents = sum(incidents)) %>% 
+  filter(nature_of_incident == "CHOKING") %>%  
+  dplyr::select(-nature_of_incident) %>% ungroup()
 
-breatjing_problem_variables <- breatjing_problem_ts %>% mutate(t =row_number(), 
-                                f1_sin = sin((2*pi*t)/7), f1_cos = cos((2*pi*t)/7),
-                                f2_sin = sin((2*2*pi*t)/7), f2_cos = cos((2*2*pi*t)/7),
-                                f3_sin = sin((3*2*pi*t)/7), f3_cos = cos((3*2*pi*t)/7),
-                                holiday= if_else(incidents > 150, 1,0))
-View(breatjing_problem_variables)
-breatjing_problem_train <-breatjing_problem_variables %>% filter_index(~ "2019-07-24")
-breatjing_problem_test <-breatjing_problem_variables %>% filter_index("2019-07-25" ~ .)
-breatjing_problem_new_data <- breatjing_problem_test %>% as_tibble() %>% select(-date, -incidents)
+breathing_problem_tsbl <- breathing_problem_ts %>% as_tsibble()
+choking_tsbl <- choking_ts %>% as_tsibble()
 
-breatjing_problem_train_predictor <- breatjing_problem_train %>% as_tibble() %>% 
-  select(-date, -incidents)
-breatjing_problem_train_ts <- ts(breatjing_problem_train$incidents, frequency = 365, start = decimal_date(as.Date("2015-10-02")))
+p1 <- breathing_problem_tsbl %>% autoplot()
+p2 <- choking_tsbl %>% autoplot()
+p1/p2
 
-# using tsglm in tscount
-breatjing_problem_fit <- tsglm(breatjing_problem_train_ts,
-                      model = list(past_obs = 1), link = "log", distr = "poisson",
-                      xreg = breatjing_problem_train_predictor)
-summary(breatjing_problem_fit)
-predict(breatjing_problem_fit, n.ahead = 7, level = 0.9, global = TRUE,
-        newxreg = breatjing_problem_new_data,method = "bootstrap", B = 1000)
-  
+#---split data-------
 
+#data_incident <- breathing_problem_tsbl
+data_incident <- choking_tsbl
 
-#using glm
+f_horizon <- 5*7
 
-reg_7day <-  glm(incidents ~ t +
-               f1_sin + f1_cos +
-               f2_sin + f3_cos +
-               f3_sin + f3_cos ,
-             data=breatjing_problem_train,family=poisson(link='log'))
-predict(reg_7day, newdata = breatjing_problem_new_data, type = "response")   
+#without TSCV
+fit <- data_incident %>% filter_index(~ "2019-06-26") %>%
+  model(
+    ETS = ETS(incidents),
+    SNAIVE = SNAIVE(incidents),
+    TSCOUNT = fable.tscount::TSCOUNT(incidents),
+    TSCOUNT_season = fable.tscount::TSCOUNT(incidents ~ season("week")),
+  )
+# 1.Can we use fourier(), e.g with TSCOUNT? model(fable.tscount::TSCOUNT(incidents ~ fourier("week", 3)+fourier("year", 5)))
+#it gives an error as it has negative values
+# 2. Where do we  specify the distribution : dist = poisson or dist = nbinom
+#3. Do we need to specify the link function required in tsglm
+#model(fable.tscount::TSCOUNT(incidents ~ fourier("week", 3)))
+#fcst <- fit %>% forecast(times = 5000,  h = f_horizon, bootstrap = TRUE) 
+fcst_sim <- fit %>%
+  generate(times = 5000, h = f_horizon, bootstrap = TRUE) 
+# for low values/intermittent series & SNAIVE and ETS, we get negative values 
+#fcst_sim_non_negative <-  fcst_sim %>% mutate(.sim= if_else(.sim <0,0,.sim))
 
+fcst_dist <- fcst_sim %>% 
+  group_by(.model) %>% 
+  summarise(
+    incidents = dist_sample(list(.sim)),
+    .mean = mean(incidents)
+  ) %>% ungroup()
 
-# Using MASS
+fsct_fable <- fcst_dist %>% 
+  as_fable(distribution = incidents, response = "incidents")
 
-glmmalf<-glmmPQL(incidents ~ t +
-                   f1_sin + f1_cos +
-                   f2_sin + f3_cos +
-                   f3_sin + f3_cos ,
-                 random=~ 1 | holiday,
-                 correlation=corARMA(form = ~ 1 | holiday, p = 1, q = 1),
-                 family=poisson(link="log"), 
-                 data=breatjing_problem_train)
-predict(glmmalf, newdata = breatjing_problem_new_data)   
+fsct_fable %>% group_by(.model) %>% 
+  mutate(h=row_number()) %>% ungroup()->fsct_fable_h
 
-# in random , we can put nature of incidents or category as random effect
-# we can use trend and fourier terms for the fixed efefct
-#is there a harmonic() function
+accuracy_total <- fsct_fable_h %>%
+  accuracy(data_incident, 
+           measures = list(point_accuracy_measures,CRPS = CRPS))
+accuracy_total
+accuracy_h <- fsct_fable_h %>%
+  accuracy(data_incident, 
+           measures = list(point_accuracy_measures,CRPS = CRPS), 
+           by = c(".model","h"))
+accuracy_h %>% dplyr::select(.model,h,CRPS) %>% 
+  ggplot(aes(x=h, y=CRPS, colour = .model))+
+  geom_point()+
+  geom_line()
 
-library(forecast)
-h <- 7
-testSet <- 7
+#forecast with TSCV
 
-obs <- length(breatjing_problem_ts)
-xFourier <- fourier(msts(as.vector(breatjing_problem_ts),seasonal.periods=c(7,365.25)), K=c(3,10))
+#timeseires cross validation
+n_init <- nrow(data_incident %>% filter_index(~ "2018-12-31")) 
+ae_tscv <- data_incident %>% slice(1:(n()-f_horizon)) %>% 
+  stretch_tsibble(.init = n_init, .step = 7 )
+ae_test <- data_incident %>% 
+  filter_index("2019-01-01" ~ .) %>% 
+  slide_tsibble(.size = f_horizon, .step = 7)
 
-breatjing_problem_variables <- breatjing_problem_ts %>% mutate(t =row_number(), 
-                                holiday= if_else(incidents > 150, 1,0)) %>% bind_cols(as_tibble(xFourier))
+fit <- ae_tscv %>%
+  model(
+    ETS = ETS(incidents),
+    SNAIVE = SNAIVE(incidents),
+    TSCOUNT = fable.tscount::TSCOUNT(incidents),
+    TSCOUNT_season = fable.tscount::TSCOUNT(incidents ~ season("week"))
+  )
 
-breatjing_problem_train <-breatjing_problem_variables %>% filter_index(~ "2019-07-24") %>% select(-date)
-breatjing_problem_test <-breatjing_problem_variables %>% filter_index("2019-07-25" ~ .)
-breatjing_problem_new_data <- breatjing_problem_test %>% as_tibble() %>% select(-date, -incidents)
+fcst_sim <- fit %>%
+  generate(times = 5000, h = f_horizon, bootstrap = TRUE) 
 
-regressionModel <- alm(incidents~., data=breatjing_problem_train,
-                       distribution="dpois", ar=1,
-                       maxeval=10000, ftol_rel=1e-10)
-summary(regressionModel)
-Acf(regressionModel$residuals)
-# nsim is needed just in case, if everything fails and bootstrap is used
-testForecast <- predict(regressionModel,newdata =breatjing_problem_test)
+fcst_sim_non_negative <-  fcst_sim %>% mutate(.sim= if_else(.sim <0,0,.sim))
 
-## brm
-#https://thestudyofthehousehold.netlify.app/2018/02/13/2018-02-13-easily-made-fitted-and-predicted-values-made-easy/
-#https://paul-buerkner.github.io/blog/brms-blogposts/
-library(brms)
-data("inholidayer", package = "brms")
-head(inholidayer, n = 1)
-fit3 <- brm(formula = rating ~ treat + period + carry + (1 | subject), 
-            data = inholidayer, family = cumulative)
-### fit a stopping ratio model with equidistant thresholds 
-### and category specific effects
-fit4 <- brm(formula = rating ~ period + carry + cse(treat) + (1 | subject),
-            data = inholidayer, family = sratio(threshold = "equidistant"),
-            prior = set_prior("normal(-1,2)", coef = "treat"))
+fcst_dist <- fcst_sim_non_negative %>% 
+  group_by(.model,.id) %>% 
+  summarise(
+    incidents = dist_sample(list(.sim)),
+    .mean = mean(incidents)
+  ) %>% ungroup()
 
-### obtain model summaries and plots
-summary(fit4, waic = TRUE)
-plot(fit4, ask = FALSE)
+fsct_fable <- fcst_dist %>% 
+  as_fable(distribution = incidents, response = "incidents")
+
+fsct_fable %>% group_by(.id,.model) %>% 
+  mutate(h=row_number()) %>% ungroup()->fsct_fable_h
+
+accuracy_total <- fsct_fable_h %>%
+  accuracy(data_incident, 
+           measures = list(point_accuracy_measures,CRPS = CRPS))
+accuracy_total
+accuracy_h <- fsct_fable_h %>%
+  accuracy(data_incident, 
+           measures = list(point_accuracy_measures,CRPS = CRPS), 
+           by = c(".model","h"))
+accuracy_h %>% dplyr::select(.model,h,CRPS) %>% 
+  ggplot(aes(x=h, y=CRPS, colour = .model))+
+  geom_point()+
+  geom_line()

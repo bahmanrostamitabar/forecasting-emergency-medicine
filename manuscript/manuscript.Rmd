@@ -82,6 +82,8 @@ The combination of demand forecast, incidents being attended, resource availabil
 
 Table \@ref(tab:summarylit) summarise studies on forecasting in emergency and urgent care.
 
+
+
 ```{r summarylit}
 li <- readxl::read_xlsx("../data/literature.xlsx")
 knitr::kable(li, booktabs = T, linesep = "",caption = "Summary of studies in hourly emergency care forecasting") %>% kableExtra::kable_styling(latex_options = c("scale_down","hold_position")) %>% column_spec(5,"15em")
@@ -95,6 +97,9 @@ Is there any study using grouped time series in urgent and emergency care?
 <!--
 Using models for count time series in urgent and emergency care!
 -->
+
+
+Focus on the ambulance services!
 
 
 @gijo2016sarima generated a time series model to forecast the daily and hourly call volume at all centre handling emergency ambulance services.  Since historical data showed seasonality, SARIMA models were investigated. Regarding the daily model, the authors generated a SARIMA model, which, however, resulted in the forecast error (MMSE) that significantly increased when the lead time exceeded 8 days. On the other hand, the SARIMA model proposed to forecast the log-calls an hourly basis. This model was found to fit well the model both for shorter and longer lead times. 
