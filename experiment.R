@@ -202,7 +202,7 @@ fit_incident <- train %>%
   reconcile(
     bu = bottom_up(base),
     ols = min_trace(base, method = "ols"),
-    mint = min_trace(base, method = "mint_shrink"),
+    mint = min_trace(base, method = "mint_shrink")
   )
 
 fcst_incident <- fit_incident %>% forecast(h = f_horizon)

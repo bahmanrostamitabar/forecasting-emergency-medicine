@@ -242,3 +242,145 @@ incidents %>% group_by(lhb_code,nature_of_incident) %>%
 
 
 
+# forecasting experiment
+# Read data
+incidents_original <- readxl::read_excel("data/Nature_of_Incidents_Attended.xlsx") %>%
+  mutate(date = as_date(Incident_Date)) %>%
+  janitor::clean_names() %>%
+  force_tz(date, tz = "GB") 
+nature_of_incident_low <- c("AUTOMATIC CRASH NOTIFICATION",
+                            "INACCESSIBLE INCIDENT/OTHER ENTRAP",
+                            "INTERFACILITY EVALUATION/TRANSFER",
+                            "MAJOR INCIDENT - OVERRIDE PROQA",
+                            "TRANSFER/INTERFACILITY/PALLIATIVE")
+incidents <- incidents_original %>%   mutate_at(.vars = "nature_of_incident", .funs=as.numeric) %>% 
+  mutate(nature_of_incident= ifelse(!is.na(nature_of_incident),nature_of_incident_description , "upgrade")) %>% 
+  mutate(nature_of_incident= ifelse(nature_of_incident %in% nature_of_incident_low,"other" , nature_of_incident)) %>% 
+  group_by(lhb_code, category, nature_of_incident, date) %>% 
+  summarise(incidents = sum(total_incidents)) %>% ungroup() %>% 
+  as_tsibble(index = date, key = c(lhb_code, category, nature_of_incident)) %>%
+  fill_gaps(incidents = 0) %>% 
+  mutate(category = factor(category, level=c("RED","AMBER","GREEN")),
+         nature_of_incident = factor(nature_of_incident),
+         lhb_code = factor(lhb_code))
+incidents %>% slice_max(n=5, order_by = incidents)
+# prepare data, look at two different series 
+breathing_problem_ts <- incidents %>% index_by(date) %>% 
+  group_by(nature_of_incident) %>% 
+  summarise(incidents = sum(incidents)) %>% 
+  filter(nature_of_incident == "BREATHING PROBLEMS") %>%  
+  dplyr::select(-nature_of_incident) %>% ungroup()
+
+# this ts is intermittent
+choking_ts <- incidents %>% index_by(date) %>% 
+  group_by(nature_of_incident) %>% 
+  summarise(incidents = sum(incidents)) %>% 
+  filter(nature_of_incident == "CHOKING") %>%  
+  dplyr::select(-nature_of_incident) %>% ungroup()
+
+breathing_problem_tsbl <- breathing_problem_ts %>% as_tsibble()
+choking_tsbl <- choking_ts %>% as_tsibble()
+
+p1 <- breathing_problem_tsbl %>% autoplot()
+p2 <- choking_tsbl %>% autoplot()
+p1/p2
+
+#---split data-------
+
+#data_incident <- breathing_problem_tsbl
+data_incident <- choking_tsbl
+
+f_horizon <- 5*7
+
+#without TSCV
+fit <- data_incident %>% filter_index(~ "2019-06-26") %>%
+  model(
+    TSCOUNT = fable.tscount::TSCOUNT(incidents ~ trend()+season("week") + fourier("year", 10), link = "log", model=list(past_obs=1:4))
+  )
+
+#log(x+1) or sqrt()
+fit %>% dplyr::select(TSCOUNT) %>% gg_tsresiduals()
+#model(fable.tscount::TSCOUNT(incidents ~ fourier("week", 3)))
+fcst <- fit %>% forecast(times = 5000,  h = f_horizon, bootstrap = TRUE) 
+fcst_sim <- fit %>%
+  generate(times = 5000, h = f_horizon, bootstrap = TRUE) 
+fcst_sim %>% filter(.sim <0)
+# for low values/intermittent series & SNAIVE and ETS, we get negative values 
+#fcst_sim_non_negative <-  fcst_sim %>% mutate(.sim= if_else(.sim <0,0,.sim))
+
+fcst_dist <- fcst_sim %>% 
+  group_by(.model) %>% 
+  summarise(
+    incidents = dist_sample(list(.sim)),
+    .mean = mean(incidents)
+  ) %>% ungroup()
+
+fsct_fable <- fcst_dist %>% 
+  as_fable(distribution = incidents, response = "incidents")
+
+fsct_fable %>% group_by(.model) %>% 
+  mutate(h=row_number()) %>% ungroup()->fsct_fable_h
+fcst %>% group_by(.model) %>% 
+  mutate(h=row_number()) %>% ungroup()->fsct_fable_h
+
+accuracy_total <- fsct_fable_h %>%
+  accuracy(data_incident, 
+           measures = list(point_accuracy_measures,CRPS = CRPS))
+accuracy_total
+accuracy_h <- fsct_fable_h %>%
+  accuracy(data_incident, 
+           measures = list(point_accuracy_measures,CRPS = CRPS), 
+           by = c(".model","h"))
+accuracy_h %>% dplyr::select(.model,h,CRPS) %>% 
+  ggplot(aes(x=h, y=CRPS, colour = .model))+
+  geom_point()+
+  geom_line()
+
+#forecast with TSCV
+
+#timeseires cross validation
+n_init <- nrow(data_incident %>% filter_index(~ "2018-12-31")) 
+ae_tscv <- data_incident %>% slice(1:(n()-f_horizon)) %>% 
+  stretch_tsibble(.init = n_init, .step = 7 )
+ae_test <- data_incident %>% 
+  filter_index("2019-01-01" ~ .) %>% 
+  slide_tsibble(.size = f_horizon, .step = 7)
+
+fit <- ae_tscv %>%
+  model(
+    ETS = ETS(incidents),
+    SNAIVE = SNAIVE(incidents),
+    TSCOUNT = fable.tscount::TSCOUNT(incidents),
+    TSCOUNT_season = fable.tscount::TSCOUNT(incidents ~ season("week"))
+  )
+
+fcst_sim <- fit %>%
+  generate(times = 5000, h = f_horizon, bootstrap = TRUE) 
+
+fcst_sim_non_negative <-  fcst_sim %>% mutate(.sim= if_else(.sim <0,0,.sim))
+
+fcst_dist <- fcst_sim_non_negative %>% 
+  group_by(.model,.id) %>% 
+  summarise(
+    incidents = dist_sample(list(.sim)),
+    .mean = mean(incidents)
+  ) %>% ungroup()
+
+fsct_fable <- fcst_dist %>% 
+  as_fable(distribution = incidents, response = "incidents")
+
+fsct_fable %>% group_by(.id,.model) %>% 
+  mutate(h=row_number()) %>% ungroup()->fsct_fable_h
+
+accuracy_total <- fsct_fable_h %>%
+  accuracy(data_incident, 
+           measures = list(point_accuracy_measures,CRPS = CRPS))
+accuracy_total
+accuracy_h <- fsct_fable_h %>%
+  accuracy(data_incident, 
+           measures = list(point_accuracy_measures,CRPS = CRPS), 
+           by = c(".model","h"))
+accuracy_h %>% dplyr::select(.model,h,CRPS) %>% 
+  ggplot(aes(x=h, y=CRPS, colour = .model))+
+  geom_point()+
+  geom_line()
