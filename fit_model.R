@@ -34,19 +34,6 @@ incidents <- incidents_original %>%   mutate_at(.vars = "nature_of_incident", .f
   mutate(nature_of_incident= ifelse(nature_of_incident %in% nature_of_incident_low,"other" , nature_of_incident)) %>% 
   group_by(lhb_code, category, nature_of_incident, date) %>% 
   summarise(incidents = sum(total_incidents),.groups = "drop")
- 
-# incidents <- incidents_original %>%   mutate_at(.vars = "nature_of_incident", .funs=as.numeric) %>%
-#   mutate(nature_of_incident= ifelse(!is.na(nature_of_incident),nature_of_incident_description , "upgrade")) %>%
-#   mutate(nature_of_incident= ifelse(nature_of_incident %in% nature_of_incident_low,"other" , nature_of_incident)) %>%
-#   group_by(lhb_code, category, nature_of_incident, date) %>%
-#   summarise(incidents = sum(total_incidents)) %>% ungroup() %>%
-#   as_tsibble(index = date, key = c(lhb_code, category, nature_of_incident)) %>%
-#   fill_gaps(incidents = 0) %>%
-#   mutate(category = factor(category, level=c("RED","AMBER","GREEN")),
-#          nature_of_incident = factor(nature_of_incident),
-#          lhb_code = factor(lhb_code)) %>% as_tibble() %>%
-#   add_count(nature_of_incident,category,lhb_code,sort = TRUE) %>%
-#   filter(n>1) %>% dplyr::select(-n)
 
 incidents_tsbl <- incidents %>%  
   as_tsibble(index = date, key = c(lhb_code, category, nature_of_incident)) %>%
@@ -58,11 +45,6 @@ incidents_tsbl <- incidents %>%
 incidents_gts <- incidents_tsbl %>%
    aggregate_key(nature_of_incident * category * lhb_code, incidents = sum(incidents))
 
-
-
-#train <- incidents_gts %>% filter(date < (max(date) - f_horizon))
-
-#plan(multisession)
 
 fit_incident <- incidents_gts %>%
   model(
