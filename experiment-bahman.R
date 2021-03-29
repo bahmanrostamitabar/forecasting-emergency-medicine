@@ -402,3 +402,40 @@ accuracy_h %>% dplyr::select(.model,h,CRPS) %>%
 
 # incidents %>% 
 #   filter(lhb_code =="SB" , nature_of_incident == "HEART PROBLEMS/A.I.C.D",category == "RED")
+
+
+# Top level
+fcst_incident %>% 
+  filter(is_aggregated(nature_of_incident),
+         is_aggregated(category),
+         is_aggregated(lhb_code)) %>%
+  accuracy(data = incidents_gts,
+           measures = list(mase = MASE,
+                           rmsse = RMSSE,
+                           crps = CRPS)
+  ) %>%
+  group_by(.model) %>%
+  summarise(mase = mean(mase), 
+            rmsse = mean(rmsse),
+            crps = mean(crps))
+
+
+# Bottom level
+acc <- fcst_incident %>% 
+  filter(!is_aggregated(category), 
+         !is_aggregated(nature_of_incident), 
+         !is_aggregated(lhb_code)) %>%
+  filter(nature_of_incident!="DIABETIC PROBLEMS", category!="RED",lhb_code!="POW") %>% 
+  accuracy(data = incidents_gts,
+           measures = list(mase = MASE,
+                           rmsse = RMSSE,
+                           crps = CRPS,
+                           mae = MAE,
+                           rmse = RMSE)
+  ) %>%
+  group_by(.model) %>%
+  summarise(mase = mean(mase), 
+            rmsse = mean(rmsse),
+            mae = mean(mae),
+            rmse = mean(rmse),
+            crps = mean(crps))
