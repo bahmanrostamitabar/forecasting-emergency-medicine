@@ -120,9 +120,11 @@ In order to deal with large number of zeros in the data, authors developed zero-
 Moreover, both models either underestimated or overestimated the number of calls. Authors suggested that the inability to capture a positive trend resulted in underestimation, and the opposite was due to a negative trend. Therefore, authors recommended that further research should add certain temporal variables able to capture the trend.
 
 
+# Data
 
+Operations Department and I suppose it's split into three different categories.  You've got... you've got Response which is the ambulances.  You've got the Control which is the people who take the telephone calls.  And then you've got Resilience which are the things that people like have the hazardous response teams so they'll go and save people from water and maybe with fires as well.  They've got... they’re specially trained in different things so there's the contingency sort of there.  So from a Control perspective, they look at... they look at it at least twice a week to see what the... what it... how busy it is.  And then they staff... they… they’re looking to staff to the worst level, knowing that they will get some people... there will be some abstractions.  So they won't manage to... to manage that, because their key area [inaudible].  Excuse me, they try to answer within the... the phone within three seconds 95% of the time.  I'm not sure exactly.  It's something like that.  That’s very high up there.  That's what they're trying to do.  So... and because I got it broken down at the Control level, so we've got North Wales level for calls, and we've also got it broken down by the North, the Mid, and the South Control.  It's actually called the North, the South East, and Central and West.  Those are the three control areas.  So they can see how those break down, knowing that at the moment we've got particularly high demand in the South East, and it's forecast to be just bonkers
 
-# Experimental design {#design}
+# Experimental set {#design}
 
 
 # Result and discussion {#result}
