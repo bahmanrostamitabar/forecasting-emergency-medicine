@@ -7,9 +7,14 @@ library(fable.tscount)
 
 # Read data previously processed in data folder and add aggregation levels
 incidents <- readRDS(here::here("data/incidents_tsbl.rds")) |>
-  aggregate_key(nature_of_incident * category * lhb_code,
-    incidents = sum(incidents)
-  )
+  # Temporarily only consider a small part of data until everything works
+  filter(nature_of_incident == "BREATHING PROBLEMS", lhb_code == "BC") |> 
+  select(-nature_of_incident, -lhb_code) |> 
+  # Create aggregates
+  aggregate_key(category, incidents = sum(incidents))
+  #aggregate_key(nature_of_incident * category * lhb_code,
+  #  incidents = sum(incidents)
+  #)
 
 # Add holidays
 incidents <- incidents |>
@@ -18,19 +23,17 @@ incidents <- incidents |>
     by = "date"
   )
 
-# Check that some of the upper levels look ok
-incidents |>
-  filter(is_aggregated(nature_of_incident), is_aggregated(category)) |>
-  autoplot(incidents)
-incidents |>
-  filter(is_aggregated(nature_of_incident), is_aggregated(lhb_code)) |>
-  autoplot(incidents)
-
 # First pass using a simple training/test set keeping last 6 weeks for testing
-train <- filter(incidents, date <= max(date) - 42)
-test <- filter(incidents, date > max(date) - 42)
+train <- incidents |> 
+  filter(date <= max(date) - 42)
+test <- incidents |> 
+  filter(date > max(date) - 42)
 
 # Fit some models
+# Parallelization doesn't work for TSCOUNT
+# Issue raised at https://github.com/mitchelloharawild/fable.tscount/issues/2
+# library(future)
+# plan(multisession)
 fit_incident <- train %>%
   model(
     NAIVE = NAIVE(sqrt(incidents)),
@@ -50,18 +53,24 @@ fit_reconcile <- fit_incident %>%
     wls_ETS = min_trace(ETS, method = "wls_struct")
   )
 
-# Produce forecasts
+# Produce forecasts (need to use simulated sample paths for TSCOUNT)
 fcst_incident <- fit_reconcile %>%
-  forecast(new_data = test)
+  forecast(new_data = test, simulate = TRUE)
 
 # Look at MASE over several levels for MinT
 fcst_accuracy <- fcst_incident %>%
-  accuracy(incidents_gts, measures = list(rmsse = RMSSE, mase = MASE))
+  accuracy(incidents, measures = list(crps=CRPS, rmsse = RMSSE, mase = MASE))
 
 # Bottom level
 fcst_accuracy %>%
-  filter(!is_aggregated(lhb_code), !is_aggregated(category), !is_aggregated(nature_of_incident)) %>%
-  summarise(rmsse = mean(rmsse), mase = mean(mase), crps = mean(crps), winkler = mean(winkler))
+  #filter(!is_aggregated(lhb_code), !is_aggregated(category), !is_aggregated(nature_of_incident)) %>%
+  group_by(.model) |> 
+  summarise(rmsse = mean(rmsse), mase = mean(mase), crps = mean(crps)) |> 
+  arrange(rmsse)
+
+
+# Code below not currently working --------------
+# as at 14 October 2022
 
 # At LHB level
 fcst_accuracy %>%
