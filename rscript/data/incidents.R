@@ -8,7 +8,7 @@ library(lubridate)
 library(tsibble)
 
 # Read data
-incidents_original <- here::here("data/Nature_of_Incidents_Attended.xlsx") |> 
+incidents_original <- here::here("data/Nature_of_Incidents_Attended.xlsx") |>
   readxl::read_excel() |>
   mutate(date = as_date(Incident_Date)) |>
   janitor::clean_names() |>
@@ -157,5 +157,4 @@ incident_all <- incident_gts |>
   select(-delet, -date)
 
 # Write out final rds
-
 write_rds(incident_all, here::here("data/incidents_gts.rds"))
