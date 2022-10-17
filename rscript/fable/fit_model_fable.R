@@ -37,9 +37,9 @@ fit_incident <- train |>
   model(
     NAIVE = NAIVE(sqrt(incidents)),
     ETS = ETS(sqrt(incidents)),
-    TSCOUNT = TSCOUNT(incidents ~ trend() + season("week") + fourier("year", 10)
+    TSCOUNT = TSCOUNT(incidents ~ trend() + season("week") + fourier("year", 3)
         + public_holiday_d + school_holiday_d + xmas + new_years_day, 
-      link = "log", model = list(past_obs = 1:13))
+      link = "log", model = list(past_obs = 1:3))
   )
 # Add reconciliation constraints and produce forecasts
 # Need to handle tscount separately so we can simulate forecast distributions
