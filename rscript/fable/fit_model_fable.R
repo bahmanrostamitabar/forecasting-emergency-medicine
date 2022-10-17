@@ -46,7 +46,6 @@ fit_incident <- train |>
 ets_forecast <- fit_incident |>
   select(-TSCOUNT) |> 
   reconcile(
-    td_ETS = top_down(ETS),
     bu_ETS = bottom_up(ETS),
     wls_ETS = min_trace(ETS, method = "wls_struct"),
     wls_ELS = min_trace(ETS, method = "mint_shrink")
@@ -55,7 +54,6 @@ ets_forecast <- fit_incident |>
 tscount_forecast <- fit_incident |> 
   select(TSCOUNT) |> 
   reconcile(
-    td_TSCOUNT = top_down(TSCOUNT),
     bu_TSCOUNT = bottom_up(TSCOUNT),
     wls_TSCOUNT = min_trace(TSCOUNT, method = "wls_struct"),
     wls_TSCOUNT = min_trace(TSCOUNT, method = "mint_shrink")
