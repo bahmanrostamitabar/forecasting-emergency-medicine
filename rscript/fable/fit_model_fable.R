@@ -13,7 +13,8 @@ incidents <- readRDS(here::here("data/incidents_tsbl.rds")) |>
   #aggregate_key(category, incidents = sum(incidents))
   # End of temporary section of code
   # Uncomment next 3 lines when ready to scale up
-  aggregate_key(nature_of_incident * category * lhb_code, 
+  aggregate_key(
+    nature_of_incident * category * lhb_code, 
     incidents = sum(incidents)
   )
 

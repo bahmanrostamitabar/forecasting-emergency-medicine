@@ -4,18 +4,18 @@ Paper on Forecasting Welsh Ambulance Call-outs by Bahman Rostami-Tabar and Rob J
 
 ## Folders:
 
-  * `data` contains raw data and cleaned/wrangled data (stored as rds) in `gts` and `tsibble` formats.
-  * `rscripts` contains all R scripts used in experiments and in final version
-  * `manuscript` contains our main paper
-  * `img` contains figures for the paper not created using R
+* `data` contains raw data and cleaned/wrangled data (stored as rds) in `gts` and `tsibble` formats.
+* `rscripts` contains all R scripts used in experiments and in final version
+* `manuscript` contains our main paper
+* `img` contains figures for the paper not created using R
 
 ## To reproduce results for paper
 
 Run the following scripts in this order
 
-  * rscript/data/holidays.R
-  * rscript/data/incidents.R
-  *
+* rscript/data/holidays.R
+* rscript/data/incidents.R
+* rscript/fable/fit_model_fable.R
 
 ## Count series papers:
 
