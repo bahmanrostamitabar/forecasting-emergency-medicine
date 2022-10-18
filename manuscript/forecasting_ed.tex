@@ -1,0 +1,479 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  authoryear,
+  preprint,
+  3p]{elsarticle}
+
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\setcounter{secnumdepth}{5}
+% Make \paragraph and \subparagraph free-standing
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\makeatletter
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\makeatletter
+\@ifpackageloaded{tcolorbox}{}{\usepackage[many]{tcolorbox}}
+\makeatother
+\makeatletter
+\@ifundefined{shadecolor}{\definecolor{shadecolor}{rgb}{.97, .97, .97}}
+\makeatother
+\makeatletter
+\makeatother
+\journal{Annals of Emergency Medicine}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage[]{natbib}
+\bibliographystyle{elsarticle-harv}
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Forecasting},
+  pdfauthor={Bahman Rostami-Tabar; Rob J. Hyndman},
+  pdfkeywords={Forecasting, Ambulance, Hierarchical structure},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\setlength{\parindent}{6pt}
+\begin{document}
+
+\begin{frontmatter}
+\title{Forecasting}
+\author[1]{Bahman Rostami-Tabar%
+\corref{cor1}%
+\fnref{fn1}}
+ \ead{rostami-tabarb@cardiff.ac.uk} 
+\author[2]{Rob J. Hyndman%
+%
+}
+ \ead{rob.hymdman@monash.ac.edu} 
+
+\affiliation[1]{organization={Cardiff University, Cardiff Business
+School},country={United Kingdom},countrysep={,},postcode={CF10
+3EU},postcodesep={}}
+\affiliation[2]{organization={Monash University, Department of
+Econometrics and Business
+Statistics},country={Australia},countrysep={,},postcode={VIC
+3800},postcodesep={}}
+
+\cortext[cor1]{Corresponding author}
+\fntext[fn1]{This is the first author footnote.}
+
+        
+\begin{abstract}
+This is the abstract. An accurate demand forecasting is crucial in
+Emergency medicine to depict various courses of action that can result
+in massive savings in terms of patient lives. Inability to match the
+staff with the demand results in an overcrowding care system which is a
+serious problem causing challenging situations on patient flow. Also, it
+is related with increasing length of stay, low patient satisfaction,
+increasing health care costs, inaccuracy in electronic medical record,
+and reported waiting times.
+\end{abstract}
+
+
+
+
+
+\begin{keyword}
+    Forecasting \sep Ambulance \sep 
+    Hierarchical structure
+\end{keyword}
+\end{frontmatter}
+    \ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[frame hidden, interior hidden, breakable, enhanced, boxrule=0pt, borderline west={3pt}{0pt}{shadecolor}, sharp corners]}{\end{tcolorbox}}\fi
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+An accurate demand forecasting is crucial in Emergency medicine to
+depict various courses of action that can result in massive savings in
+terms of patient lives. Inability to match the staff with the demand
+results in an overcrowding care system which is a serious problem
+causing challenging situations on patient flow. Also, it is related with
+increasing length of stay, low patient satisfaction, increasing health
+care costs, inaccuracy in electronic medical record, and reported
+waiting times.without incurring last-minute expenses, such as overtime
+or supplemental staffing {[}Reference{]}.
+
+An accurate forecasting of the daily demand enables managers to match
+staff to meet anticipated patients, reconfigure units and redeploy staff
+and vehicles. This will have many advantages for patients, staff and the
+quality of healthcare services provided.
+
+The ability to accurately forecast the demand of future health services
+is critical for planning decisions aimed at improving the quality of
+service delivery in the health care. Forecasting has been used in
+various fields of healthcare to inform planning decisions at the
+strategic, tactical and operational levels. There is at least one or
+multiple reasons why we need to produce a forecast. Most often reasons
+determine clearly what to forecast and which level of forecast
+granularities are required. There are typically some planning process at
+strategic(long-term) level such as dimensioning resource capacities and
+budgeting; tactical(medium-term) level such as temporary capacity
+expansions, staff-shift scheduling, and inventory control; and
+operational(short-term) level such as planning rosters for staff and
+allocate resources and medical item distribution. Each planning level
+will typically have different forecasting needs in terms of granularity
+and horizon (how far into the future do we forecast). A natural question
+that arise from these examples is how to generate forecasts to support
+planning decisions at multiple granularities and horizons. In order to
+answer this question, we first need to understand some fundamental
+aspects of forecasting in healthcare:
+
+Daily forecasts are required to inform the short-term planning for the
+current and the upcoming shifts of the day. This involves the decision
+making related to the execution of the delivery process for various
+health care services such as Ambulatory ,Emergency. Daily forecasts are
+important at various levels:
+
+\begin{itemize}
+\item
+  \textbf{Nature of incidents}
+\item
+  \textbf{Category: Red, Amber, Green}
+\item
+  \textbf{Health board}
+\item
+  \textbf{Country level}
+\end{itemize}
+
+Implementing and sustaining improvements in hospital-wide flow requires
+alignment, cooperation, and coordination between hospital units and
+departments. Without effective executive oversight and collaboration,
+teams operate in isolation from one another and the aggregated impact of
+their efforts is limited. In many cases, this isolation leads to
+duplicative work, rework, or work that runs counter to overall goals to
+improve hospital-wide patient flow
+
+The combination of demand forecast, incidents being attended, resource
+availability and delays at hospitals, provide information on the state
+of the unscheduled care system across the emergency medicine services.
+Having this full picture enables the delivery managers to focus on the
+areas that require intervention to enable the most effective delivery of
+the service to the patients.
+
+Despite a large number of studies dedicated to forecasting in
+healthcare{[}ref{]}, this ques- tion unanswered in healthcare
+forecasting. Almost all studies assume that the level of data
+granularity matches with the level of forecast requirement, e.g.~daily
+series is used to generate daily forecast. Moreover, in the presence of
+the high data granularity, the recommendation is to first aggregate the
+data into a requested forecast granularity level and then generate the
+forecast(Goodwin, 2018). However, there is no empirical evidence to
+support this claim
+
+\hypertarget{lit}{%
+\section{Research background}\label{lit}}
+
+Table Table~\ref{tbl-lit} summarise studies on forecasting in emergency
+and urgent care.
+
+\hypertarget{tbl-lit}{}
+\begin{table}[!h]
+\caption{\label{tbl-lit}summary of literature review }\tabularnewline
+
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tabular}{l|r|l|l|>{\raggedright\arraybackslash}p{15em}|l}
+\hline
+Author & Year & Forecast variable & Forecast Horizon & Method & Measure\\
+\hline
+McCarthy 
+2008 & 2008 & ED arrivals & 1 day & Poisson log-linear regression model, including temporal factors, patient characteristics and climatic factors & 95\% CI\\
+\hline
+Cote et al. & 2013 & ED arrivals & 1 day & Fourier regression & R\textasciicircum{}2,  Standard Error\\
+\hline
+Kim et al. & 2014 & Hospital demand & 1h, 7days, 
+30days & Linear regression; Exponential smoothing; ARIMA; GARCH; VAR & MAPE\\
+\hline
+1 day & 2007 & Ambulance demand & 1day & Regression & RMSE\\
+\hline
+Hertzum & 2017 & ED arrivals
+ED occupancy & 1day & linear regression; SARIMA; Naïve & MAE, MAPE, 
+MASE\\
+\hline
+Choudhury and Urena & 2020 & ED arrivals & 1day & ARIMA; Holt-winters; TBATS; ANN & RMSE, ME\\
+\hline
+Steins et al. & 2019 & Ambulance call & 1day & ZIP and ZINB regression;
+ moving average with seasonality weights & ME, MAE, RMSE\\
+\hline
+Jones et al. & 2009 & ED census & 1day & VAR;  Holt winters & MAE\\
+\hline
+Morzuch and Allen & 2006 & ED arrivals & 7 days & Regression; ARIMA; Exponential smoothing & RMSE\\
+\hline
+Taylor & 2008 & centre volume & 14 days & ARMA, Exponential smoothing; Dynamic harmonic regression; Seasonal random walk; Seasonal mean;
+Random walk; Mean; Median; Simple exponential smoothing & MAE
+RMSE\\
+\hline
+Gijo and Balakrishna & 2016 & call volume & 7 days & SARIMA & MMSE\\
+\hline
+\end{tabular}}
+\end{table}
+
+Focus on the ambulance services!
+
+\citet{gijo2016sarima} generated a time series model to forecast the
+daily and hourly call volume at all centre handling emergency ambulance
+services. Since historical data showed seasonality, SARIMA models were
+investigated. Regarding the daily model, the authors generated a SARIMA
+model, which, however, resulted in the forecast error (MMSE) that
+significantly increased when the lead time exceeded 8 days. On the other
+hand, the SARIMA model proposed to forecast the log-calls an hourly
+basis. This model was found to fit well the model both for shorter and
+longer lead times.
+
+Forecasting at the daily level of granularity is generally use for
+roaster planing and deciding when to contact staff on call for instance.
+\citet{luo2017hospital} use a combination of seasonal ARIMA (SARIMA) and
+a single exponential smoothing (SES) model to forecast daily outpatient
+visits 1 week ahead.They indicate that using combinatorial model can be
+more effective than each model separately. \citet{whitt2019forecasting}
+examine several alternative models to forecast the total daily arrival
+for 1-7 days ahead, including a linear regression based on calendar and
+weather variables, seasonal autoregressive integrated moving average
+with exogenous regressors (SARIMAX) and the multilayer perceptron (MLP)
+model. Using a daily ED admission for 3 years, they show that SARIMAX
+provides the most accurate daily forecast by MSE measure.
+\citet{marcilio2013forecasting} compare the forecast accuracy of the
+Generalised Linear Model (GLM), Generalised Estimating Equations (GEE),
+and Seasonal Autoregressive Integrated Moving Average (SARIMA) methods
+using total daily patient visits to an ED using MAPE. They conclud that
+GLM and GEE models provide more accurate forecasts than SARIMA model.
+\citet{rostami2020anticipating} propose a model to forecast daily ED
+attendance with consideration of different types of holidays, weekday
+effects, auto-regressive effects, long-term trends and date effects.
+They provide probabilistic forecasts to quantify uncertainties in future
+ED attendance and they show that the proposed model outperforms three
+time series techniques including 1) Naive, 2) AutoRegressive, AR(p), 3)
+exponential smoothing state space model (ETS) and a regression model
+without considering special events as alternatives. \citet{zhou2018time}
+SARIMA, NARNN and the hybrid SARIMA-NARNN to forecast the daily number
+of new admission inpatients. The root mean square error (RMSE), mean
+absolute error (MAE) and mean absolute percentage error (MAPE) were used
+to compare the forecasting performance among the three models. They show
+that NARNN model outperforms the others. \citet{sun2009forecasting} use
+SARIMA model to forecast daily patient volume for each patient acuity
+level. MAPE is used to choose the best-fit model. They fitted separate
+ARIMA models to the three categories of acuity and overall data. They
+conclude that the ARIMA model is effective for both short term (weekly)
+and long term (three months) forecast horizons. Moreover, they observe
+that the impact of weather is not significant.
+\citet{zinouri2018modelling} use SARIMA to develop a statistical
+prediction model that provides short-term forecasts of daily surgical
+demand. Our results suggest that the proposed SARIMA model can be useful
+for estimating surgical case volumes 2--4 weeks prior to the day of
+surgery, which can support robust and reliable staff schedules.
+\citet{moustris2012seven} use Artificial Neural Network (ANN) models to
+forecast the total weekly(7 days) number of Childhood Asthma Admission.
+Three different ANN models were developed and trained to forecast the
+admission of different age subgroups and for the whole study population.
+\citet{mccoy2018assessment} compare SARIMA, Prophet and Snaive methods
+for prediction 365 days of hospital discharge using a daily hospital
+discharge volumes at 2 large, New England academic medical centers. They
+show that Prophet model outperforms SARIMA and Snaive.
+
+\citet{khaldi2019forecasting} investigate the combination of the
+Artificial Neural Networks (ANNs) with a signal decomposition technique
+named Ensemble Empirical Mode decomposition (EEMD), to make one step
+ahead weekly forecasting of patients arrivals to ED. using seven years
+of weekly demand. The results of the proposed model were compared
+against ANN without signal decomposition, ANN with Discrete wavelet
+Transform (DWT). The results show that the combined forecasts outperform
+the benchmarking models.
+
+\citet{steins2019forecasting} aimed to develop a forecasting model for
+predicting the number of ambulance services calls per hour and
+geographical areas, to support managers in decisions-making and to
+investigate which ones were the factors that affected the number of
+calls. Data collected consisted of a time and location of historical
+ambulance call data for three counties in Sweden and a list of
+explanatory factors of the area, such as socioeconomic and geographic.
+In order to deal with large number of zeros in the data, authors
+developed zero-inflated Poisson (ZIP) and zero-inflated negative
+binomial (ZINB) regression models. These were then compared to the
+currently existing forecasting system, based on moving average with
+seasonality weights, using ME, MAE and RMSE. Firstly, the factors
+affecting the number of ambulance calls were found to be the following:
+population in different age groups, median income, length of road,
+number of nightlife spots (the number of restaurants), day of the week
+and hour of the day. Secondly, it was found that the older population
+(65-100) generated more ambulance calls and that ZIP model performs
+better than the current model. However, the improvement provided by the
+more advance model was not much greater than the one provided by the
+existing model. Authors suggested that it could be because the
+population, which was used as an independent variable in both models,
+was so dominant compared to the other factors. Moreover, both models
+either underestimated or overestimated the number of calls. Authors
+suggested that the inability to capture a positive trend resulted in
+underestimation, and the opposite was due to a negative trend.
+Therefore, authors recommended that further research should add certain
+temporal variables able to capture the trend.
+
+\hypertarget{data}{%
+\section{Data}\label{data}}
+
+Operations Department and I suppose it's split into three different
+categories. You've got\ldots{} you've got Response which is the
+ambulances. You've got the Control which is the people who take the
+telephone calls. And then you've got Resilience which are the things
+that people like have the hazardous response teams so they'll go and
+save people from water and maybe with fires as well. They've got\ldots{}
+they're specially trained in different things so there's the contingency
+sort of there. So from a Control perspective, they look at\ldots{} they
+look at it at least twice a week to see what the\ldots{} what it\ldots{}
+how busy it is. And then they staff\ldots{} they\ldots{} they're looking
+to staff to the worst level, knowing that they will get some
+people\ldots{} there will be some abstractions. So they won't manage
+to\ldots{} to manage that, because their key area {[}inaudible{]}.
+Excuse me, they try to answer within the\ldots{} the phone within three
+seconds 95\% of the time. I'm not sure exactly. It's something like
+that. That's very high up there. That's what they're trying to do.
+So\ldots{} and because I got it broken down at the Control level, so
+we've got North Wales level for calls, and we've also got it broken down
+by the North, the Mid, and the South Control. It's actually called the
+North, the South East, and Central and West. Those are the three control
+areas. So they can see how those break down, knowing that at the moment
+we've got particularly high demand in the South East, and it's forecast
+to be just bonkers
+
+\hypertarget{design}{%
+\section{Experimental set}\label{design}}
+
+\hypertarget{result}{%
+\section{Result and discussion}\label{result}}
+
+\hypertarget{conclusion}{%
+\section{Conclusion}\label{conclusion}}
+
+
+\renewcommand\refname{References}
+  \bibliography{mybibfile.bib}
+
+
+\end{document}
