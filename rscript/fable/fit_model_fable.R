@@ -8,15 +8,15 @@ library(fable.tscount)
 # Read data previously processed in data folder and add aggregation levels
 incidents <- readRDS(here::here("data/incidents_tsbl.rds")) |>
   # Temporarily only consider a small part of data until everything works
-  #filter(nature_of_incident == "BREATHING PROBLEMS", lhb_code == "BC") |> 
-  #select(-nature_of_incident, -lhb_code) |> 
-  #aggregate_key(category, incidents = sum(incidents))
+  filter(nature_of_incident == "BREATHING PROBLEMS", lhb_code == "BC") |> 
+  select(-nature_of_incident, -lhb_code) |> 
+  aggregate_key(category, incidents = sum(incidents))
   # End of temporary section of code
   # Uncomment next 3 lines when ready to scale up
-  aggregate_key(
-    nature_of_incident * category * lhb_code, 
-    incidents = sum(incidents)
-  )
+  #aggregate_key(
+  #  nature_of_incident * category * lhb_code, 
+  #  incidents = sum(incidents)
+  #)
 
 # Add holidays
 incidents <- incidents |>
@@ -26,15 +26,17 @@ incidents <- incidents |>
   )
 
 # First pass using a simple training/test set keeping last 6 weeks for testing
-train <- incidents |> filter(date <= max(date) - 42)
-test <- incidents |> filter(date > max(date) - 42)
+train <- incidents |> 
+  filter(date <= max(date) - 42) 
+test <- incidents |> 
+  filter(date > max(date) - 42)
 
 # Fit some models
 # Parallelization doesn't work for TSCOUNT
 # Issue raised at https://github.com/mitchelloharawild/fable.tscount/issues/2
 # library(future)
 # plan(multisession)
-fit_incident <- train |>
+fit_incident <- train |> 
   model(
     NAIVE = NAIVE(sqrt(incidents)),
     ETS = ETS(sqrt(incidents)),
@@ -49,16 +51,18 @@ ets_forecast <- fit_incident |>
   select(-TSCOUNT) |> 
   reconcile(
     bu_ETS = bottom_up(ETS),
-    wls_ETS = min_trace(ETS, method = "wls_struct"),
-    wls_ELS = min_trace(ETS, method = "mint_shrink")
+    wls_ETS1 = min_trace(ETS, method = "wls_struct"),
+    wls_ETS2 = min_trace(ETS, method = "wls_var"),
+    mint_ETS = min_trace(ETS, method = "mint_shrink")
   ) |> 
   forecast(new_data = test)
 tscount_forecast <- fit_incident |> 
   select(TSCOUNT) |> 
   reconcile(
     bu_TSCOUNT = bottom_up(TSCOUNT),
-    wls_TSCOUNT = min_trace(TSCOUNT, method = "wls_struct"),
-    wls_TSCOUNT = min_trace(TSCOUNT, method = "mint_shrink")
+    wls_TSCOUNT1 = min_trace(TSCOUNT, method = "wls_struct"),
+    wls_TSCOUNT2 = min_trace(TSCOUNT, method = "wls_var"),
+    mint_TSCOUNT = min_trace(TSCOUNT, method = "mint_shrink")
   ) |> 
   forecast(new_data = test, simulate=TRUE)
 fcst_incident <- bind_rows(as_tibble(ets_forecast), as_tibble(tscount_forecast)) |> 
