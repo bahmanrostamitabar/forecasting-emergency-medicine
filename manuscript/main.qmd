@@ -1,0 +1,82 @@
+---
+title: "Hierarchical and grouped time series forecasting: an application to Emergency Medical Services"
+format:
+  elsevier-pdf:
+    keep-tex: true
+    journal:
+      name: Annals of Emergency Medicine
+      formatting: preprint
+      model: 3p
+      cite-style: authoryear
+  elsevier-html: 
+    toc: true
+author:
+  - name: Bahman Rostami-Tabar
+    email: rostami-tabarb@cardiff.ac.uk
+    affiliations: 
+        - id: carbs
+          name: Cardiff University
+          department: Cardiff Business School
+          country: United Kingdom
+          postal-code: CF10 3EU
+    attributes:
+        corresponding: true
+  - name: Rob J. Hyndman
+    email: Rob.Hyndman@monash.edu
+    affiliations:
+        - id: monash
+          name: Monash University
+          department: Department of Econometrics and Business Statistics
+          country: Australia
+          postal-code: VIC 3800
+abstract: |
+  The primary goal of an emergency service is to minimize the ambulance response time. Accurate forecasts of ambulance demand are crucial inputs into the decisions of planners and policymakers on the resource (e.g. staff and fleet) planning and dynamic deployment. Informing those decisions require detailed forecasting of demand at multiple levels of hierarchy from the national and regional levels to the nature of incidents and their priorities. These forecasts are often generated independently by different teams. However, independent forecasts may not add up to the other levels resulting in mismatched forecasts that lead to conflicting decisions and a lack of coordination in the care service. To address this issue, we explore the inherently hierarchical and grouped structure of Emergency Medcine Services. We apply forecast reconciliation methods to generate both point and probabilistic forecasts that are coherent, for the first time in the healthcare literature.
+keywords: [Emergency services, healthcare, hierarchical time series forecasting, forecast reconciliation]
+bibliography: mybibfile.bib
+---
+
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = FALSE, cache=TRUE, message = FALSE, warning = FALSE)
+# Make sure you have the latest versions of rmarkdown and rticle
+library(tidyverse)
+library(lubridate)
+library(patchwork)
+library(tsibble)
+library(kableExtra)
+library(fable)
+library(ggthemes)
+library(readxl)
+library(here)
+```
+
+
+
+```{r intro, child="01-introduction.qmd"}
+
+```
+
+
+```{r literature, child="02-literature.qmd"}
+
+```
+
+
+```{r experiment, child="03-experiment.qmd"}
+
+```
+
+```{r htc, child="04-htsgts.qmd"}
+
+```
+
+```{r results, child="05-results.qmd"}
+
+```
+
+```{r conclusion, child="06-conclusion.qmd"}
+
+```
+
+# References {#references .unnumbered}
