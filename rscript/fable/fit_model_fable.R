@@ -39,19 +39,23 @@ test <- incidents |>
 # Issue raised at https://github.com/mitchelloharawild/fable.tscount/issues/2
 # library(future)
 # plan(multisession)
-fit_incident <- train |> 
-  model(
-    NAIVE = NAIVE(sqrt(incidents)),
-    ETS = ETS(sqrt(incidents)),
-    TSCOUNT = TSCOUNT(incidents ~ trend() + season("week") + fourier("year", 3)
-        + public_holiday_d + school_holiday_d + xmas + new_years_day, 
-      link = "log", model = list(past_obs = 1:3))
-  )
-write_rds(fit_incident, here::here("rscript/fable/fit_incident.rds"))
+if(fs::file_exists(here::here("rscript/fable/fit_incidents.rds"))) {
+    fit_incidents <- read_rds(here::here("rscript/fable/fit_incidents.rds"))
+  } else {
+    fit_incidents <- train |> 
+      model(
+        NAIVE = NAIVE(sqrt(incidents)),
+        ETS = ETS(sqrt(incidents)),
+        TSCOUNT = TSCOUNT(incidents ~ trend() + season("week") + fourier("year", 3)
+            + public_holiday_d + school_holiday_d + xmas + new_years_day, 
+          link = "log", model = list(past_obs = 1:3))
+      )
+    write_rds(fit_incident, here::here("rscript/fable/fit_incidents.rds"))
+  }
 
 # Add reconciliation constraints and produce forecasts
 # Need to handle tscount separately so we can simulate forecast distributions
-ets_forecast <- fit_incident |>
+ets_forecast <- fit_incidents |>
   select(-TSCOUNT) |> 
   reconcile(
     bu_ETS = bottom_up(ETS),
@@ -60,7 +64,7 @@ ets_forecast <- fit_incident |>
     mint_ETS = min_trace(ETS, method = "mint_shrink")
   ) |> 
   forecast(new_data = test)
-tscount_forecast <- fit_incident |> 
+tscount_forecast <- fit_incidents |> 
   select(TSCOUNT) |> 
   reconcile(
     bu_TSCOUNT = bottom_up(TSCOUNT),
@@ -69,11 +73,11 @@ tscount_forecast <- fit_incident |>
     mint_TSCOUNT = min_trace(TSCOUNT, method = "mint_shrink")
   ) |> 
   forecast(new_data = test, simulate=TRUE)
-fcst_incident <- bind_rows(as_tibble(ets_forecast), as_tibble(tscount_forecast)) |> 
+fcst_incidents <- bind_rows(as_tibble(ets_forecast), as_tibble(tscount_forecast)) |> 
   as_fable(index=date, key=c(.model,category), response="incidents", distribution=incidents)
 
 # Look at MASE over several levels for MinT
-fcst_accuracy <- fcst_incident |>
+fcst_accuracy <- fcst_incidents |>
   accuracy(incidents, measures = list(crps=CRPS, rmsse = RMSSE, mase = MASE))
 
 # Bottom level
