@@ -11,15 +11,15 @@ library(fable.tscount)
 # Read data previously processed in data folder and add aggregation levels
 incidents <- readRDS(here::here("data/incidents_tsbl.rds")) |>
   # Temporarily only consider a small part of data until everything works
-  filter(nature_of_incident == "BREATHING PROBLEMS", lhb_code == "BC") |> 
-  select(-nature_of_incident, -lhb_code) |> 
-  aggregate_key(category, incidents = sum(incidents))
+  #filter(nature_of_incident == "BREATHING PROBLEMS", lhb_code == "BC") |> 
+  #select(-nature_of_incident, -lhb_code) |> 
+  #aggregate_key(category, incidents = sum(incidents))
   # End of temporary section of code
   # Uncomment next 3 lines when ready to scale up
-  #aggregate_key(
-  #  nature_of_incident * category * lhb_code, 
-  #  incidents = sum(incidents)
-  #)
+  aggregate_key(
+    nature_of_incident * category * lhb_code, 
+    incidents = sum(incidents)
+  )
 
 # Add holidays
 incidents <- incidents |>
@@ -48,6 +48,7 @@ fit_incident <- train |>
       link = "log", model = list(past_obs = 1:3))
   )
 write_rds(fit_incident, here::here("rscript/fable/fit_incident.rds"))
+
 # Add reconciliation constraints and produce forecasts
 # Need to handle tscount separately so we can simulate forecast distributions
 ets_forecast <- fit_incident |>
