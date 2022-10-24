@@ -1,3 +1,6 @@
+# This script needs the "tolerant-inverse" branch of fabletools
+#remotes::install_github("tidyverts/fabletools", "tolerant-inverse")
+
 library(tidyverse)
 library(tsibble)
 library(fable)
