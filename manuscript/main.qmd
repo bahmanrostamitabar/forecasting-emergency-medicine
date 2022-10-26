@@ -1,5 +1,10 @@
 ---
 title: "Hierarchical and grouped time series forecasting: an application to Emergency Medical Services"
+execute:
+  echo: false
+  message: false
+  warning: false
+  cache: true
 format:
   elsevier-pdf:
     keep-tex: true
@@ -36,10 +41,10 @@ bibliography: mybibfile.bib
 ---
 
 
-```{r setup, include=FALSE}
+```{r}
+#| label: setup
+#| include: false
 library(knitr)
-knitr::opts_chunk$set(echo = FALSE, cache=TRUE, message = FALSE, warning = FALSE)
-# Make sure you have the latest versions of rmarkdown and rticle
 library(tidyverse)
 library(lubridate)
 library(patchwork)
@@ -49,8 +54,9 @@ library(fable)
 library(ggthemes)
 library(readxl)
 library(here)
+library(tsibble)
+library(fable)
 ```
-
 
 
 ```{r intro, child="01-introduction.qmd"}

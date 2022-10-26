@@ -1,7 +1,5 @@
-# Results and discussion {#result}
+# Results and discussion {#sec-result}
 
-
-Moreover, both models either underestimated or overestimated the number of calls. Authors suggested that the inability to capture a positive trend resulted in underestimation, and the opposite was due to a negative trend. Therefore, authors recommended that further research should add certain temporal variables able to capture the trend.
 
 ## Point forecast
 
