@@ -13,9 +13,8 @@ Paper on Forecasting Welsh Ambulance Call-outs by Bahman Rostami-Tabar and Rob J
 
 Run the following scripts in this order
 
-* rscript/data/holidays.R
-* rscript/data/incidents.R
-* rscript/hts/forecast_hts.R
+* **Prepare data**: `rscript/data/incidents.R`
+* **Generate forecasts and evaluation summaries**: `rscript/hts/forecast_hts.R`
 
 ## Count series papers:
 

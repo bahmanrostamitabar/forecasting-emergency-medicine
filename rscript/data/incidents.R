@@ -7,6 +7,7 @@ library(tidyverse)
 library(lubridate)
 library(tsibble)
 library(hts)
+source(here::here("rscript/data/holidays.R"))
 
 # Read data
 incidents_original <- here::here("data/Nature_of_Incidents_Attended.xlsx") |>
