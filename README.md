@@ -15,7 +15,7 @@ Run the following scripts in this order
 
 * rscript/data/holidays.R
 * rscript/data/incidents.R
-* rscript/fable/fit_model_fable.R
+* rscript/hts/forecast_hts.R
 
 ## Count series papers:
 
