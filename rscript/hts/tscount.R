@@ -6,6 +6,9 @@ tscount <- function(y) {
   season_week <- forecast::seasonaldummy(y)
   trend <- seq_along(y)
   X <- cbind(trend, season_week, fourier_year, holidays[seq_along(y),])
+  # Remove constant covariates
+  constant <- apply(X, 2, forecast:::is.constant)
+  X <- X[, !constant]
   tsglm(y, model = list(past_obs = 1:3), xreg=X, link="log")
 }
 
@@ -16,6 +19,8 @@ simulate.tsglm <- function(object, innov,...) {
   season_week <- forecast::seasonaldummy(ts(seq(n), frequency=7), h=h)
   trend <- seq(n+h)[-(1:n)]
   X <- cbind(trend, season_week, fourier_year, holidays[n+seq(h),])
+  # Remove missing columns
+  X <- X[, colnames(X) %in% names(coefficients(object))]
   output <- tsglm.sim(h, 
         param = list(
           intercept = object$coefficient[1],
