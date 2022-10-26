@@ -10,7 +10,7 @@ htsplus <- function(object,
                     h,
                     model_function = auto.arima,
                     methods,
-                    nsim = 50) {
+                    nsim = 2000) {
   # Generate all time series at all levels
   ally <- aggts(object)
   # Loop over all time series and store models
@@ -51,12 +51,12 @@ htsplus <- function(object,
   G2 <- solve(t(S) %*% Winv %*% S) %*% t(S) %*% Winv
   Winv <- solve(W3)
   G3 <- solve(t(S) %*% Winv %*% S) %*% t(S) %*% Winv
-  
+
   # Computing mapping matrix M
   M1 <- S %*% G1
   M2 <- S %*% G2
   M3 <- S %*% G3
-  
+
   # Compute reconciled future sample paths using cross-sectional bootstrap
   nmethods <- length(methods)
   sim <- array(0, c(nseries, h, nsim, nmethods))
@@ -69,8 +69,9 @@ htsplus <- function(object,
     for (i in seq(nseries)) {
       sim[i, , j, 1] <- simulate(models[[i]], innov = bootres[, i])
       # Use same sample paths for other reconciliation methods
-      for(k in seq(nmethods)[-1])
+      for (k in seq(nmethods)[-1]) {
         sim[i, , j, k] <- sim[i, , j, 1]
+      }
     }
     sim[, , j, 1] <- M1 %*% sim[, , j, 1]
     sim[, , j, 2] <- M2 %*% sim[, , j, 2]
@@ -86,9 +87,9 @@ rmsse <- function(sim, test_gts, train_gts) {
   alltest <- aggts(test_gts)
   alltrain <- aggts(train_gts)
   scale_factor <- colMeans(diff(alltrain, 7)^2)
-  rmsse <- fmean[,1,]
-  for(i in NCOL(rmsse)) {
-    rmsse[,i] <- colMeans(sweep((t(fmean[,,i]) - alltest)^2, 2L, scale_factor, "/"))
+  rmsse <- fmean[, 1, ]
+  for (i in NCOL(rmsse)) {
+    rmsse[, i] <- colMeans(sweep((t(fmean[, , i]) - alltest)^2, 2L, scale_factor, "/"))
   }
   # Set RMSSE of zero series to zero
   rmsse[scale_factor < .Machine$double.eps] <- 0
@@ -112,14 +113,14 @@ crps <- function(sim, test_gts) {
   nseries <- dim(sim)[[1]]
   H <- dim(sim)[[2]]
   nmethods <- dim(sim)[[4]]
-  crps <- array(0,c(nseries, H, nmethods))
-  dimnames(crps) <- dimnames(sim)[c(1,2,4)]
+  crps <- array(0, c(nseries, H, nmethods))
+  dimnames(crps) <- dimnames(sim)[c(1, 2, 4)]
   for (i in seq(nseries)) {
     for (h in seq(H)) {
-      for(m in seq(nmethods)) {
-        crps[i, h, m] <- crps_sample(sim[i, h,, m], alltest[h, i])
+      for (m in seq(nmethods)) {
+        crps[i, h, m] <- crps_sample(sim[i, h, , m], alltest[h, i])
       }
     }
   }
-  return(apply(crps, c(3,1), mean))
+  return(apply(crps, c(3, 1), mean))
 }
