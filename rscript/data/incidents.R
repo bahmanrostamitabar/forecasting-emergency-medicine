@@ -6,6 +6,7 @@
 library(tidyverse)
 library(lubridate)
 library(tsibble)
+library(hts)
 
 # Read data
 incidents_original <- here::here("data/Nature_of_Incidents_Attended.xlsx") |>
@@ -49,7 +50,7 @@ incidents_tsbl |>
   select(-nature_of_incident, -lhb_code) |> 
   mutate(category = recode(category, "GREEN" = "GRE", "AMBER" = "AMB")) |> 
   pivot_wider(names_from = category, values_from = incidents) |> 
-  filter(date <= "2015-12-31") |> 
+  #filter(date <= "2015-12-31") |> 
   select(-date) |> 
   mutate(BLU = 0) |> 
   ts(frequency=7) |> 

@@ -12,8 +12,8 @@ incident_gts <- read_rds(here::here("data/incidents_test_gts.rds"))
 # incident_gts <- read_rds(here::here("data/incidents_gts.rds"))
 holidays <- read_rds(here::here("data/holidays_ts.rds"))
 
-train <- window(incident_gts, end = c(12, 1))
-test <- window(incident_gts, start = c(12, 2))
+train <- window(incident_gts, end = c(190, 7))
+test <- window(incident_gts, start = c(191, 1))
 alltest <- aggts(test)
 
 # Reconciliation methods
