@@ -42,7 +42,7 @@ incidents_tsbl <- incidents |>
 # Save as rds
 write_rds(incidents_tsbl, here::here("data/incidents_tsbl.rds"))
 
-# Test data in gts format
+# Small data set in gts format
 incidents_tsbl |> 
   as_tibble() |> 
   filter(nature_of_incident == "BREATHING PROBLEMS", lhb_code == "BC") |> 
@@ -52,12 +52,11 @@ incidents_tsbl |>
   filter(date <= "2015-12-31") |> 
   select(-date) |> 
   mutate(BLU = 0) |> 
-  as.ts(frequency=7) |> 
+  ts(frequency=7) |> 
   hts() |> 
   write_rds(here::here("data/incidents_test_gts.rds"))
 
-
-# Prepare data for gts format
+# Prepare full data in gts format
 incident_modify <- incidents_tsbl |>
   as_tibble() |>
   # Replace incident names with strings of equal length
