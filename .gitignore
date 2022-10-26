@@ -5,5 +5,6 @@
 *_cache/
 *_files/
 .DS_Store
+*.rds
 
 /.luarc.json
