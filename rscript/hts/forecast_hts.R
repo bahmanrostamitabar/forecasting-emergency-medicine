@@ -8,8 +8,8 @@ source(here::here("rscript/hts/tscount.R"))
 plan(multisession, workers = 2)
 
 # Read hierarchical/grouped time series
-incident_gts <- read_rds(here::here("data/incidents_test_gts.rds"))
-# incident_gts <- read_rds(here::here("data/incidents_gts.rds"))
+#incident_gts <- read_rds(here::here("data/incidents_test_gts.rds"))
+incident_gts <- read_rds(here::here("data/incidents_gts.rds"))
 holidays <- read_rds(here::here("data/holidays_ts.rds"))
 
 train <- window(incident_gts, end = c(190, 7))
