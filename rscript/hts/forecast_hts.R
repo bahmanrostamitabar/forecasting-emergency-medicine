@@ -16,34 +16,16 @@ train <- window(incident_gts, end = c(190, 7))
 test <- window(incident_gts, start = c(191, 1))
 alltest <- aggts(test)
 
-# Reconciliation methods
-methods <- c("bu", "wls", "mint")
-
-# Set up storage
-fcst_ets <- as.list(methods)
-names(fcst_ets) <- methods
-fcst_tscount <- fcst_ets
-rmsse_ets <- matrix(0, nrow = length(methods), ncol = ncol(alltest))
-dimnames(rmsse_ets) <- list(methods, colnames(alltest))
-rmsse_tscount <- crps_tscount <- crps_ets <- rmsse_ets
-
 # ETS simulations
-for (i in seq_along(methods)) {
-  cat(paste("ETS: Method", methods[[i]], "\n"))
-  fcst_ets[[i]] <- htsplus(train,
-    h = nrow(test$bts),
-    model_function = ets, method = methods[i]
+fcst_ets <- htsplus(train, h = nrow(test$bts),
+    model_function = ets, methods = c("bu", "wls", "mint")
   )
-  rmsse_ets[i, ] <- rmsse(fcst_ets[[i]], test, train)
-  crps_ets[i, ] <- crps(fcst_ets[[i]], test)
-}
 # TSCOUNT simulations
-for (i in seq_along(methods)) {
-  cat(paste("TSCOUNT: Method", methods[[i]], "\n"))
-  fcst_tscount[[i]] <- htsplus(train,
-    h = nrow(test$bts),
-    model_function = tscount, method = methods[i]
+fcst_tscount <- htsplus(train, h = nrow(test$bts),
+    model_function = tscount, method = c("bu", "wls", "mint")
   )
-  rmsse_tscount[i, ] <- rmsse(fcst_tscount[[i]], test, train)
-  crps_tscount[i, ] <- crps(fcst_tscount[[i]], test)
-}
+  
+rmsse_ets <- rmsse(fcst_ets, test, train)
+crps_ets <- crps(fcst_ets, test)
+rmsse_tscount <- rmsse(fcst_tscount, test, train)
+crps_tscount <- crps(fcst_tscount, test)
