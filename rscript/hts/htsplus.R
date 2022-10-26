@@ -26,11 +26,17 @@ htsplus <- function(object, h,
   models <- list()
   # Loop over all time series and compute forecast means and variances
   for (i in seq(nseries)) {
-    # Add some tiny positive noise to avoid zero series
-    models[[i]] <- model_function(ally[, i] + abs(rnorm(n=ntime, sd=1e-2)))
+    if(forecast:::is.constant(ally[,i])) {
+      # Series is constant. So just fit a mean zero model with small variance
+      models[[i]] <- Arima(ally[,i] + rnorm(ntime, sd=1e-3), order=c(0,0,0), include.mean = FALSE)
+    } else {
+      models[[i]] <- model_function(ally[, i])
+    }
     # Grab the residuals
-    innov_res[,i] <- residuals(models[[i]], type="innovation")
     response_res[,i] <- residuals(models[[i]], type="response")
+    if(!identical(model_function, tscount)) {
+      innov_res[,i] <- residuals(models[[i]], type="innovation")
+    } 
   }
   # S matrix
   S <- smatrix(object)
@@ -84,13 +90,41 @@ htsplus <- function(object, h,
   return(sim)
 }
 
-# Look at RMSSE over several levels for MinT
-rmsse <- function(fmean, test_gts, train_gts) {
+# Compute RMSSE given forecast mean and training/test gts objects
+rmsse <- function(sim, test_gts, train_gts) {
+  fmean <- t(apply(sim, c(1,2), mean))
   alltest <- aggts(test_gts)
   alltrain <- aggts(train_gts)
   scale_factor <- colMeans(diff(alltrain, 7)^2)
   rmsse <- colMeans(sweep((fmean - alltest)^2, 2L, scale_factor, '/'))
+  # Set RMSSE of zero series to zero
   rmsse[scale_factor < .Machine$double.eps] <- 0
   return(rmsse)
 }
+
+# Compute CRPS given simulated values x and actual y
+crps_sample <- function(x, y) {
+  # Set CRPS of zero series to zero
+  if(var(x) < 1e-5)
+    return(0)
+  x <- sort(x)
+  m <- length(x)
+  crps <- (2/m) * mean((x - y) * (m * (y < x) - seq_len(m) +  0.5))
 }
+
+# Compute CRPS given simulated sample paths and test gts object
+crps <- function(sim, test_gts) {
+  alltest <- aggts(test_gts)
+  nseries <- dim(sim)[[1]]
+  H <- dim(sim)[[2]]
+  crps <- matrix(0, nrow=H, ncol=nseries)
+  colnames(crps) <- dimnames(sim)[[1]]
+  rownames(crps) <- dimnames(sim)[[2]]
+  for(i in seq(nseries)) {
+    for(h in seq(H)) {
+      crps[h, i] <- crps_sample(sim[i,h,], alltest[h,i])
+    }
+  }
+  return(colMeans(crps))
+}
+

@@ -1,25 +1,38 @@
 library(hts)
 source(here::here("rscript/hts/htsplus.R"))
+source(here::here("rscript/hts/tscount.R"))
 
 # Read hierarchical/grouped time series
 incident_gts <- read_rds(here::here("data/incidents_test_gts.rds"))
 #incident_gts <- read_rds(here::here("data/incidents_gts.rds"))
+holidays <- read_rds(here::here("data/holidays_ts.rds"))
 
 train <- window(incident_gts, end = c(12,1))
 test <- window(incident_gts, start=c(12,2))
+alltest <- aggts(test)
 
-# Simulated future sample paths
-fcst_ets_bu <- htsplus(train, h = nrow(test$bts), model_function = ets, lambda = 0.5, method = "bu")
-fcst_ets_wls <- htsplus(train, h = nrow(test$bts), model_function = ets, lambda = 0.5, method = "wls")
-fcst_ets_mint <- htsplus(train, h = nrow(test$bts), model_function = ets, lambda = 0.5, method = "mint")
+# Reconciliation methods
+methods <- c("bu", "wls", "mint")
 
-# Means
-mean_ets_bu <- t(apply(fcst_ets_bu, c(1,2), mean))
-mean_ets_wls <- t(apply(fcst_ets_wls, c(1,2), mean))
-mean_ets_mint <- t(apply(fcst_ets_mint, c(1,2), mean))
+# Set up storage 
+fcst_ets <- as.list(methods)
+names(fcst_ets) <- methods
+fcst_tscount <- fcst_ets
+rmsse_ets <- matrix(0, nrow = length(methods), ncol = ncol(alltest))
+dimnames(rmsse_ets) <- list(methods, colnames(alltest))
+rmsse_tscount <- crps_tscount <- crps_ets <- rmsse_ets
 
-rmsse(mean_ets_bu, test, train)
-rmsse(mean_ets_wls, test, train)
-rmsse(mean_ets_mint, test, train)
-
-
+# ETS simulations
+for(i in seq_along(methods)) {
+  fcst_ets[[i]] <- htsplus(train, h = nrow(test$bts), 
+                           model_function = ets, method = methods[i])
+  rmsse_ets[i, ] <- rmsse(fcst_ets[[i]], test, train)
+  crps_ets[i, ] <- crps(fcst_ets[[i]], test)
+}
+# TSCOUNT simulations
+for(i in seq_along(methods)) {
+  fcst_tscount[[i]] <- htsplus(train, h = nrow(test$bts), 
+                           model_function = tscount, method = methods[i])
+  rmsse_tscount[i, ] <- rmsse(fcst_tscount[[i]], test, train)
+  crps_tscount[i, ] <- crps(fcst_tscount[[i]], test)
+}

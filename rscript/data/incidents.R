@@ -174,3 +174,12 @@ incident_all |>
   ts(frequency = 7) |> 
   gts(characters = list(c(1, 2), 3, 9)) |> 
   write_rds(here::here("data/incidents_gts.rds"))
+
+# Covariates for gts format
+
+readRDS(here::here("data/holiday_dummy.rds")) |> 
+  as_tibble() |> 
+  select(-date) |> 
+  ts(frequency = 7) |> 
+  write_rds(here::here("data/holidays_ts.rds"))
+  
