@@ -42,8 +42,22 @@ incidents_tsbl <- incidents |>
 # Save as rds
 write_rds(incidents_tsbl, here::here("data/incidents_tsbl.rds"))
 
-# Prepare data for gts format
+# Test data in gts format
+incidents_tsbl |> 
+  as_tibble() |> 
+  filter(nature_of_incident == "BREATHING PROBLEMS", lhb_code == "BC") |> 
+  select(-nature_of_incident, -lhb_code) |> 
+  mutate(category = recode(category, "GREEN" = "GRE", "AMBER" = "AMB")) |> 
+  pivot_wider(names_from = category, values_from = incidents) |> 
+  filter(date <= "2015-12-31") |> 
+  select(-date) |> 
+  mutate(BLU = 0) |> 
+  as.ts(frequency=7) |> 
+  hts() |> 
+  write_rds(here::here("data/incidents_test_gts.rds"))
 
+
+# Prepare data for gts format
 incident_modify <- incidents_tsbl |>
   as_tibble() |>
   # Replace incident names with strings of equal length
@@ -157,4 +171,7 @@ incident_all <- incident_gts |>
   select(-delet, -date)
 
 # Write out final rds
-write_rds(incident_all, here::here("data/incidents_gts.rds"))
+incident_all |> 
+  ts(frequency = 7) |> 
+  gts(characters = list(c(1, 2), 3, 9)) |> 
+  write_rds(here::here("data/incidents_gts.rds"))
