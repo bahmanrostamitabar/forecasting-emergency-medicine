@@ -47,9 +47,9 @@ htsplus <- function(object,
   # Find G matrix
   nbottom <- NCOL(object$bts)
   G1 <- cbind(matrix(0, nrow = nbottom, ncol = nseries - nbottom), diag(nrow = nbottom))
-  Winv <- solve(W2)
+  Winv <- MASS::ginv(W2)
   G2 <- solve(t(S) %*% Winv %*% S) %*% t(S) %*% Winv
-  Winv <- solve(W3)
+  Winv <- MASS::ginv(W3)
   G3 <- solve(t(S) %*% Winv %*% S) %*% t(S) %*% Winv
 
   # Computing mapping matrix M
