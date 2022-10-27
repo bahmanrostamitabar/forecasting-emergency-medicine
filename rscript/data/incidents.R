@@ -127,6 +127,11 @@ incident_ready <- incident_modify |>
     lhb == "SB" ~ "C"
   ))
 
+
+incident_gt <- incident_ready |>
+  as_tsibble(index = date, key = c(region, lhb, category, nature)) |>
+  aggregate_key((region / lhb) * category * nature, incident = sum(incident))
+
 a1 <- incident_ready |>
   filter(lhb == "CV", category == "RED", nature == "FALLSTHRO") |>
   select(date, delet = incident)
