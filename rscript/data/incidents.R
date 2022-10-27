@@ -6,6 +6,7 @@
 library(tidyverse)
 library(lubridate)
 library(tsibble)
+library(fabletools)
 library(hts)
 source(here::here("rscript/data/holidays.R"))
 
@@ -131,6 +132,8 @@ incident_ready <- incident_modify |>
 incident_gt <- incident_ready |>
   as_tsibble(index = date, key = c(region, lhb, category, nature)) |>
   aggregate_key((region / lhb) * category * nature, incident = sum(incident))
+write_rds(incident_gt, here::here("data/incidents_gt.rds"))
+
 
 a1 <- incident_ready |>
   filter(lhb == "CV", category == "RED", nature == "FALLSTHRO") |>
