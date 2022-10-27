@@ -12,13 +12,18 @@ source(here::here("rscript/hts/tscount.R"))
 incident_gts <- read_rds(here::here("data/incidents_gts.rds"))
 holidays <- read_rds(here::here("data/holidays_ts.rds"))
 
-# Keep last 12 weeks for evaluation
-train <- window(incident_gts, end = c(188, 7))
-test <- window(incident_gts, start = c(188, 8))
-
-# Create reconciled sample paths
-reconcile_sample_paths(train, model_function = "ets")
-reconcile_sample_paths(train, model_function = "tscount")
+nobs <- NROW(incident_gts$bts)
+horizons <- 42 * seq(10)
+for(i in seq(horizons)) {
+  # Set up training and test sets
+  n <- nobs - horizons[i]
+  weeks <- trunc(n/7)
+  train <- window(incident_gts, end = c(weeks, n - weeks*7 + 7))
+  test <- window(incident_gts, start = c(weeks, n - weeks*7 + 8))
+  # Create reconciled sample paths
+  reconcile_sample_paths(train, model_function = "ets")
+  #reconcile_sample_paths(train, model_function = "tscount")
+}
 
 # Summary statistics of forecast accuracy
 #rmsse_ets <- rmsse(train, test, model_function = "ets", method = "wls")
