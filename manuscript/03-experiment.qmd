@@ -1,6 +1,6 @@
 # Experiment setup {#sec-experiment}
 
-We are interested in generating forecasts to inform the planning horizon of $ph=7 to 42$ days, interested by planners in the ambulance services trust. The forecast horizon in this study is $fh = 2 \times ph$ days ahead (2*42 days planning horizon). This is because the planning is generally freezed for ph days and considering a forecast horizon of ph days might not be helpful for planning. While forecasts are generated for $2 \times ph$ days ahead, performance evaluation is only assessed based on the last $ph$ days and not the $2 \times ph$ days. The forecasts are produced for the holdout of 365 days using time series cross-validation [@hyndman2021forecasting]. 
+We are interested in generating forecasts to inform the planning horizon of $ph= 42$ days, interested by planners in the ambulance services trust. The forecast horizon in this study is $fh = 2 \times ph$ days ahead (2*42 days planning horizon). This is because the planning is generally freezed for $ph$ days and considering a forecast horizon of $ph$ days might not be helpful for planning. While forecasts are generated for $2 \times ph$ days ahead, performance evaluation is only assessed based on the last $ph$ days and not the $2 \times ph$ days. The forecasts are produced for the holdout of 365 days using time series cross-validation [@hyndman2021forecasting]. 
 In the following section, we discuss the dataset, describe the forecasting methods used to generate base forecasts and present the point and probabilistic accuracy measures.
 
 ## Data {#sec-data}
@@ -77,6 +77,7 @@ Given the total number of time series, direct visual analysis is infeasible. The
 #| fig.align: center
 #| fig-cap: "Time series features of attended incidents across all levels (1530 series)"
 library(feasts)
+
 incident_gthf <- read_rds(here::here("data/incident_gt.rds"))
 incident_gthf %>% 
   features(incidents,feat_stl) %>%
