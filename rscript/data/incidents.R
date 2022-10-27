@@ -43,7 +43,7 @@ incidents_tsbl <- incidents |>
   as_tsibble(index = date, key = c(lhb_code, category, nature_of_incident)) |>
   fill_gaps(incidents = 0, .full = TRUE)
 # Save as rds
-write_rds(incidents_tsbl, here::here("data/incidents_tsbl.rds"))
+write_rds(incidents_tsbl, paste0(storage_folder, "incidents_tsbl.rds"))
 
 # Small data set in gts format
 incidents_tsbl |> 
@@ -57,7 +57,7 @@ incidents_tsbl |>
   mutate(BLU = 0) |> 
   ts(frequency=7) |> 
   hts() |> 
-  write_rds(here::here("data/incidents_test_gts.rds"))
+  write_rds(paste0(storage_folder, "incidents_test_gts.rds"))
 
 # Prepare full data in gts format
 incident_modify <- incidents_tsbl |>
@@ -132,7 +132,7 @@ incident_ready <- incident_modify |>
 incident_gt <- incident_ready |>
   as_tsibble(index = date, key = c(region, lhb, category, nature)) |>
   aggregate_key((region / lhb) * category * nature, incident = sum(incident))
-write_rds(incident_gt, here::here("data/incidents_gt.rds"))
+write_rds(incident_gt, paste0(storage_folder, "incidents_gt.rds"))
 
 
 a1 <- incident_ready |>
@@ -183,13 +183,13 @@ incident_all <- incident_gts |>
 incident_all |> 
   ts(frequency = 7) |> 
   gts(characters = list(c(1, 2), 3, 9)) |> 
-  write_rds(here::here("data/incidents_gts.rds"))
+  write_rds(paste0(storage_folder, "incidents_gts.rds"))
 
 # Covariates for gts format
 
-readRDS(here::here("data/holiday_dummy.rds")) |> 
+readRDS(paste0(storage_folder, "holiday_dummy.rds")) |> 
   as_tibble() |> 
   select(-date) |> 
   ts(frequency = 7) |> 
-  write_rds(here::here("data/holidays_ts.rds"))
+  write_rds(paste0(storage_folder, "holidays_ts.rds"))
   

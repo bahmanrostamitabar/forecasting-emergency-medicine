@@ -36,7 +36,7 @@ holiday_dummy <- holiday %>%
   as_tsibble(index = date)
 
 # Save as RDS for reading in by other scripts
-write_rds(holiday_dummy, here::here("data/holiday_dummy.rds"))
+write_rds(holiday_dummy, paste0(storage_folder, "holiday_dummy.rds"))
 
 
 # Other holiday tibbles created below, no longer used (?)

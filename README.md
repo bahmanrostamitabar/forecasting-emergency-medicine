@@ -13,6 +13,12 @@ Paper on Forecasting Welsh Ambulance Call-outs by Bahman Rostami-Tabar and Rob J
 
 Run the following scripts in this order
 
+* **Storage folder**: Edit following line to wherever your Google drive folder is
+
+```
+storage_folder <- "/home/hyndman/GDrive/Incidents_project/"
+```
+
 * **Prepare data**: `rscript/data/incidents.R`
 * **Generate forecasts and evaluation summaries**: `rscript/hts/forecast_hts.R`
 
