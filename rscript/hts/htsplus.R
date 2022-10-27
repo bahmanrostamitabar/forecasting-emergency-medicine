@@ -159,6 +159,8 @@ future_sample_paths <- function(object, model_function = "ets", h = 84, nsim = 1
       sim[i, , j] <- simulate(models[[i]], innov = bootres[, i])
     }
   }
+  # Set negative to zero
+  sim[sim < 0] <- 0
   # Save results to file and then return them
   write_rds(sim, filename)
   return(invisible(sim))
@@ -192,6 +194,8 @@ reconcile_sample_paths <- function(object, model_function = "ets", methods = c("
     for(j in seq(nsim)) {
       newsim[,,j] <- M[[k]] %*% sim[,,j]
     }
+    # Set negative to zero
+    newsim[newsim < 0] <- 0
     write_rds(newsim, paste0(filestem,methods[k],".rds"))
   }
   return(invisible(newsim))
@@ -213,6 +217,8 @@ rmsse <- function(train_gts, test_gts, model_function, method) {
   }
   
   # Find the simulation files that exist
+  stem <- filename <- here::here(paste0("rscript/hts/", model_function, "_*_sim_", ".rds"))
+  
   sim <- reconcile_sample_paths(train_gts, model_function, methods = method)
 
   # Set up rmsse object
