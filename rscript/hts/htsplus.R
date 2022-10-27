@@ -9,7 +9,7 @@ fit_models <- function(object, model_function = "ets") {
   ntime <- NROW(object$bts)
 
   # Form file name for saving results
-  filename <- here::here(paste0("rscript/hts/", model_function, "_", ntime, ".rds"))
+  filename <- paste0(storage_folder, model_function, "_", ntime, ".rds")
   # Check if this has already been run
   if (fs::file_exists(filename)) {
     # Just use the previous results
@@ -52,7 +52,7 @@ calculate_residuals <- function(object, model_function, type=c("innovation","res
   ntime <- NROW(object$bts)
   
   # Form file name for saving results
-  filename <- here::here(paste0("rscript/hts/", model_function, "_", ntime, "_res_",type,".rds"))
+  filename <- paste0(storage_folder, model_function, "_", ntime, "_res_",type,".rds")
   # Check if this has already been run
   if (fs::file_exists(filename)) {
     return(read_rds(filename))
@@ -85,7 +85,7 @@ make_mapping_matrices <- function(object, model_function) {
   ntime <- NROW(object$bts)
   
   # Form file name for saving results
-  filename <- here::here(paste0("rscript/hts/", model_function, "_", ntime, "_mapping.rds"))
+  filename <- paste0(storage_folder, model_function, "_", ntime, "_mapping.rds")
   # Check if this has already been run
   if (fs::file_exists(filename)) {
     # Just use the previous results
@@ -136,7 +136,7 @@ future_sample_paths <- function(object, model_function = "ets", h = 84, nsim = 1
   ntime <- NROW(object$bts)
 
   # Form file name for saving results
-  filename <- here::here(paste0("rscript/hts/", model_function, "_", ntime, "_sim.rds"))
+  filename <- paste0(storage_folder, model_function, "_", ntime, "_sim_base.rds")
   # Check if this has already been run
   if (fs::file_exists(filename)) {
     # Just use the previous results
@@ -176,11 +176,10 @@ reconcile_sample_paths <- function(object, model_function = "ets", methods = c("
   ntime <- NROW(object$bts)
   
   # Has this already been run?
-  filename <- here::here(paste0("rscript/hts/", model_function, "_", ntime, 
-                                  "_sim_",methods[1],".rds"))
+  filename <- paste0(storage_folder, model_function, "_", ntime, "_sim_",methods[1],".rds")
   # Check if this has already been run
   if (fs::file_exists(filename)) {
-    return(read_rds(filename))
+    return(invisible(read_rds(filename)))
   }
 
   # Otherwise reconcile for all the methods, and return the first one
@@ -188,7 +187,7 @@ reconcile_sample_paths <- function(object, model_function = "ets", methods = c("
   M <- make_mapping_matrices(object, model_function)
 
   nsim <- dim(sim)[3]
-  filestem <- here::here(paste0("rscript/hts/", model_function, "_", ntime, "_sim_"))
+  filestem <- paste0(storage_folder, model_function, "_", ntime, "_sim_")
   for(k in rev(seq_along(methods))) {
     newsim <- sim
     for(j in seq(nsim)) {
@@ -208,18 +207,26 @@ reconcile_sample_paths <- function(object, model_function = "ets", methods = c("
 # model_function = function used to model each time series. e.g., ets or auto.arima or tscount
 # method = method of reconciliation
 
-rmsse <- function(train_gts, test_gts, model_function, method) {
+rmsse <- function(alldata, model_function, method) {
   # Check if this has already been run
-  filename <- here::here(paste0("rscript/hts/", model_function, "_", ntime, 
-                                "_rmsse_",method,".rds"))
+  filename <- paste0(storage_folder, model_function, "_rmsse_",method,".rds")
   if (fs::file_exists(filename)) {
     return(read_rds(filename))
   }
   
-  # Find the simulation files that exist
-  stem <- filename <- here::here(paste0("rscript/hts/", model_function, "_*_sim_", ".rds"))
+  # Find the simulation files
+  files <- fs::dir_ls(path = storage_folder, glob = "*.rds") 
+  files <- files[stringr::str_detect(files, model_function)]
+  files <- files[stringr::str_detect(files, paste0("_sim_", method))]
+
+  # Extract the training set sizes
+  ntimes <- readr::parse_number(stringr::str_extract(files, "_[0-9]*_"))
   
-  sim <- reconcile_sample_paths(train_gts, model_function, methods = method)
+  # First sim file
+  sim <- read_rds(files[1])
+  
+  # Set up errors
+  e <- array(0, c(dim(sim)[1:2], ntimes))
 
   # Set up rmsse object
   fmean <- apply(sim, c(2, 1), mean)

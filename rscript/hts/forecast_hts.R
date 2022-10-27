@@ -8,22 +8,22 @@ source(here::here("rscript/hts/tscount.R"))
 #plan(multisession, workers = 3)
 
 # Read hierarchical/grouped time series
-#incident_gts <- read_rds(here::here("data/incidents_test_gts.rds"))
-incident_gts <- read_rds(here::here("data/incidents_gts.rds"))
-holidays <- read_rds(here::here("data/holidays_ts.rds"))
+#incident_gts <- read_rds(paste0(storage_folder, "incidents_test_gts.rds"))
+incident_gts <- read_rds(paste0(storage_folder, "incidents_gts.rds"))
+holidays <- read_rds(paste0(storage_folder, "holidays_ts.rds"))
 
-nobs <- NROW(incident_gts$bts)
-horizons <- 42 * seq(10)
-for(i in seq(horizons)) {
-  # Set up training and test sets
-  n <- nobs - horizons[i]
-  weeks <- trunc(n/7)
-  train <- window(incident_gts, end = c(weeks, n - weeks*7 + 7))
-  test <- window(incident_gts, start = c(weeks, n - weeks*7 + 8))
+# Test sets of size 84, 
+origins <- 42 * seq(10) + 42
+for(i in seq(origins)) {
+  # Set up training set
+  train <- incident_gts
+  train$bts <- subset(train$bts, end = nrow(incident_gts$bts) - origins[i])
   # Create reconciled sample paths
   reconcile_sample_paths(train, model_function = "ets")
   #reconcile_sample_paths(train, model_function = "tscount")
 }
+
+
 
 # Summary statistics of forecast accuracy
 #rmsse_ets <- rmsse(train, test, model_function = "ets", method = "wls")
