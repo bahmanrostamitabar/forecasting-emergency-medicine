@@ -4,7 +4,7 @@ library(tscount)
 tscount <- function(y) {
   fourier_year <- forecast::fourier(ts(y, frequency=365.25), K=3)
   season_week <- forecast::seasonaldummy(y)
-  trend <- seq_along(y)
+  trend <- splines::ns(seq(length(y)), df=10)
   X <- cbind(trend, season_week, fourier_year, holidays[seq_along(y),])
   # Remove constant covariates
   constant <- apply(X, 2, forecast:::is.constant)
@@ -17,11 +17,11 @@ simulate.tsglm <- function(object, innov,...) {
   h <- NROW(innov)
   fourier_year <- forecast::fourier(ts(seq(n), frequency=365.25), K=3, h=h)
   season_week <- forecast::seasonaldummy(ts(seq(n), frequency=7), h=h)
-  trend <- seq(n+h)[-(1:n)]
+  trend <- predict(splines::ns(seq(n), df=10), newx=seq(n+h)[-(seq(n))])
   X <- cbind(trend, season_week, fourier_year, holidays[n+seq(h),])
   # Remove missing columns
   X <- X[, colnames(X) %in% names(coefficients(object))]
-  output <- tsglm.sim(h, 
+  output <- tsglm.sim(h,
         param = list(
           intercept = object$coefficient[1],
           past_obs = object$coefficients[2:4],
@@ -29,8 +29,8 @@ simulate.tsglm <- function(object, innov,...) {
           xreg = object$coefficients[-(1:4)]
         ),
         model = list(
-          past_obs = 1:3, 
-          past_mean = FALSE, 
+          past_obs = 1:3,
+          past_mean = FALSE,
           external=FALSE
         ),
         xreg = X,
