@@ -142,9 +142,9 @@ future_sample_paths <- function(object, model_function = "ets", h = 84, nsim = 1
     # Just use the previous results
     return(invisible(read_rds(filename)))
   }
-  
+
   models <- fit_models(object, model_function)
-  restype <- dplyr::if_else(identical(model_function,"tscount"), "response", "innovation")
+  restype <- dplyr::if_else(identical(model_function, "ets"), "innovation", "response")
   innov_res <- calculate_residuals(object, model_function, type = restype)
   nseries <- length(models)
 
