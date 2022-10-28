@@ -4,7 +4,7 @@ library(tscount)
 tscount <- function(y) {
   fourier_year <- forecast::fourier(ts(y, frequency=365.25), K=3)
   season_week <- forecast::seasonaldummy(y)
-  trend <- splines::ns(seq(length(y)), df=10)
+  trend <- splines::ns(seq(n), df=round(n/100))
   X <- cbind(trend, season_week, fourier_year, holidays[seq_along(y),])
   # Remove constant covariates
   constant <- apply(X, 2, forecast:::is.constant)
@@ -17,7 +17,10 @@ simulate.tsglm <- function(object, innov,...) {
   h <- NROW(innov)
   fourier_year <- forecast::fourier(ts(seq(n), frequency=365.25), K=3, h=h)
   season_week <- forecast::seasonaldummy(ts(seq(n), frequency=7), h=h)
-  trend <- predict(splines::ns(seq(n), df=10), newx=seq(n+h)[-(seq(n))])
+  # Use last value of trend for future
+  lasttrend <- tail(splines::ns(seq(n), df=round(n/100)),1)
+  trend <- matrix(rep(lasttrend,h), nrow=h, byrow=TRUE)
+  colnames(trend) <- colnames(lasttrend)
   X <- cbind(trend, season_week, fourier_year, holidays[n+seq(h),])
   # Remove missing columns
   X <- X[, colnames(X) %in% names(coefficients(object))]
