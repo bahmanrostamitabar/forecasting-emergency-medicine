@@ -18,12 +18,11 @@ for(i in seq(origins)) {
   # Set up training set
   train <- incident_gts
   train$bts <- subset(train$bts, end = nrow(incident_gts$bts) - origins[i])
-  # Create reconciled sample paths
+  # Create reconciled sample paths for different models
   reconcile_sample_paths(train, model_function = "ets")
   #reconcile_sample_paths(train, model_function = "tscount")
+  reconcile_sample_paths(train, model_function = "iglm")
 }
-
-
 
 # Summary statistics of forecast accuracy
 #rmsse_ets <- rmsse(train, test, model_function = "ets", method = "wls")
