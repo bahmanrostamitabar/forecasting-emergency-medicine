@@ -108,9 +108,9 @@ make_mapping_matrices <- function(object, model_function) {
   nbottom <- NCOL(object$bts)
   G1 <- cbind(matrix(0, nrow = nbottom, ncol = nseries - nbottom), diag(nrow = nbottom))
   Winv <- MASS::ginv(W2)
-  G2 <- solve(t(S) %*% Winv %*% S) %*% t(S) %*% Winv
+  G2 <- MASS::ginv(t(S) %*% Winv %*% S) %*% t(S) %*% Winv
   Winv <- MASS::ginv(W3)
-  G3 <- solve(t(S) %*% Winv %*% S) %*% t(S) %*% Winv
+  G3 <- MASS::ginv(t(S) %*% Winv %*% S) %*% t(S) %*% Winv
 
   # Computing mapping matrix M
   M1 <- S %*% G1
