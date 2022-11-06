@@ -172,8 +172,9 @@ future_sample_paths <- function(object, model_function = "ets", h = 84, nsim = 1
 # model_function = function used to model each time series. e.g., ets or auto.arima or tscount
 # method = method of reconciliation
 
-reconcile_sample_paths <- function(object, model_function = "ets", methods = c("bu", "wls", "mint")) {
+reconcile_sample_paths <- function(object, model_function = "ets") {
   ntime <- NROW(object$bts)
+  methods = c("bu", "wls", "mint")
   
   # Has this already been run?
   filename <- paste0(storage_folder, model_function, "_", ntime, "_sim_",methods[1],".rds")
@@ -200,45 +201,70 @@ reconcile_sample_paths <- function(object, model_function = "ets", methods = c("
   return(invisible(newsim))
 }
 
-# Compute RMSSE given forecast mean and training/test gts objects
-
-# train_gts = gts object training data
-# test_gts = gts object test data
+# Compute MSE for a specific model and reconciliation method
+# train = gts object training data
 # model_function = function used to model each time series. e.g., ets or auto.arima or tscount
 # method = method of reconciliation
 
-rmsse <- function(alldata, model_function, method) {
+compute_mse_specific <- function(train, model_function="ets", method="wls") {
+  # Find simulation files
+  files <- fs::dir_ls(storage_folder, glob = paste0("*",model_function,"_*_sim_",method,".rds"))
+  # Dimensions
+  norigins <- length(files)
+  nb <- NCOL(train$bts)
+  alltrain <- aggts(train)
+  nseries <- NCOL(alltrain)
+  # Only keep most aggregated and most disaggregated series
+  alltrain <- t(alltrain[,c(1, (nseries-nb+1):nseries)])
+  e <- array(0, c(nb+1, 84, norigins)) 
+  for(i in seq(norigins)) {
+    sim <- read_rds(files[i])[c(1,(nseries-nb+1):nseries),,]
+    sim <- apply(sim, c(1,2), mean)
+    n <- parse_number(files[i])
+    e[,,i] <- sim - alltrain[,n+seq(84)]
+  }
+  mse <- apply(e^2, c(1,2), mean)
+  # Collapse bottom level
+  bottom <- colMeans(mse[-1,])
+  mse <- rbind(mse[1,], bottom)
+  colnames(mse) <- colnames(sim)
+  rownames(mse) <- c("Total","Bottom")
+  return(mse)
+}
+
+# Compute MSE for all models and methods
+# train = gts object training data
+
+compute_mse <- function(train) {
+  # Has this already been run?
+  filename <- paste0(storage_folder, "mse.rds")
   # Check if this has already been run
-  filename <- paste0(storage_folder, model_function, "_rmsse_",method,".rds")
   if (fs::file_exists(filename)) {
-    return(read_rds(filename))
+    return(invisible(read_rds(filename)))
   }
   
-  # Find the simulation files
-  files <- fs::dir_ls(path = storage_folder, glob = "*.rds") 
-  files <- files[stringr::str_detect(files, model_function)]
-  files <- files[stringr::str_detect(files, paste0("_sim_", method))]
-
-  # Extract the training set sizes
-  ntimes <- readr::parse_number(stringr::str_extract(files, "_[0-9]*_"))
-  
-  # First sim file
-  sim <- read_rds(files[1])
-  
-  # Set up errors
-  e <- array(0, c(dim(sim)[1:2], ntimes))
-
-  # Set up rmsse object
-  fmean <- apply(sim, c(2, 1), mean)
-  alltest <- aggts(test_gts)
-  alltrain <- aggts(train_gts)
-  scale_factor <- colMeans(diff(alltrain, 7)^2)
-  for (i in NCOL(rmsse)) {
-    rmsse[, i] <- colMeans(sweep((t(fmean[, , i]) - alltest)^2, 2L, scale_factor, "/"))
+  # Find simulation files
+  files <- fs::dir_ls(storage_folder, glob = paste0("*_sim_*.rds"))
+  # Find models
+  models <- str_remove(files, storage_folder) |> 
+    str_extract("[a-zA-Z]*_") |> 
+    str_remove("_") |> 
+    unique()
+  # Find methods
+  methods <- str_remove(files, storage_folder) |> 
+    str_extract("[a-zA-Z]*.rds") |> 
+    str_remove(".rds") |> 
+    unique()
+  mse <- NULL
+  for(i in seq_along(models)) {
+    for(j in seq_along(methods)) {
+      mse_tmp <- compute_mse_specific(train, models[i], methods[j])
+      mse <- bind_rows(mse,
+         tibble(method = methods[j], model = models[i], h=rep(1:84,rep(2,84)), mse=c(mse_tmp), series=rep(c("Total","Bottom"),84)))
+    }
   }
-  # Set RMSSE of zero series to zero
-  rmsse[scale_factor < .Machine$double.eps] <- 0
-  return(t(rmsse))
+  write_rds(mse, filename)
+  return(mse)
 }
 
 # Compute CRPS given simulated values x and actual y
@@ -251,6 +277,32 @@ crps_sample <- function(x, y) {
   m <- length(x)
   crps <- (2 / m) * mean((x - y) * (m * (y < x) - seq_len(m) + 0.5))
 }
+
+compute_crps_specific <- function(train, model_function="ets", method="wls") {
+  # Find simulation files
+  files <- fs::dir_ls(storage_folder, glob = paste0("*",model_function,"_*_sim_",method,".rds"))
+  # Dimensions
+  norigins <- length(files)
+  nb <- NCOL(train$bts)
+  alltrain <- aggts(train)
+  nseries <- NCOL(alltrain)
+  # Only keep most aggregated and most disaggregated series
+  alltrain <- t(alltrain[,c(1, (nseries-nb+1):nseries)])
+  crps_i <- array(0, c(nb+1, 84, norigins)) 
+  for(i in seq(norigins)) {
+    sim <- read_rds(files[i])[c(1,(nseries-nb+1):nseries),,]
+    n <- parse_number(files[i])
+    e[,,i] <- sim - alltrain[,n+seq(84)]
+  }
+  mse <- apply(e^2, c(1,2), mean)
+  # Collapse bottom level
+  bottom <- colMeans(mse[-1,])
+  mse <- rbind(mse[1,], bottom)
+  colnames(mse) <- colnames(sim)
+  rownames(mse) <- c("Total","Bottom")
+  return(mse)
+}
+
 
 # Compute CRPS given simulated sample paths and test gts object
 crps <- function(sim, test_gts) {

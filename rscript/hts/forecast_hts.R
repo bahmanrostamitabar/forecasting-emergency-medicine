@@ -1,8 +1,10 @@
+library(tidyverse)
 library(hts)
 library(readr)
 library(furrr)
 source(here::here("rscript/hts/htsplus.R"))
-source(here::here("rscript/hts/tscount.R"))
+source(here::here("rscript/hts/glm.R"))
+source(here::here("rscript/hts/naive.R"))
 
 # Parallelization
 # plan(multisession, workers = 3)
@@ -19,13 +21,19 @@ for (i in seq(origins)) {
   train <- incident_gts
   train$bts <- subset(train$bts, end = nrow(incident_gts$bts) - origins[i])
   # Create reconciled sample paths for different models
-  reconcile_sample_paths(train, model_function = "ets")
+  #reconcile_sample_paths(train, model_function = "ets")
   # reconcile_sample_paths(train, model_function = "tscount")
-  reconcile_sample_paths(train, model_function = "iglm")
+  #reconcile_sample_paths(train, model_function = "iglm")
+  reconcile_sample_paths(train, model_function = "naiveglm")
 }
 
-# Summary statistics of forecast accuracy
-# rmsse_ets <- rmsse(train, test, model_function = "ets", method = "wls")
-# crps_ets <- crps(fcst_ets, test)
-# rmsse_tscount <- rmsse(fcst_tscount, test, train)
-# crps_tscount <- crps(fcst_tscount, test)
+mse <- compute_mse(incident_gts)
+mse |> 
+  group_by(method, model, series) |> 
+  summarise(mse = mean(mse)) |> 
+  arrange(mse)
+
+# glm Problems
+
+#model <- read_rds("/home/hyndman/GDrive/Incidents_project/iglm_1316.rds")$CPOAMBHEADACHES
+
