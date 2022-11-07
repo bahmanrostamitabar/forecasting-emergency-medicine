@@ -255,6 +255,7 @@ compute_mse <- function(train) {
     str_extract("[a-zA-Z]*.rds") |> 
     str_remove(".rds") |> 
     unique()
+  methods <- methods[methods != ""]
   mse <- NULL
   for(i in seq_along(models)) {
     for(j in seq_along(methods)) {
