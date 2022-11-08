@@ -23,8 +23,8 @@ for (i in seq(origins)) {
   # Create reconciled sample paths for different models
   #reconcile_sample_paths(train, model_function = "ets")
   # reconcile_sample_paths(train, model_function = "tscount")
-  #reconcile_sample_paths(train, model_function = "iglm")
-  reconcile_sample_paths(train, model_function = "naiveglm")
+  reconcile_sample_paths(train, model_function = "iglm")
+  #reconcile_sample_paths(train, model_function = "naiveglm")
 }
 
 mse <- compute_mse(incident_gts)
@@ -32,8 +32,3 @@ mse |>
   group_by(method, model, series) |> 
   summarise(mse = mean(mse)) |> 
   arrange(mse)
-
-# glm Problems
-
-#model <- read_rds("/home/hyndman/GDrive/Incidents_project/iglm_1316.rds")$CPOAMBHEADACHES
-
