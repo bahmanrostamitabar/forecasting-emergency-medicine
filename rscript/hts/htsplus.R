@@ -254,7 +254,7 @@ compute_mse <- function(train) {
   methods <- str_remove(files, storage_folder) |> 
     str_extract("[a-zA-Z]*.rds") |> 
     str_remove(".rds") |> 
-    unique() 
+    unique()
   methods <- methods[methods != ""]
   mse <- NULL
   for(i in seq_along(models)) {
