@@ -1,23 +1,16 @@
 # Specific naive model used for this data
-naiveglm <- function(y) {
-  n <- length(y)
-  object <- glm(y ~ 1, family = poisson())
-  # Slim down return object and add ts attributes
+naiveecdf <- function(y) {
   object <- list(
-    coefficients = object$coefficients,
-    residuals = residuals(object, type = "response"),
+    residuals = y - mean(y),
     y = y
   )
-  return(structure(object, class = "naiveglm"))
+  return(structure(object, class = "naiveecdf"))
 }
 
-simulate.naiveglm <- function(object, innov, ...) {
+simulate.naiveecdf <- function(object, innov, ...) {
   n <- length(object$y)
   h <- NROW(innov)
-  # Find mean of future periods
-  mean_future <- exp(coefficients(object))
-  # Return Poisson series with this mean
-  ts(rpois(h, lambda = mean_future),
+  ts(sample(object$y, size = h, replace=TRUE),
     frequency = frequency(object$y),
     start = tsp(object$y)[2] + 1 / frequency(object$y)
   )

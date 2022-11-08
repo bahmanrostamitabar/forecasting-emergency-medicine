@@ -23,12 +23,13 @@ for (i in seq(origins)) {
   # Create reconciled sample paths for different models
   #reconcile_sample_paths(train, model_function = "ets")
   # reconcile_sample_paths(train, model_function = "tscount")
-  reconcile_sample_paths(train, model_function = "iglm")
-  #reconcile_sample_paths(train, model_function = "naiveglm")
+  #reconcile_sample_paths(train, model_function = "iglm")
+  reconcile_sample_paths(train, model_function = "naiveecdf")
 }
 
 mse <- compute_mse(incident_gts)
 mse |> 
   group_by(method, model, series) |> 
   summarise(mse = mean(mse)) |> 
-  arrange(mse)
+  arrange(mse) |>
+  print(n=200)
