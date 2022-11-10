@@ -23,13 +23,32 @@ for (i in seq(origins)) {
   # Create reconciled sample paths for different models
   #reconcile_sample_paths(train, model_function = "ets")
   # reconcile_sample_paths(train, model_function = "tscount")
-  #reconcile_sample_paths(train, model_function = "iglm")
-  reconcile_sample_paths(train, model_function = "naiveecdf")
+  reconcile_sample_paths(train, model_function = "iglm")
+  #reconcile_sample_paths(train, model_function = "naiveecdf")
 }
 
-mse <- compute_mse(incident_gts)
+# Accuracy
+
+mse <- compute_mse(incident_gts, "mse")
+mase <- compute_mse(incident_gts, "mase")
+rmsse <- compute_mse(incident_gts, "rmsse")
+crps <- compute_mse(incident_gts, "crps")
+
 mse |> 
   group_by(method, model, series) |> 
   summarise(mse = mean(mse)) |> 
   arrange(mse) |>
   print(n=200)
+
+mase |> 
+  group_by(method, model, series) |> 
+  summarise(mase = mean(mase)) |> 
+  arrange(mase) |>
+  print(n=200)
+
+rmsse |> 
+  group_by(method, model, series) |> 
+  summarise(rmsse = sqrt(mean(rmsse^2))) |> 
+  arrange(rmsse) |>
+  print(n=200)
+

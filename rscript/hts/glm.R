@@ -1,7 +1,7 @@
 # Specific tsglm model used for this data
 iglm <- function(y) {
   n <- length(y)
-  simple_fit <- any(y == 0)
+  simple_fit <- mean(y>0) < 0.5
   if(!simple_fit) {
     fourier_year <- forecast::fourier(ts(y, frequency = 365.25), K = 3)
     season_week <- forecast::seasonaldummy(y)
