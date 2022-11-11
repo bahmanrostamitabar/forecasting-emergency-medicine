@@ -27,6 +27,8 @@ for (i in seq(origins)) {
   #reconcile_sample_paths(train, model_function = "naiveecdf")
 }
 
+create_ensembles(c("naiveecdf","iglm","ets"))
+
 # Accuracy
 
 mse <- compute_accuracy(incident_gts, "mse")

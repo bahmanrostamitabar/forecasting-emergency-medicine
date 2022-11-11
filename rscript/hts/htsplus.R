@@ -34,7 +34,7 @@ fit_models <- function(object, model_function = "ets") {
     .options = furrr_options(seed = NULL)
   )
   # Save results to file and then return them
-  write_rds(models, filename)
+  write_rds(models, filename, compress="bz2")
   return(invisible(models))
 }
 
@@ -48,29 +48,29 @@ fit_models <- function(object, model_function = "ets") {
 calculate_residuals <- function(object, model_function, type=c("innovation","response")) {
   # Type of residual to store
   type <- match.arg(type)
-  
+
   ntime <- NROW(object$bts)
-  
+
   # Form file name for saving results
   filename <- paste0(storage_folder, model_function, "_", ntime, "_res_",type,".rds")
   # Check if this has already been run
   if (fs::file_exists(filename)) {
     return(read_rds(filename))
   }
-  
+
   # Grab models
   models <- fit_models(object, model_function)
   ntime <- NROW(object$bts)
   nseries <- length(models)
-  
+
   # Compute the residuals from each model
   res <- matrix(0, nrow = ntime, ncol = nseries)
   for (i in seq(nseries)) {
     res[, i] <- residuals(models[[i]], type = type)
   }
-  
+
   # Save results to file and then return them
-  write_rds(res, filename)
+  write_rds(res, filename, compress="bz2")
   return(invisible(res))
 }
 
@@ -83,7 +83,7 @@ calculate_residuals <- function(object, model_function, type=c("innovation","res
 
 make_mapping_matrices <- function(object, model_function) {
   ntime <- NROW(object$bts)
-  
+
   # Form file name for saving results
   filename <- paste0(storage_folder, model_function, "_", ntime, "_mapping.rds")
   # Check if this has already been run
@@ -95,7 +95,7 @@ make_mapping_matrices <- function(object, model_function) {
   # Grab the residuals from each model
   response_res <- calculate_residuals(object, model_function, type = "response")
   nseries <- NCOL(response_res)
-  
+
   # Create S matrix
   S <- smatrix(object)
 
@@ -121,7 +121,7 @@ make_mapping_matrices <- function(object, model_function) {
   mapping_matrices <- list(M1 = M1, M2 = M2, M3 = M3)
 
   # Save results to file and then return them
-  write_rds(mapping_matrices, filename)
+  write_rds(mapping_matrices, filename, compress="bz2")
   return(invisible(mapping_matrices))
 }
 
@@ -162,7 +162,7 @@ future_sample_paths <- function(object, model_function = "ets", h = 84, nsim = 1
   # Set negative to zero
   sim[sim < 0] <- 0
   # Save results to file and then return them
-  write_rds(sim, filename)
+  write_rds(sim, filename, compress="bz2")
   return(invisible(sim))
 }
 
@@ -175,7 +175,7 @@ future_sample_paths <- function(object, model_function = "ets", h = 84, nsim = 1
 reconcile_sample_paths <- function(object, model_function = "ets") {
   ntime <- NROW(object$bts)
   methods = c("bu", "wls", "mint")
-  
+
   # Has this already been run?
   filename <- paste0(storage_folder, model_function, "_", ntime, "_sim_",methods[1],".rds")
   # Check if this has already been run
@@ -196,7 +196,7 @@ reconcile_sample_paths <- function(object, model_function = "ets") {
     }
     # Set negative to zero
     newsim[newsim < 0] <- 0
-    write_rds(newsim, paste0(filestem,methods[k],".rds"))
+    write_rds(newsim, paste0(filestem,methods[k],".rds"), compress="bz2")
   }
   return(invisible(newsim))
 }

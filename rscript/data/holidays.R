@@ -1,5 +1,5 @@
 # Script to turn original data file of holidays into an RDS for later use
-# Input: holiday_rugby.xlsx 
+# Input: holiday_rugby.xlsx
 # Output: holiday_dummy.rds
 
 library(tidyverse)
@@ -32,7 +32,7 @@ holiday_dummy <- holiday |>
   as_tsibble(index = date)
 
 # Save as RDS for reading in by other scripts
-write_rds(holiday_dummy, paste0(storage_folder, "holiday_dummy.rds"))
+write_rds(holiday_dummy, paste0(storage_folder, "holiday_dummy.rds"), compress="bz2")
 
 
 # Other holiday tibbles created below, no longer used (?)
