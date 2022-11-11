@@ -1,8 +1,8 @@
 # Specific tsglm model used for this data
 iglm <- function(y) {
   n <- length(y)
-  simple_fit <- mean(y>0) < 0.5
-  if(!simple_fit) {
+  simple_fit <- mean(y > 0) < 0.5
+  if (!simple_fit) {
     fourier_year <- forecast::fourier(ts(y, frequency = 365.25), K = 3)
     season_week <- forecast::seasonaldummy(y)
     trend <- splines::ns(seq(n), df = round(n / 300))
@@ -15,7 +15,7 @@ iglm <- function(y) {
       simple_fit <- TRUE
     }
   }
-  if(simple_fit) {
+  if (simple_fit) {
     object <- glm(y ~ 1, family = poisson())
   }
   # Slim down return object and add ts attributes

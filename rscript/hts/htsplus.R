@@ -34,7 +34,7 @@ fit_models <- function(object, model_function = "ets") {
     .options = furrr_options(seed = NULL)
   )
   # Save results to file and then return them
-  write_rds(models, filename, compress="bz2")
+  write_rds(models, filename, compress = "bz2")
   return(invisible(models))
 }
 
@@ -45,14 +45,14 @@ fit_models <- function(object, model_function = "ets") {
 # model_function = output from fit_models()
 # type = Type of residual to store
 
-calculate_residuals <- function(object, model_function, type=c("innovation","response")) {
+calculate_residuals <- function(object, model_function, type = c("innovation", "response")) {
   # Type of residual to store
   type <- match.arg(type)
 
   ntime <- NROW(object$bts)
 
   # Form file name for saving results
-  filename <- paste0(storage_folder, model_function, "_", ntime, "_res_",type,".rds")
+  filename <- paste0(storage_folder, model_function, "_", ntime, "_res_", type, ".rds")
   # Check if this has already been run
   if (fs::file_exists(filename)) {
     return(read_rds(filename))
@@ -70,7 +70,7 @@ calculate_residuals <- function(object, model_function, type=c("innovation","res
   }
 
   # Save results to file and then return them
-  write_rds(res, filename, compress="bz2")
+  write_rds(res, filename, compress = "bz2")
   return(invisible(res))
 }
 
@@ -121,7 +121,7 @@ make_mapping_matrices <- function(object, model_function) {
   mapping_matrices <- list(M1 = M1, M2 = M2, M3 = M3)
 
   # Save results to file and then return them
-  write_rds(mapping_matrices, filename, compress="bz2")
+  write_rds(mapping_matrices, filename, compress = "bz2")
   return(invisible(mapping_matrices))
 }
 
@@ -162,7 +162,7 @@ future_sample_paths <- function(object, model_function = "ets", h = 84, nsim = 1
   # Set negative to zero
   sim[sim < 0] <- 0
   # Save results to file and then return them
-  write_rds(sim, filename, compress="bz2")
+  write_rds(sim, filename, compress = "bz2")
   return(invisible(sim))
 }
 
@@ -174,10 +174,10 @@ future_sample_paths <- function(object, model_function = "ets", h = 84, nsim = 1
 
 reconcile_sample_paths <- function(object, model_function = "ets") {
   ntime <- NROW(object$bts)
-  methods = c("bu", "wls", "mint")
+  methods <- c("bu", "wls", "mint")
 
   # Has this already been run?
-  filename <- paste0(storage_folder, model_function, "_", ntime, "_sim_",methods[1],".rds")
+  filename <- paste0(storage_folder, model_function, "_", ntime, "_sim_", methods[1], ".rds")
   # Check if this has already been run
   if (fs::file_exists(filename)) {
     return(invisible(read_rds(filename)))
@@ -189,14 +189,14 @@ reconcile_sample_paths <- function(object, model_function = "ets") {
 
   nsim <- dim(sim)[3]
   filestem <- paste0(storage_folder, model_function, "_", ntime, "_sim_")
-  for(k in rev(seq_along(methods))) {
+  for (k in rev(seq_along(methods))) {
     newsim <- sim
-    for(j in seq(nsim)) {
-      newsim[,,j] <- M[[k]] %*% sim[,,j]
+    for (j in seq(nsim)) {
+      newsim[, , j] <- M[[k]] %*% sim[, , j]
     }
     # Set negative to zero
     newsim[newsim < 0] <- 0
-    write_rds(newsim, paste0(filestem,methods[k],".rds"), compress="bz2")
+    write_rds(newsim, paste0(filestem, methods[k], ".rds"), compress = "bz2")
   }
   return(invisible(newsim))
 }

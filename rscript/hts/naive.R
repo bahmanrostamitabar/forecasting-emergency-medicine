@@ -10,7 +10,7 @@ naiveecdf <- function(y) {
 simulate.naiveecdf <- function(object, innov, ...) {
   n <- length(object$y)
   h <- NROW(innov)
-  ts(sample(object$y, size = h, replace=TRUE),
+  ts(sample(object$y, size = h, replace = TRUE),
     frequency = frequency(object$y),
     start = tsp(object$y)[2] + 1 / frequency(object$y)
   )

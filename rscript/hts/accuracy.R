@@ -1,7 +1,7 @@
 # Compute MSE for all models and methods
 # train = gts object training data
 
-compute_accuracy <- function(train, measure="mse") {
+compute_accuracy <- function(train, measure = "mse") {
   # Has this already been run?
   filename <- paste0(storage_folder, measure, ".rds")
   # Check if this has already been run
@@ -23,18 +23,21 @@ compute_accuracy <- function(train, measure="mse") {
     unique()
   methods <- methods[methods != ""]
   accuracy <- NULL
-  for(i in seq_along(models)) {
-    for(j in seq_along(methods)) {
+  for (i in seq_along(models)) {
+    for (j in seq_along(methods)) {
       accuracy_tmp <- compute_accuracy_specific(train, models[i], methods[j], measure)
       accuracy <- bind_rows(
         accuracy,
-        tibble(method = methods[j], model = models[i],
-          h=rep(1:84,rep(5,84)), accuracy=c(accuracy_tmp),
-          series=rep(c("Overall","Total","Control areas", "Health boards", "Bottom"),84)))
+        tibble(
+          method = methods[j], model = models[i],
+          h = rep(1:84, rep(5, 84)), accuracy = c(accuracy_tmp),
+          series = rep(c("Overall", "Total", "Control areas", "Health boards", "Bottom"), 84)
+        )
+      )
     }
   }
   colnames(accuracy)[4] <- measure
-  write_rds(accuracy, filename, compress="bz2")
+  write_rds(accuracy, filename, compress = "bz2")
   return(accuracy)
 }
 
@@ -43,13 +46,11 @@ compute_accuracy <- function(train, measure="mse") {
 # model_function = function used to model each time series. e.g., ets or auto.arima or tscount
 # method = method of reconciliation
 
-compute_accuracy_specific <- function(
-    train, model_function="ets", method="wls",
-    measure=c("mse","rmsse","mase","crps")
-) {
+compute_accuracy_specific <- function(train, model_function = "ets", method = "wls",
+                                      measure = c("mse", "rmsse", "mase", "crps")) {
   measure <- match.arg(measure)
   # Find simulation files
-  files <- fs::dir_ls(storage_folder, glob = paste0("*",model_function,"_*_sim_",method,".rds"))
+  files <- fs::dir_ls(storage_folder, glob = paste0("*", model_function, "_*_sim_", method, ".rds"))
   # Dimensions
   norigins <- length(files)
   nb <- NCOL(train$bts)
@@ -57,29 +58,29 @@ compute_accuracy_specific <- function(
   nseries <- NCOL(alltrain)
   alltrain <- t(alltrain)
   e <- array(0, c(nseries, 84, norigins))
-  for(i in seq(norigins)) {
+  for (i in seq(norigins)) {
     sim <- read_rds(files[i])
-    sim <- apply(sim, c(1,2), mean)
+    sim <- apply(sim, c(1, 2), mean)
     n <- parse_number(files[i])
-    e[,,i] <- sim - alltrain[,n+seq(84)]
+    e[, , i] <- sim - alltrain[, n + seq(84)]
   }
-  if(measure=="mse") {
-    accuracy <- apply(e^2, c(1,2), mean)
-  } else if(measure == "rmsse") {
+  if (measure == "mse") {
+    accuracy <- apply(e^2, c(1, 2), mean)
+  } else if (measure == "rmsse") {
     # Use insample MSE as scaling factor
     scale_factor <- rowMeans(sweep(alltrain, 1, rowMeans(alltrain))^2)
-    mse <- apply(e^2, c(1,2), mean)
-    accuracy <- sweep(mse, 1, scale_factor, FUN="/")
-  } else if(measure == "mase") {
+    mse <- apply(e^2, c(1, 2), mean)
+    accuracy <- sweep(mse, 1, scale_factor, FUN = "/")
+  } else if (measure == "mase") {
     # Use insample MAE as scaling factor
     scale_factor <- rowMeans(abs(sweep(alltrain, 1, rowMeans(alltrain))))
-    mae <- apply(abs(e), c(1,2), mean)
-    accuracy <- sweep(mae, 1, scale_factor, FUN="/")
-  } else if(measure == "crps") {
-    accuracy <- matrix(0, nrow=nseries, ncol=84)
-    for(j in seq(nseries)) {
-      for(k in seq(84)) {
-        accuracy[j,k] <- crps_sample(e[j,k,], 0)
+    mae <- apply(abs(e), c(1, 2), mean)
+    accuracy <- sweep(mae, 1, scale_factor, FUN = "/")
+  } else if (measure == "crps") {
+    accuracy <- matrix(0, nrow = nseries, ncol = 84)
+    for (j in seq(nseries)) {
+      for (k in seq(84)) {
+        accuracy[j, k] <- crps_sample(e[j, k, ], 0)
       }
     }
     stop("not yet implemented")
@@ -90,17 +91,18 @@ compute_accuracy_specific <- function(
   # Collapse bottom level
   bottom <- colMeans(tail(accuracy, nb))
   # Collapse control areas
-  control_areas <- colMeans(accuracy[2:4,])
+  control_areas <- colMeans(accuracy[2:4, ])
   # Collapse health boards
-  health_boards <- colMeans(accuracy[5:11,])
+  health_boards <- colMeans(accuracy[5:11, ])
   # Combine
-  accuracy <- rbind(overall, accuracy[1,], control_areas, health_boards, bottom)
+  accuracy <- rbind(overall, accuracy[1, ], control_areas, health_boards, bottom)
   colnames(accuracy) <- colnames(sim)
-  rownames(accuracy) <- c("Overall", "Total","Control areas","Health boards", "Bottom")
-  if(measure == "rmsse")
+  rownames(accuracy) <- c("Overall", "Total", "Control areas", "Health boards", "Bottom")
+  if (measure == "rmsse") {
     return(sqrt(accuracy))
-  else
+  } else {
     return(accuracy)
+  }
 }
 
 # Compute CRPS given simulated values x and actual y

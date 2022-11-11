@@ -3,8 +3,8 @@ library(tscount)
 # Specific tsglm model used for this data
 tscount <- function(y) {
   n <- length(y)
-  simple_fit <- mean(y>0) < 0.5
-  if(!simple_fit) {
+  simple_fit <- mean(y > 0) < 0.5
+  if (!simple_fit) {
     fourier_year <- forecast::fourier(ts(y, frequency = 365.25), K = 3)
     season_week <- forecast::seasonaldummy(y)
     trend <- splines::ns(seq(n), df = round(n / 300))
@@ -17,7 +17,7 @@ tscount <- function(y) {
       simple_fit <- TRUE
     }
   }
-  if(simple_fit) {
+  if (simple_fit) {
     object <- tsglm(y, link = "log")
   }
   # Slim down return object and add ts attributes
@@ -41,7 +41,7 @@ simulate.tsglm <- function(object, innov, ...) {
   X <- cbind(trend, season_week, fourier_year, holidays[n + seq(h), ])
   # Remove missing columns
   X <- X[, colnames(X) %in% names(coefficients(object))]
-  if(NCOL(X)==0) {
+  if (NCOL(X) == 0) {
     # Simple fit
     output <- rpois(h, exp(object$coefficients))
   } else {
@@ -59,7 +59,7 @@ simulate.tsglm <- function(object, innov, ...) {
       ),
       xreg = X,
       link = "log"
-  )$ts
+    )$ts
   }
   ts(output,
     frequency = frequency(object$response),

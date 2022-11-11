@@ -21,13 +21,13 @@ for (i in seq(origins)) {
   train <- incident_gts
   train$bts <- subset(train$bts, end = nrow(incident_gts$bts) - origins[i])
   # Create reconciled sample paths for different models
-  #reconcile_sample_paths(train, model_function = "ets")
+  # reconcile_sample_paths(train, model_function = "ets")
   reconcile_sample_paths(train, model_function = "tscount")
-  #reconcile_sample_paths(train, model_function = "iglm")
-  #reconcile_sample_paths(train, model_function = "naiveecdf")
+  # reconcile_sample_paths(train, model_function = "iglm")
+  # reconcile_sample_paths(train, model_function = "naiveecdf")
 }
 
-create_ensembles(c("naiveecdf","iglm","ets"))
+create_ensembles()
 
 # Accuracy
 
@@ -36,34 +36,33 @@ mase <- compute_accuracy(incident_gts, "mase")
 rmsse <- compute_accuracy(incident_gts, "rmsse")
 crps <- compute_accuracy(incident_gts, "crps")
 
-mse |> 
-  group_by(method, model, series) |> 
-  summarise(mse = mean(mse)) |> 
+mse |>
+  group_by(method, model, series) |>
+  summarise(mse = mean(mse)) |>
   arrange(mse) |>
-  print(n=200)
+  print(n = 200)
 
-mase |> 
-  group_by(method, model, series) |> 
-  summarise(mase = mean(mase)) |> 
-  arrange(series,mase) |>
-  print(n=200)
-mase |> 
-  filter(series=="Overall") |> 
-  group_by(method, model, series) |> 
-  summarise(mase = mean(mase)) |> 
+mase |>
+  group_by(method, model, series) |>
+  summarise(mase = mean(mase)) |>
+  arrange(series, mase) |>
+  print(n = 200)
+mase |>
+  filter(series == "Overall") |>
+  group_by(method, model, series) |>
+  summarise(mase = mean(mase)) |>
   arrange(mase) |>
-  print(n=200)
+  print(n = 200)
 
-rmsse |> 
-  group_by(method, model, series) |> 
-  summarise(rmsse = sqrt(mean(rmsse^2))) |> 
-  arrange(series,rmsse) |>
-  print(n=200)
+rmsse |>
+  group_by(method, model, series) |>
+  summarise(rmsse = sqrt(mean(rmsse^2))) |>
+  arrange(series, rmsse) |>
+  print(n = 200)
 
-rmsse |> 
-  filter(series=="Overall") |> 
-  group_by(method, model, series) |> 
-  summarise(rmsse = sqrt(mean(rmsse^2))) |> 
+rmsse |>
+  filter(series == "Overall") |>
+  group_by(method, model, series) |>
+  summarise(rmsse = sqrt(mean(rmsse^2))) |>
   arrange(rmsse) |>
-  print(n=200)
-
+  print(n = 200)
