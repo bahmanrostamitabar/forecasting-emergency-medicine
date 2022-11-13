@@ -4,10 +4,14 @@ library(readr)
 library(furrr)
 source(here::here("rscript/hts/htsplus.R"))
 source(here::here("rscript/hts/glm.R"))
+source(here::here("rscript/hts/tscount.R"))
 source(here::here("rscript/hts/naive.R"))
+source(here::here("rscript/hts/ensemble.R"))
+source(here::here("rscript/hts/qcombinations.R"))
+source(here::here("rscript/hts/accuracy.R"))
 
 # Parallelization
-# plan(multisession, workers = 3)
+plan(multisession, workers = 3)
 
 # Read hierarchical/grouped time series
 # incident_gts <- read_rds(paste0(storage_folder, "incidents_test_gts.rds"))
@@ -28,6 +32,7 @@ for (i in seq(origins)) {
 }
 
 create_ensembles()
+create_qcomb()
 
 # Accuracy
 
