@@ -30,7 +30,7 @@ tscount <- function(y) {
 }
 
 simulate.tsglm <- function(object, innov, ...) {
-  n <- length(object$response)
+  n <- length(object$y)
   h <- NROW(innov)
   fourier_year <- forecast::fourier(ts(seq(n), frequency = 365.25), K = 3, h = h)
   season_week <- forecast::seasonaldummy(ts(seq(n), frequency = 7), h = h)
@@ -62,7 +62,7 @@ simulate.tsglm <- function(object, innov, ...) {
     )$ts
   }
   ts(output,
-    frequency = frequency(object$response),
-    start = tsp(object$response)[2] + 1 / frequency(object$response)
+    frequency = frequency(object$y),
+    start = tsp(object$y)[2] + 1 / frequency(object$y)
   )
 }

@@ -45,9 +45,9 @@ create_specific_ensemble <- function(models, method, origin) {
   # Find simulation files
   files <- fs::dir_ls(storage_folder, glob = paste0("*_", origin, "_sim_", method, ".rds"))
   # For each training set, combine available simulation files
-  new_sim <- array(0, c(1224, 84, 1000 * length(files_i)))
-  for (j in seq_along(files_i)) {
-    new_sim[, , 1000 * (j - 1) + seq(1000)] <- read_rds(files_i[j])
+  new_sim <- array(0, c(1224, 84, 1000 * length(files)))
+  for (j in seq_along(files)) {
+    new_sim[, , 1000 * (j - 1) + seq(1000)] <- read_rds(files[j])
   }
   write_rds(new_sim, filename, compress = "bz2")
 }
