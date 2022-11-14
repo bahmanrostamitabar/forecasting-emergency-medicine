@@ -52,12 +52,6 @@ mase |>
   summarise(mase = mean(mase)) |>
   arrange(series, mase) |>
   print(n = 200)
-mase |>
-  filter(series == "Overall") |>
-  group_by(method, model, series) |>
-  summarise(mase = mean(mase)) |>
-  arrange(mase) |>
-  print(n = 200)
 
 rmsse |>
   group_by(method, model, series) |>
@@ -65,9 +59,8 @@ rmsse |>
   arrange(series, rmsse) |>
   print(n = 200)
 
-rmsse |>
-  filter(series == "Overall") |>
+crps |>
   group_by(method, model, series) |>
-  summarise(rmsse = sqrt(mean(rmsse^2))) |>
-  arrange(rmsse) |>
+  summarise(crps = mean(crps)) |>
+  arrange(series, crps) |>
   print(n = 200)
