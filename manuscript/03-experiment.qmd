@@ -77,10 +77,10 @@ Given the total number of time series, direct visual analysis is infeasible. The
 #| fig.align: center
 #| fig-cap: "Time series features of attended incidents across all levels (1530 series)"
 library(feasts)
-
+incident_gthf <- read_rds(paste0(storage_folder, "incidents_gt.rds"))
 incident_gthf <- read_rds(here::here("data/incident_gt.rds"))
 incident_gthf %>% 
-  features(incidents,feat_stl) %>%
+  features(incident,feat_stl) %>%
   ggplot(aes(x = trend_strength, y = seasonal_strength_week)) +
   geom_point(pch=1)+
   ggthemes::theme_few()
@@ -165,9 +165,11 @@ p_nature_healthboard
 
 Given the presence of various significant patterns in the past attended incidents, we consider three different forecasting models to generate the base forecasts. Once the base forecasts are produced, hierarchical and grouped time series methods are used to reconcile them across the all levels. We briefly discussed forecasting models in the following sections, and the hierarchical forecasting methods are discussed in @sec-htc.
 
+**Naive:** We start with one of the simplest forecasting approaches used in practice - assuming that in the next few days, everything will be the same as in the similar days in the past. This is called "Naïve". In our case, given that we need a distribution of values, we will use a modified approach, where the empirical distribution of the daily attended incidents time series is used to forecast the future attended incidents distribution. We consider the empirical distribution of the most recent year of historic data on a rolling basis to capture potential changes in behavior over time.
+
 **Exponential Smoothing State Space model (ETS):** ETS models [@hyndman2021forecasting] can combine trend, seasonality and error components in a time series through various forms such as additive, multiplicative or mixed. The trend component can be none ("N"), Additive ("A"), damped ("Ad") or multiplicative ("M"). The seasonality can be none ("N"), Additive ("A"), or multiplicative ("M"). The error term can also be additive ("A") or multiplicative ("M"). To forecast the attended incidents at each level, we use the `ETS()` function in the `fable` package [@fable2022] in R. To identify the best model for a given time series, the ETS function uses the corrected Akaike’s Information Criterion (AICc).
 
-**Auto-Regressive Integrated Moving Average (ARIMA):** ARIMA [@hyndman2021forecasting] is another effective family of forecasting models that capture autocorrelation in time series. They can model various range of time series considering the stationarity of series, the Auto-Regressive (AR) and moving average (MA) orders. In this study, an automatic ARIMA algorithm implemented using `ARIMA()` function of fable package in R is used to forecast the attended incidents. To select the best model for a given time series, the algorithm uses unit root test, Maximum Likelihood Estimation (MLE) and the AICc.
+<!-- **Auto-Regressive Integrated Moving Average (ARIMA):** ARIMA [@hyndman2021forecasting] is another effective family of forecasting models that capture autocorrelation in time series. They can model various range of time series considering the stationarity of series, the Auto-Regressive (AR) and moving average (MA) orders. In this study, an automatic ARIMA algorithm implemented using `ARIMA()` function of fable package in R is used to forecast the attended incidents. To select the best model for a given time series, the algorithm uses unit root test, Maximum Likelihood Estimation (MLE) and the AICc. -->
 
 **Poisson Regression: ** Despite the popularity and the relevant of automatic `ETS` and `ARIMA` in this study, but they produce non-integer attended incidents and forecasts might also be negative. However, the number of attended incidents is an integer and non-negative. When using `ETS` and `ARIMA`, a time series transformation approach such as `sqrt()` could be used to generate strictly positive forecasts, however forecasts are still not integer. Another alternative is to use  forecasting models that produce integer, non-negative forecasts. One of the models that is frequently used in practice is the Poisson regression [see, for example, @mccarthy2008challenge], which can be summarized as
 $$
