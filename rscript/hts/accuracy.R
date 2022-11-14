@@ -83,7 +83,6 @@ compute_accuracy_specific <- function(train, model_function = "ets", method = "w
         accuracy[j, k] <- crps_sample(e[j, k, ], 0)
       }
     }
-    stop("not yet implemented")
   }
 
   # Overall accuracy
