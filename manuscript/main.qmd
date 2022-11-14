@@ -1,5 +1,5 @@
 ---
-title: "Hierarchical and grouped time series forecasting: an application to Emergency Medical Services"
+title: "Hierarchical time series forecasting in Emergency Medical Services"
 author:
   - name: Bahman Rostami-Tabar
     email: rostami-tabarb@cardiff.ac.uk
@@ -22,10 +22,14 @@ author:
 abstract: |
   The primary goal of an emergency service is to minimize the ambulance response time. Accurate forecasts of ambulance demand are crucial inputs into the decisions of planners and policymakers on the resource (e.g. staff and fleet) planning and dynamic deployment. Informing those decisions require detailed forecasting of demand at multiple levels of hierarchy from the national and regional levels to the nature of incidents and their priorities. These forecasts are often generated independently by different teams. However, independent forecasts may not add up to the other levels resulting in mismatched forecasts that lead to conflicting decisions and a lack of coordination in the care service. To address this issue, we explore the inherently hierarchical and grouped structure of Emergency Medcine Services. We apply forecast reconciliation methods to generate both point and probabilistic forecasts that are coherent, for the first time in the healthcare literature.
 keywords: 
-  - Healthcare
-  - Emergency services
+  - forecasting
+  - healthcare
+  - emergency services
   - forecast reconciliation
-  - hierarchical time series forecasting
+  - hierarchical time series
+  - ambulance demand
+  - atteneded incidents
+  
 bibliography: bibliography.bib
 execute:
   echo: false
