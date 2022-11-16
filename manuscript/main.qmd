@@ -35,7 +35,7 @@ execute:
   echo: false
   message: false
   warning: false
-pdf-engine: latexmk
+pdf-engine: pdflatex
 format:
   elsevier-pdf:
     keep-tex: true
