@@ -39,6 +39,7 @@ pdf-engine: pdflatex
 format:
   elsevier-pdf:
     keep-tex: true
+    include-in-header: preamble.tex
     journal:
       name: Annals of Emergency Medicine
       formatting: preprint
