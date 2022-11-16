@@ -44,8 +44,6 @@ format:
       formatting: preprint
       model: 3p
       cite-style: authoryear
-  elsevier-html:
-    toc: true
 ---
 
 
