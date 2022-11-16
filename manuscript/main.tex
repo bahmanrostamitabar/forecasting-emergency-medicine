@@ -219,7 +219,7 @@ reconciliation \sep hierarchical time series \sep ambulance demand \sep
     attended incidents
 \end{keyword}
 \end{frontmatter}
-    \ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[sharp corners, interior hidden, breakable, enhanced, frame hidden, boxrule=0pt, borderline west={3pt}{0pt}{shadecolor}]}{\end{tcolorbox}}\fi
+    \ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[enhanced, interior hidden, boxrule=0pt, frame hidden, breakable, sharp corners, borderline west={3pt}{0pt}{shadecolor}]}{\end{tcolorbox}}\fi
 
 \hypertarget{sec-intro}{%
 \section{Introduction}\label{sec-intro}}
@@ -462,7 +462,7 @@ We are interested in generating forecasts to inform the planning horizon
 of \(ph= 42\) days, required by planners in the ambulance services
 trust. The forecast horizon in this study is \(fh = 2 \times ph\) days
 ahead (2*42 days planning horizon). This is because the planning is
-generally freezed for \(ph\) days and considering a forecast horizon of
+generally frozen for \(ph\) days and considering a forecast horizon of
 \(ph\) days might not be helpful for planning. While forecasts are
 generated for \(2 \times ph\) days ahead, performance evaluation is only
 assessed based on the last \(ph\) days and not the \(2 \times ph\) days.
@@ -522,7 +522,7 @@ and then into 7 different healthboard at the bottom}
 
 \raisebox{-\height}{
 
-\includegraphics{/Users/bahmanrostami-tabar/Documents/1-research/1-research_papers/Work with Rob Hyndman/forecasting-emergency-medcine/img/group.png}
+\includegraphics{../img/group.png}
 
 }
 
@@ -537,7 +537,7 @@ and grouped levels.}
 \end{minipage}%
 
 \caption{\label{fig-hierarchy}The hierarchical and grouped structure of
-attended incidents (ambulance demand)}
+attended incidents (ambulance demand).}
 
 \end{figure}
 
@@ -606,7 +606,7 @@ across all levels (1530 series)}
 
 In addition to displaying the trend and seasonality features, we also
 visualize few time series at various levels of the aggregation. Figure
-Figure~\ref{fig-dataviz} reveals different information such as trend,
+Figure~\ref{fig-dataviz2} reveals different information such as trend,
 seasonality and noise. For example, some series depict seasonality and
 trend, whereas some other series report low volume of attended incidents
 and entropy, making them more volatile and difficult to forecast. At the
@@ -616,103 +616,12 @@ data set represents a diverse set of daily time series patterns.
 
 \begin{figure}
 
-\begin{minipage}[t]{0.49\linewidth}
-
-{\centering 
-
-\raisebox{-\height}{
-
-\includegraphics{main_files/figure-pdf/fig-dataviz-1.pdf}
+{\centering \includegraphics[width=1\textwidth,height=\textheight]{main_files/figure-pdf/fig-dataviz2-1.pdf}
 
 }
 
-}
-
-\subcaption{\label{fig-dataviz-1}Whole country}
-\end{minipage}%
-%
-\begin{minipage}[t]{0.02\linewidth}
-
-{\centering 
-
-~
-
-}
-
-\end{minipage}%
-%
-\begin{minipage}[t]{0.49\linewidth}
-
-{\centering 
-
-\raisebox{-\height}{
-
-\includegraphics{main_files/figure-pdf/fig-dataviz-2.pdf}
-
-}
-
-}
-
-\subcaption{\label{fig-dataviz-2}By control area}
-\end{minipage}%
-\newline
-\begin{minipage}[t]{0.49\linewidth}
-
-{\centering 
-
-\raisebox{-\height}{
-
-\includegraphics{main_files/figure-pdf/fig-dataviz-3.pdf}
-
-}
-
-}
-
-\subcaption{\label{fig-dataviz-3}By health board and control area}
-\end{minipage}%
-%
-\begin{minipage}[t]{0.02\linewidth}
-
-{\centering 
-
-~
-
-}
-
-\end{minipage}%
-%
-\begin{minipage}[t]{0.49\linewidth}
-
-{\centering 
-
-\raisebox{-\height}{
-
-\includegraphics{main_files/figure-pdf/fig-dataviz-4.pdf}
-
-}
-
-}
-
-\subcaption{\label{fig-dataviz-4}By health board and priority}
-\end{minipage}%
-\newline
-\begin{minipage}[t]{\linewidth}
-
-{\centering 
-
-\raisebox{-\height}{
-
-\includegraphics{main_files/figure-pdf/fig-dataviz-5.pdf}
-
-}
-
-}
-
-\subcaption{\label{fig-dataviz-5}By nature of incident and health board}
-\end{minipage}%
-
-\caption{\label{fig-dataviz}Time series of attended incidents at various
-levels.}
+\caption{\label{fig-dataviz2}Time series of attended incidents at
+various levels.}
 
 \end{figure}
 
@@ -855,7 +764,7 @@ CRPS=\frac{1}{h} \sum_{j=1}^{h} \int_{-\infty}^{\infty} \left(F^f_j(x) - F^0_j(x
 }\label{eq-CRPS}\end{equation}
 
 where \(F^f_j(x)\) is the forecasted Cumulative Density Function (CDF)
-of period \(j\) and 𝐹\(F^0_j(x)\) is the true CDF of period \(j\).
+of period \(j\) and \(F^0_j(x)\) is the true CDF of period \(j\).
 
 \hypertarget{sec-htc}{%
 \section{Hierarchical and grouped time series forecasting
@@ -961,6 +870,18 @@ fable package in R in the experiment.
 
 \hypertarget{probabilistic-forecast}{%
 \subsection{Probabilistic forecast}\label{probabilistic-forecast}}
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\textwidth,height=\textheight]{main_files/figure-pdf/fig-accuracy-1.pdf}
+
+}
+
+\caption{\label{fig-accuracy}Average accuracy by week for 12 weeks. CRPS
+is relative to a naive ECDF. MASE and MSSE are relative to the
+corresponding values for the training set.}
+
+\end{figure}
 
 \hypertarget{sec-conclusion}{%
 \section{Conclusion}\label{sec-conclusion}}
