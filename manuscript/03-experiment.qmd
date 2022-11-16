@@ -1,10 +1,7 @@
 # Experiment setup {#sec-experiment}
 
-<<<<<<< HEAD
 We are interested in generating forecasts to inform the planning horizon of $ph= 42$ days, required by planners in the ambulance services trust. The forecast horizon in this study is $fh = 2 \times ph$ days ahead (2*42 days planning horizon). This is because the planning is generally freezed for $ph$ days and considering a forecast horizon of $ph$ days might not be helpful for planning. While forecasts are generated for $2 \times ph$ days ahead, performance evaluation is only assessed based on the last $ph$ days and not the $2 \times ph$ days. The forecasts are produced for the holdout of 365 days using time series cross-validation [@hyndman2021forecasting]. 
-=======
-We are interested in generating forecasts to inform the planning horizon of $ph= 42$ days, interested by planners in the ambulance services trust. The forecast horizon in this study is $fh = 2 \times ph$ days ahead (2*42 days planning horizon). This is because the planning is generally frozen for $ph$ days and considering a forecast horizon of $ph$ days might not be helpful for planning. While forecasts are generated for $2 \times ph$ days ahead, performance evaluation is only assessed based on the last $ph$ days and not the $2 \times ph$ days. The forecasts are produced for the holdout of 365 days using time series cross-validation [@hyndman2021forecasting].
->>>>>>> 4bd8ee9a7c43bd78f81294094557f941a45c205c
+
 In the following section, we discuss the dataset, describe the forecasting methods used to generate base forecasts and present the point and probabilistic accuracy measures.
 
 ## Data {#sec-data}
@@ -84,7 +81,7 @@ Given the total number of time series, direct visual analysis is infeasible. The
 #| out.width: "70%"
 #| fig.align: center
 #| fig-cap: "Time series features of attended incidents across all levels (1530 series)"
-incident_gthf <- readr::read_rds(here::here("data/incidents_gt.rds"))
+incident_gthf <- readr::read_rds(paste0(storage_folder, "incidents_gt.rds"))
 incident_gthf %>%
   features(incident, feat_stl) %>%
   ggplot(aes(x = trend_strength, y = seasonal_strength_week)) +
@@ -198,13 +195,7 @@ model.
 
 ## Performance evaluation
 
-<<<<<<< HEAD
-The data is spitted into training (up until 2018-07-31) and test (from  2018-08-01 to the end) sets, with all model development and hyper-parameter tuning performed using training data only. The time series cross validation is performed with a forecast horizon of $2*42$ days and advances in 42-day steps. Forecasting performance is evaluated using both point and probabilistic error measures. Forecast error is calculated by considering only the last 42 days and not the entire $2*42$ days. This corresponds on how forecasts are generated for planning in practice.
-=======
-Forecasting performance is evaluated using both point and probabilistic error measures.
->>>>>>> 4bd8ee9a7c43bd78f81294094557f941a45c205c
-
-The point forecast accuracy is measured via Root Mean Squared Scaled Error (RMSSE) and Mean Absolute Scaled Error (MASE) that are describes below:
+The data is spitted into training (up until 2018-07-31) and test (from  2018-08-01 to the end) sets, with all model development and hyper-parameter tuning performed using training data only. The time series cross validation is performed with a forecast horizon of $2*42$ days and advances in 42-day steps. Forecasting performance is evaluated using both point and probabilistic error measures. Forecast error is calculated by considering only the last 42 days and not the entire $2*42$ days. This corresponds on how forecasts are generated for planning in practice. Forecasting performance is evaluated using both point and probabilistic error measures. The point forecast accuracy is measured via Root Mean Squared Scaled Error (RMSSE) and Mean Absolute Scaled Error (MASE) that are describes below:
 
 $$
 RMSSE = \sqrt{mean(q_{j}^2)},
