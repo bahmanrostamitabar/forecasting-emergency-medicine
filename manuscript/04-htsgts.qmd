@@ -1,6 +1,6 @@
 # Hierarchical and grouped time series forecasting techniques {#sec-htc}
 
-There are many applications in the healthcare and in particular in EMS where a collection of time series is available. These series are generally hierarchically organized based on multiple levels such as area/region, health board and/or are aggregated at different levels in groups based on nature of demand, priority of demand or some other attributes. While series could be strictly hierarchical or only grouped bases on some attributes, in many situation a more complex structures arise when attributes of interest are both nested and crossed, having hierarchical and grouped structure. This is also the case as discussed in @sec-data
+There are many applications in the healthcare and in particular in EMS where a collection of time series is available. These series are generally hierarchically organized based on multiple levels such as area/region, health board and/or are aggregated at different levels in groups based on nature of demand, priority of demand or some other attributes. While series could be strictly hierarchical or only grouped bases on some attributes, in many situation a more complex structures arise when attributes of interest are both nested and crossed, having hierarchical and grouped structure. This is also the case as discussed in @sec-data.
 
 ## Independent (base forecast)
 
