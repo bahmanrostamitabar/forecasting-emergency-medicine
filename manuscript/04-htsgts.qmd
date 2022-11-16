@@ -1,10 +1,10 @@
-# Hierachcail and grouped time series forecasting techniques {#sec-htc}
+# Hierarchical and grouped time series forecasting techniques {#sec-htc}
 
 There are many applications in the healthcare and in particular in EMS where a collection of time series is available. These series are generally hierarchically organized based on multiple levels such as area/region, health board and/or are aggregated at different levels in groups based on nature of demand, priority of demand or some other attributes. While series could be strictly hierarchical or only grouped bases on some attributes, in many situation a more complex structures arise when attributes of interest are both nested and crossed, having hierarchical and grouped structure. This is also the case as discussed in @sec-data
 
 ## Independent (base forecast)
 
-A common practice in healthcare (and EMS) to predict hierarchical and grouped series relies on producing independent forecast, also refereed to as base forecast, typically by different teams as the need for such forecasts arise. This is also known as base forecast. We observe $n$ time series at time $t$, across the entire hierarchical and grouped structure, written as $y_t$. The base forecasts of $y_{T+h}$ given data $y_1,\dots,y_T$ are denoted by $\hat{y}_h$ for h steps-ahead for all $n$ series ($n=1530$ in this study). Forecasts generated in this way are nor coherent. 
+A common practice in healthcare (and EMS) to predict hierarchical and grouped series relies on producing independent forecast, also refereed to as base forecast, typically by different teams as the need for such forecasts arise. This is also known as base forecast. We observe $n$ time series at time $t$, across the entire hierarchical and grouped structure, written as $y_t$. The base forecasts of $y_{T+h}$ given data $y_1,\dots,y_T$ are denoted by $\hat{y}_h$ for h steps-ahead for all $n$ series ($n=1530$ in this study). Forecasts generated in this way are nor coherent.
 
 ## Reconciliation methos
 
@@ -36,4 +36,3 @@ Bottom-Up is a simple approach to generate coherent forecasts. It first involves
 Given the summing matrix and base forecasts, bottom-up and linear reconciliation methods can be written as $\tilde{y}_h = SG\hat{y}_h$ for different matrices $G$.
 
 Optimal reconciled forecasts are obtained with $G=(S'W^{-1}S)^{-1}W^{-1}$, or $\tilde{y}_h = M\hat{y}_h,$ where the $n\times n$ "mapping" matrix is given by $M = S(S'W^{-1}S)^{-1}W^{-1},$ where $\hat{y}_h$ are the $h$-step forecasts of $y_{T+h}$ given data to time $T$, and $W$ is an $n \times n$ positive definite matrix. Different choices for $W$ lead to different solutions such as Ordinary Least Square (OLS) , Weighted Least Square (WLS) and Minimum Trace (MinT) [@WicEtAl2019]. We use the implementation of these methods in the fable package in R in the experiment.
-

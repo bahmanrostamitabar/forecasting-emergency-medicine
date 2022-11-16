@@ -1,6 +1,10 @@
 # Experiment setup {#sec-experiment}
 
+<<<<<<< HEAD
 We are interested in generating forecasts to inform the planning horizon of $ph= 42$ days, required by planners in the ambulance services trust. The forecast horizon in this study is $fh = 2 \times ph$ days ahead (2*42 days planning horizon). This is because the planning is generally freezed for $ph$ days and considering a forecast horizon of $ph$ days might not be helpful for planning. While forecasts are generated for $2 \times ph$ days ahead, performance evaluation is only assessed based on the last $ph$ days and not the $2 \times ph$ days. The forecasts are produced for the holdout of 365 days using time series cross-validation [@hyndman2021forecasting]. 
+=======
+We are interested in generating forecasts to inform the planning horizon of $ph= 42$ days, interested by planners in the ambulance services trust. The forecast horizon in this study is $fh = 2 \times ph$ days ahead (2*42 days planning horizon). This is because the planning is generally frozen for $ph$ days and considering a forecast horizon of $ph$ days might not be helpful for planning. While forecasts are generated for $2 \times ph$ days ahead, performance evaluation is only assessed based on the last $ph$ days and not the $2 \times ph$ days. The forecasts are produced for the holdout of 365 days using time series cross-validation [@hyndman2021forecasting].
+>>>>>>> 4bd8ee9a7c43bd78f81294094557f941a45c205c
 In the following section, we discuss the dataset, describe the forecasting methods used to generate base forecasts and present the point and probabilistic accuracy measures.
 
 ## Data {#sec-data}
@@ -10,35 +14,38 @@ The dataset used in this study is from a major ambulance service trust in Great 
 ```{r}
 #| label: fig-hierarchy
 #| out.width: "60%"
-#| fig-cap: "The hierarchical and grouped structure of attended inciddents (ambulance demand)"
-#| fig-subcap: 
-#|   - "Hierarchical structure: Attended inciddents in all country is disaggregated into 3 control areas /regions and then into 7 different healrhboard at the bottom"
-#|   - "Grouped structure:  Incidents could be grouped into priority (i.e. Red, Amber & Green) and the nature of attenedd incident (i.e. there are 35 different nature of incidents including chest pain , breahtign problems, heart attack, stroke, and son on). The symbol * refers to the crossed attributes between hierarchical and grouped levels."
+#| fig-cap: "The hierarchical and grouped structure of attended incidents (ambulance demand)"
+#| fig-subcap:
+#|   - "Hierarchical structure: Attended incidents in all country is disaggregated into 3 control areas /regions and then into 7 different healthboard at the bottom"
+#|   - "Grouped structure:  Incidents could be grouped into priority (i.e. Red, Amber & Green) and the nature of attended incident (i.e. there are 35 different nature of incidents including chest pain , breathing problems, heart attack, stroke, and so on). The symbol * refers to the crossed attributes between hierarchical and grouped levels."
 #| layout: [[50],[-2], [38]]
 
-library(ggraph)
-library(igraph)
-library(tidyverse)
-
 data <- data.frame(
-  level1="Total",
-  level2=c("Central & West", "Central & West","Central & West","North", "South & East","South & East","South & East"),
-  level3=c("HD", "SB", "PO", "BC","CV", "CT", "AB")
+  level1 = "Total",
+  level2 = c("Central & West", "Central & West", "Central & West", 
+             "North", "South & East", "South & East", "South & East"),
+  level3 = c("HD", "SB", "PO", "BC", "CV", "CT", "AB")
 )
 # transform it to a edge list!
-edges_level1_2 = data %>% select(level1, level2) %>% 
-  unique %>% rename(from=level1, to=level2)
-edges_level2_3 = data %>% select(level2, level3) %>% 
-  unique %>% rename(from=level2, to=level3)
-edge_list=rbind(edges_level1_2, edges_level2_3)
+edges_level1_2 <- data %>%
+  select(level1, level2) %>%
+  unique() %>%
+  rename(from = level1, to = level2)
+edges_level2_3 <- data %>%
+  select(level2, level3) %>%
+  unique() %>%
+  rename(from = level2, to = level3)
+edge_list <- rbind(edges_level1_2, edges_level2_3)
 
-mygraph <- graph_from_data_frame( edge_list )
-ggraph(mygraph, layout = 'dendrogram', circular = FALSE) + 
-  geom_edge_diagonal() +
-  geom_node_point(colour="#dddddd",size=10) +
-  geom_node_text(
-    aes(label=c("All country", "Central & West", "North","South & East", "HD", "SB", "PO", "BC","CV", "CT", "AB") )
-  )+
+mygraph <- igraph::graph_from_data_frame(edge_list)
+ggraph::ggraph(mygraph, layout = "dendrogram", circular = FALSE) +
+  ggraph::geom_edge_diagonal() +
+  ggraph::geom_node_point(color = "#dddddd", size = 10) +
+  ggraph::geom_node_text(
+    aes(label = c("All country", 
+                  "Central & West", "North", "South & East", 
+                  "HD", "SB", "PO", "BC", "CV", "CT", "AB"))
+  ) +
   theme_void()
 
 knitr::include_graphics(here::here("img/group.png"))
@@ -65,7 +72,8 @@ agg_level <- tibble::tribble(
   "Control * Health board * Priority * Nature of incident (Bottom level)", 691,
   "Total", 1530
 )
-knitr::kable(agg_level, booktabs = T, position = "left") %>% kable_classic(full_width = F)
+knitr::kable(agg_level, booktabs = TRUE, position = "left") %>%
+  kable_classic(full_width = FALSE)
 ```
 
 Given the total number of time series, direct visual analysis is infeasible. Therefore, we first compute features of all 1530 time series and display the strength of trend and weekly seasonality strength in Figure @fig-feature. Each point represents one time series with the strength of trend in x-axis and the strength of seasonality in y-axis. It is clear that there are some series showing strong trends and/or seasonality, corresponding to series at the higher levels of the hierarchy. The majority of series show low trend and seasonality. These are time series belonging to the bottom series, series related to the nature of incidents for a given control, health board and priority level. Bottom series are dominated by noise with little or no systematic patterns.
@@ -76,14 +84,13 @@ Given the total number of time series, direct visual analysis is infeasible. The
 #| out.width: "70%"
 #| fig.align: center
 #| fig-cap: "Time series features of attended incidents across all levels (1530 series)"
-library(feasts)
-incident_gthf <- read_rds(paste0(storage_folder, "incidents_gt.rds"))
-incident_gthf <- read_rds(here::here("data/incident_gt.rds"))
-incident_gthf %>% 
-  features(incident,feat_stl) %>%
+incident_gthf <- readr::read_rds(here::here("data/incidents_gt.rds"))
+incident_gthf %>%
+  features(incident, feat_stl) %>%
   ggplot(aes(x = trend_strength, y = seasonal_strength_week)) +
-  geom_point(pch=1)+
-  ggthemes::theme_few()
+  geom_point(alpha = 0.5) +
+  ggthemes::theme_few() +
+  labs(x = "Strength of trend", y = "Strength of weekly seasonality")
 ```
 
 In addition to displaying the trend and seasonality features, we also visualize few time series at various levels of the aggregation. Figure @fig-dataviz reveals different information such as trend, seasonality and noise. For example, some series depict seasonality and trend, whereas some other series report low volume of attended incidents and entropy, making them more volatile and difficult to forecast. At the level on nature of incidents combined with categories of other levels, there are many series that contain zeros with low counts. As such, the data set represents a diverse set of daily time series patterns.
@@ -93,65 +100,72 @@ In addition to displaying the trend and seasonality features, we also visualize 
 #| cache: true
 #| dependson: "fig-feature"
 #| out.width: "70%"
-#| fig-cap: "Time series of attended incidents at various levels"
-#| fig-subcap: 
-#|   - "all country"
-#|   - "Control area"
-#|   - "Health board and control area"
-#|   - "Healthboard and priority"
-#|   - "Nature of incident and health board"
+#| fig-cap: "Time series of attended incidents at various levels."
+#| fig-subcap:
+#|   - "Whole country"
+#|   - "By control area"
+#|   - "By health board and control area"
+#|   - "By health board and priority"
+#|   - "By nature of incident and health board"
 #| layout: [[44,-2, 44], [44,-2, 44], [100]]
 p_total <- incident_gthf %>%
-    filter(is_aggregated(region) & is_aggregated(lhb) & is_aggregated(category) & is_aggregated(nature)) %>%
-    autoplot()+
-    labs(x="Date", y="Incidents")+
-    ggthemes::theme_few()
+  filter(is_aggregated(region) & is_aggregated(lhb) & is_aggregated(category) & is_aggregated(nature)) %>%
+  autoplot() +
+  labs(x = "Date", y = "Incidents") +
+  ggthemes::theme_few()
 
 p_total_control <- incident_gthf %>%
   filter(!is_aggregated(region) & !is_aggregated(lhb) & is_aggregated(category) & is_aggregated(nature)) %>%
-  as_tibble() %>% select(-nature,-category) %>% 
-  group_by(date,region) %>% summarise(incidents=sum(incidents), .groups="drop") %>% 
-  ggplot(aes(x=date, y= incidents, colour = factor(region))) +
-  geom_line()+
-  labs(x="Date", y="Incidents", colour = "Control")+
-  ggthemes::scale_color_colorblind()+
-  ggthemes::theme_few()+
+  as_tibble() %>%
+  select(-nature, -category) %>%
+  group_by(date, region) %>%
+  summarise(incident = sum(incident), .groups = "drop") %>%
+  ggplot(aes(x = date, y = incident, color = factor(region))) +
+  geom_line() +
+  labs(x = "Date", y = "Incidents", color = "Control") +
+  ggthemes::scale_color_colorblind() +
+  ggthemes::theme_few() +
   theme(legend.position = "bottom")
 
 p_control <- incident_gthf %>%
   filter(!is_aggregated(region) & !is_aggregated(lhb) & is_aggregated(category) & is_aggregated(nature)) %>%
-  as_tibble() %>% select(-nature,-category) %>% 
-  ggplot(aes(x=date, y= incidents, colour = factor(lhb))) +
-  geom_line()+
-  facet_wrap(vars(factor(region)), scales = "free_y")+
-  labs(x="Date", y="Incidents", colour = "Health board")+
-  ggthemes::scale_color_colorblind()+
-  ggthemes::theme_few()+
+  as_tibble() %>%
+  select(-nature, -category) %>%
+  ggplot(aes(x = date, y = incident, color = factor(lhb))) +
+  geom_line() +
+  facet_wrap(vars(factor(region)), scales = "free_y") +
+  labs(x = "Date", y = "Incidents", color = "Health board") +
+  ggthemes::scale_color_colorblind() +
+  ggthemes::theme_few() +
   theme(legend.position = "bottom")
 
 p_priority <- incident_gthf %>%
   filter(!is_aggregated(region) & !is_aggregated(lhb) & !is_aggregated(category) & is_aggregated(nature)) %>%
-  as_tibble() %>% select(-nature,-region) %>% 
-  ggplot(aes(x=date, y= incidents, colour = factor(lhb))) +
-  geom_line()+
-  facet_wrap(vars(factor(category)), scales = "free_y")+
-  labs(x="Date", y="Incidents", colour = "Health board")+
-  ggthemes::scale_color_colorblind()+
-  ggthemes::theme_few()+
+  as_tibble() %>%
+  select(-nature, -region) %>%
+  ggplot(aes(x = date, y = incident, color = factor(lhb))) +
+  geom_line() +
+  facet_wrap(vars(factor(category)), scales = "free_y") +
+  labs(x = "Date", y = "Incidents", color = "Health board") +
+  ggthemes::scale_color_colorblind() +
+  ggthemes::theme_few() +
   theme(legend.position = "bottom")
 
 selected_nature <- c("CHESTPAIN", "STROKECVA", "BREATHING", "ABDOMINAL")
 
 p_nature_healthboard <- incident_gthf %>%
-  filter(!is_aggregated(region) & !is_aggregated(lhb) & !is_aggregated(category) & !is_aggregated(nature)) %>% 
-as_tibble() %>% mutate(nature=as.character(nature)) %>% 
-  filter(nature %in% selected_nature) %>% group_by(date,nature,lhb) %>% summarise(incidents=sum(incidents), .groups="drop") %>% 
-  ggplot(aes(x=date, y= incidents, colour = factor(lhb))) +
-  geom_line()+
-  facet_wrap(vars(factor(nature)), scales = "free_y")+
-  labs(x="Date", y="Incidents", colour = "Health board")+
-  ggthemes::scale_color_colorblind()+
-  ggthemes::theme_few()+
+  filter(!is_aggregated(region) & !is_aggregated(lhb) & !is_aggregated(category) & !is_aggregated(nature)) %>%
+  as_tibble() %>%
+  mutate(nature = as.character(nature)) %>%
+  filter(nature %in% selected_nature) %>%
+  group_by(date, nature, lhb) %>%
+  summarise(incident = sum(incident), .groups = "drop") %>%
+  ggplot(aes(x = date, y = incident, color = factor(lhb))) +
+  geom_line() +
+  facet_wrap(vars(factor(nature)), scales = "free_y") +
+  labs(x = "Date", y = "Incidents", color = "Health board") +
+  ggthemes::scale_color_colorblind() +
+  ggthemes::theme_few() +
   theme(legend.position = "none")
 
 p_total
@@ -184,7 +198,11 @@ model.
 
 ## Performance evaluation
 
+<<<<<<< HEAD
 The data is spitted into training (up until 2018-07-31) and test (from  2018-08-01 to the end) sets, with all model development and hyper-parameter tuning performed using training data only. The time series cross validation is performed with a forecast horizon of $2*42$ days and advances in 42-day steps. Forecasting performance is evaluated using both point and probabilistic error measures. Forecast error is calculated by considering only the last 42 days and not the entire $2*42$ days. This corresponds on how forecasts are generated for planning in practice.
+=======
+Forecasting performance is evaluated using both point and probabilistic error measures.
+>>>>>>> 4bd8ee9a7c43bd78f81294094557f941a45c205c
 
 The point forecast accuracy is measured via Root Mean Squared Scaled Error (RMSSE) and Mean Absolute Scaled Error (MASE) that are describes below:
 
@@ -215,7 +233,7 @@ $$
 The denominator is the mean absolute error of the naive method in the fitting sample of $n$ observations and is used to scale the error.
 
 
-To measure the forecast distribution performance, we calculate  the Continuous Rank Probability Score [@gneiting2014probabilistic]. It rewards sharpness and penalizes miscalibration, so it measures overall performance. 
+To measure the forecast distribution performance, we calculate  the Continuous Rank Probability Score [@gneiting2014probabilistic]. It rewards sharpness and penalizes miscalibration, so it measures overall performance.
 
 $$
 CRPS=\frac{1}{h} \sum_{j=1}^{h} \int_{-\infty}^{\infty} \left(F^f_j(x) - F^0_j(x)\right)^2dx
