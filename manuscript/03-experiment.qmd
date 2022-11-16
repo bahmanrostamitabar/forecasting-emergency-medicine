@@ -302,4 +302,4 @@ $$
 CRPS=\frac{1}{h} \sum_{j=1}^{h} \int_{-\infty}^{\infty} \left(F^f_j(x) - F^0_j(x)\right)^2dx
 $$ {#eq-CRPS}
 
-where $F^f_j(x)$ is the forecasted Cumulative Density Function (CDF) of period $j$ and 𝐹$F^0_j(x)$ is the true CDF of period $j$.
+where $F^f_j(x)$ is the forecasted Cumulative Density Function (CDF) of period $j$ and $F^0_j(x)$ is the true CDF of period $j$.
