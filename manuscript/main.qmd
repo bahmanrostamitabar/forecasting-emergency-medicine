@@ -35,10 +35,11 @@ execute:
   echo: false
   message: false
   warning: false
-  cache: true
+pdf-engine: pdflatex
 format:
   elsevier-pdf:
     keep-tex: true
+    include-in-header: preamble.tex
     journal:
       name: Annals of Emergency Medicine
       formatting: preprint
@@ -55,8 +56,13 @@ library(knitr)
 library(kableExtra)
 library(ggthemes)
 library(patchwork)
-#library(ggraph)
-#library(igraph)
+# Color blind color palettes
+options(
+  ggplot2.discrete.colour = c("#D55E00", "#0072B2","#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442"),
+  ggplot2.discrete.fill = c("#D55E00", "#0072B2","#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442")
+)
+# Few theme
+ggplot2::theme_set(ggthemes::theme_few())
 ```
 
 
