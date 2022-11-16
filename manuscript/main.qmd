@@ -3,7 +3,7 @@ title: "Hierarchical time series forecasting in Emergency Medical Services"
 author:
   - name: Bahman Rostami-Tabar
     email: rostami-tabarb@cardiff.ac.uk
-    affiliations: 
+    affiliations:
         - id: carbs
           name: Cardiff University
           department: Cardiff Business School
@@ -44,7 +44,7 @@ format:
       formatting: preprint
       model: 3p
       cite-style: authoryear
-  elsevier-html: 
+  elsevier-html:
     toc: true
 ---
 
@@ -52,18 +52,13 @@ format:
 ```{r}
 #| label: setup
 #| include: false
+library(fpp3)
 library(knitr)
-library(tidyverse)
-library(lubridate)
-library(patchwork)
-library(tsibble)
 library(kableExtra)
-library(fable)
 library(ggthemes)
-library(readxl)
-library(here)
-library(tsibble)
-library(fable)
+library(patchwork)
+#library(ggraph)
+#library(igraph)
 ```
 
 

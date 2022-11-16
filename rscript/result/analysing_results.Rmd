@@ -24,11 +24,11 @@ sum(is.infinite(rm$error2_scale))
 
 ```{r label, options}
 
-rmsse_approach_level_id <-  rmse_for_analysis %>% group_by(level,approach,.id) %>% 
+rmsse_approach_level_id <-  rmse_for_analysis %>% group_by(level,approach,.id) %>%
   summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
 
 
-rmsse_approach_id <-  rmsse_approach_level_id %>% group_by(approach,level) %>% 
+rmsse_approach_id <-  rmsse_approach_level_id %>% group_by(approach,level) %>%
   summarise(rmsse=mean(rmsse), .groups = "drop")
 ```
 
@@ -36,7 +36,7 @@ rmsse_approach_id <-  rmsse_approach_level_id %>% group_by(approach,level) %>%
 # overall
 
 ```{r label, options}
-r <- rmsse_approach_level_id %>% group_by(approach) %>% 
+r <- rmsse_approach_level_id %>% group_by(approach) %>%
   summarise(mean_rmsse=mean(rmsse), median_rmsse=median(rmsse), .groups = "drop")
 r
 
@@ -45,7 +45,7 @@ r
 ## Total
 
 ```{r label, options}
-rmsse_total <- rmse_for_analysis %>% filter(level=="Total") %>% dplyr::select(-level) %>% 
+rmsse_total <- rmse_for_analysis %>% filter(level=="Total") %>% dplyr::select(-level) %>%
   group_by(approach,.id) %>% summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
 
 ggplot(rmsse_total, aes(x=fct_reorder(approach,rmsse),y=rmsse))+
@@ -69,7 +69,7 @@ ggplot(rmsse_control, aes(x=fct_reorder(approach,rmsse),y=rmsse))+
 rmsse_control_h <- rmse_for_analysis %>% filter(level %in% c("G1/S","G1/N","G1/C")) %>%
   group_by(level,approach,h) %>% summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
 
-ggplot(rmsse_control_h, aes(x=h,y=rmsse, colour=factor(approach)))+
+ggplot(rmsse_control_h, aes(x=h,y=rmsse, color=factor(approach)))+
   geom_point()+
   geom_line()+
   scale_x_continuous(breaks = seq(1,35,1))+
@@ -94,7 +94,7 @@ ggplot(rmsse_hb, aes(x=fct_reorder(approach,rmsse),y=rmsse))+
 rmsse_hb_h <- rmse_for_analysis %>% filter(stringr::str_detect(level, "G2/")) %>%
   group_by(level,approach,h) %>% summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
 
-ggplot(rmsse_hb_h, aes(x=h,y=rmsse, colour=factor(approach)))+
+ggplot(rmsse_hb_h, aes(x=h,y=rmsse, color=factor(approach)))+
   geom_point()+
   geom_line()+
   scale_x_continuous(breaks = seq(1,35,1))+
@@ -119,7 +119,7 @@ ggplot(rmsse_priority, aes(x=fct_reorder(approach,rmsse),y=rmsse))+
 rmsse_priority_h <- rmse_for_analysis %>% filter(stringr::str_detect(level, "G3/")) %>%
   group_by(level,approach,h) %>% summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
 
-ggplot(rmsse_priority_h, aes(x=h,y=rmsse, colour=factor(approach)))+
+ggplot(rmsse_priority_h, aes(x=h,y=rmsse, color=factor(approach)))+
   geom_point()+
   geom_line()+
   scale_x_continuous(breaks = seq(1,35,1))+
@@ -134,7 +134,7 @@ ggplot(rmsse_priority_h, aes(x=h,y=rmsse, colour=factor(approach)))+
 rmsse_nature <- rmse_for_analysis %>% filter(stringr::str_detect(level, "G4/")) %>%
   group_by(level,approach,.id) %>% summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
 
-rmsse_nature_all <- rmsse_nature %>% group_by(approach,level) %>% summarise(rmsse=mean(rmsse), .groups = "drop") 
+rmsse_nature_all <- rmsse_nature %>% group_by(approach,level) %>% summarise(rmsse=mean(rmsse), .groups = "drop")
 rmsse_nature_all %>% pivot_wider(names_from = approach, values_from = rmsse)%>% arrange(arima_bu) %>% View()
 ```
 
@@ -142,7 +142,7 @@ rmsse_nature_all %>% pivot_wider(names_from = approach, values_from = rmsse)%>% 
 rmsse_nature_h <- rmse_for_analysis %>% filter(stringr::str_detect(level, "G4/")) %>%
   group_by(level,approach,h) %>% summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
 
-ggplot(rmsse_hb_h, aes(x=h,y=rmsse, colour=factor(approach)))+
+ggplot(rmsse_hb_h, aes(x=h,y=rmsse, color=factor(approach)))+
   geom_point()+
   geom_line()+
   scale_x_continuous(breaks = seq(1,35,1))+
@@ -151,29 +151,29 @@ ggplot(rmsse_hb_h, aes(x=h,y=rmsse, colour=factor(approach)))+
   ggthemes::scale_color_colorblind()
 ```
 
-## 
+##
 
 ```{r label, options}
-rr <- rmsse_approach_level_id %>% group_by(approach,level) %>% 
+rr <- rmsse_approach_level_id %>% group_by(approach,level) %>%
   summarise(mean_rmsse=mean(rmsse),.groups = "drop")
 ggplot(rmsse_approach_id)+
   geom_boxplot(aes(y=rmsse, x=approach))+
   coord_cartesian(ylim = c(0,2))
 ```
-## 
+##
 
 ```{r label, options}
-rr <- rmsse_approach_level_id %>% group_by(approach,level) %>% 
+rr <- rmsse_approach_level_id %>% group_by(approach,level) %>%
   summarise(mean_rmsse=mean(rmsse),.groups = "drop")
 ggplot(rmsse_approach_id)+
   geom_boxplot(aes(y=rmsse, x=approach))+
   coord_cartesian(ylim = c(0,2))
 ```
 
-## 
+##
 
 ```{r label, options}
-rmsse_hd <-  rmse_for_analysis %>% group_by(h,.id,approach) %>% 
+rmsse_hd <-  rmse_for_analysis %>% group_by(h,.id,approach) %>%
   summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
 ggplot(rmsse_hd)+
   geom_boxplot(aes(y=rmsse, x=factor(h)))+

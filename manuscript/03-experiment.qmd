@@ -16,29 +16,32 @@ The dataset used in this study is from a major ambulance service trust in the Un
 #|   - "Grouped structure:  Incidents could be grouped into priority (i.e. Red, Amber & Green) and the nature of attended incident (i.e. there are 35 different nature of incidents including chest pain , breathing problems, heart attack, stroke, and so on). The symbol * refers to the crossed attributes between hierarchical and grouped levels."
 #| layout: [[50],[-2], [38]]
 
-library(ggraph)
-library(igraph)
-library(tidyverse)
-
 data <- data.frame(
-  level1="Total",
-  level2=c("Central & West", "Central & West","Central & West","North", "South & East","South & East","South & East"),
-  level3=c("HD", "SB", "PO", "BC","CV", "CT", "AB")
+  level1 = "Total",
+  level2 = c("Central & West", "Central & West", "Central & West", 
+             "North", "South & East", "South & East", "South & East"),
+  level3 = c("HD", "SB", "PO", "BC", "CV", "CT", "AB")
 )
 # transform it to a edge list!
-edges_level1_2 = data %>% select(level1, level2) %>% 
-  unique %>% rename(from=level1, to=level2)
-edges_level2_3 = data %>% select(level2, level3) %>% 
-  unique %>% rename(from=level2, to=level3)
-edge_list=rbind(edges_level1_2, edges_level2_3)
+edges_level1_2 <- data %>%
+  select(level1, level2) %>%
+  unique() %>%
+  rename(from = level1, to = level2)
+edges_level2_3 <- data %>%
+  select(level2, level3) %>%
+  unique() %>%
+  rename(from = level2, to = level3)
+edge_list <- rbind(edges_level1_2, edges_level2_3)
 
-mygraph <- graph_from_data_frame( edge_list )
-ggraph(mygraph, layout = 'dendrogram', circular = FALSE) + 
-  geom_edge_diagonal() +
-  geom_node_point(colour="#dddddd",size=10) +
-  geom_node_text(
-    aes(label=c("All country", "Central & West", "North","South & East", "HD", "SB", "PO", "BC","CV", "CT", "AB") )
-  )+
+mygraph <- igraph::graph_from_data_frame(edge_list)
+ggraph::ggraph(mygraph, layout = "dendrogram", circular = FALSE) +
+  ggraph::geom_edge_diagonal() +
+  ggraph::geom_node_point(color = "#dddddd", size = 10) +
+  ggraph::geom_node_text(
+    aes(label = c("All country", 
+                  "Central & West", "North", "South & East", 
+                  "HD", "SB", "PO", "BC", "CV", "CT", "AB"))
+  ) +
   theme_void()
 
 knitr::include_graphics(here::here("img/group.png"))
@@ -65,7 +68,8 @@ agg_level <- tibble::tribble(
   "Control * Health board * Priority * Nature of incident (Bottom level)", 691,
   "Total", 1530
 )
-knitr::kable(agg_level, booktabs = T, position = "left") %>% kable_classic(full_width = F)
+knitr::kable(agg_level, booktabs = TRUE, position = "left") %>%
+  kable_classic(full_width = FALSE)
 ```
 
 Given the total number of time series, direct visual analysis is infeasible. Therefore, we first compute features of all 1530 time series and display the strength of trend and weekly seasonality strength in Figure @fig-feature. Each point represents one time series with strength of trend in  x-axis and strength of seasonality in y-axis. It is clear that there are some series showing strong trends and/or seasonality, corresponding to series at the higher levels of the hierarchy. The majority show low trend and seasonality with . These are time series belonging to the bottom of the structure, series related to the nature of incidents for each given control, health board and priority.
@@ -76,14 +80,13 @@ Given the total number of time series, direct visual analysis is infeasible. The
 #| out.width: "70%"
 #| fig.align: center
 #| fig-cap: "Time series features of attended incidents across all levels (1530 series)"
-library(feasts)
-incident_gthf <- read_rds(paste0(storage_folder, "incidents_gt.rds"))
-incident_gthf <- read_rds(here::here("data/incident_gt.rds"))
-incident_gthf %>% 
-  features(incident,feat_stl) %>%
+incident_gthf <- readr::read_rds(here::here("data/incidents_gt.rds"))
+incident_gthf %>%
+  features(incident, feat_stl) %>%
   ggplot(aes(x = trend_strength, y = seasonal_strength_week)) +
-  geom_point(pch=1)+
-  ggthemes::theme_few()
+  geom_point(alpha = 0.5) +
+  ggthemes::theme_few() +
+  labs(x = "Strength of trend", y = "Strength of weekly seasonality")
 ```
 
 In addition to displaying the trend and seasonality features, we also highlight few time series at various levels of the aggregation. Figure @fig-dataviz reveals different information such as trend, seasonality and noise. For example, some series depict seasonality and trend, whereas some other series report low volume of attended incidents and entropy, making them more volatile and difficult to forecast. At the level on nature of incidents combined with categories of other levels, there are many series that contain zeros with low counts. As such, the data set represents a diverse set of daily time series patterns.
@@ -93,65 +96,72 @@ In addition to displaying the trend and seasonality features, we also highlight 
 #| cache: true
 #| dependson: "fig-feature"
 #| out.width: "70%"
-#| fig-cap: "Time series of attended incidents at various levels"
-#| fig-subcap: 
-#|   - "all country"
-#|   - "Control area"
-#|   - "Health board and control area"
-#|   - "Healthboard and priority"
-#|   - "Nature of incident and health board"
+#| fig-cap: "Time series of attended incidents at various levels."
+#| fig-subcap:
+#|   - "Whole country"
+#|   - "By control area"
+#|   - "By health board and control area"
+#|   - "By health board and priority"
+#|   - "By nature of incident and health board"
 #| layout: [[44,-2, 44], [44,-2, 44], [100]]
 p_total <- incident_gthf %>%
-    filter(is_aggregated(region) & is_aggregated(lhb) & is_aggregated(category) & is_aggregated(nature)) %>%
-    autoplot()+
-    labs(x="Date", y="Incidents")+
-    ggthemes::theme_few()
+  filter(is_aggregated(region) & is_aggregated(lhb) & is_aggregated(category) & is_aggregated(nature)) %>%
+  autoplot() +
+  labs(x = "Date", y = "Incidents") +
+  ggthemes::theme_few()
 
 p_total_control <- incident_gthf %>%
   filter(!is_aggregated(region) & !is_aggregated(lhb) & is_aggregated(category) & is_aggregated(nature)) %>%
-  as_tibble() %>% select(-nature,-category) %>% 
-  group_by(date,region) %>% summarise(incidents=sum(incidents), .groups="drop") %>% 
-  ggplot(aes(x=date, y= incidents, colour = factor(region))) +
-  geom_line()+
-  labs(x="Date", y="Incidents", colour = "Control")+
-  ggthemes::scale_color_colorblind()+
-  ggthemes::theme_few()+
+  as_tibble() %>%
+  select(-nature, -category) %>%
+  group_by(date, region) %>%
+  summarise(incident = sum(incident), .groups = "drop") %>%
+  ggplot(aes(x = date, y = incident, color = factor(region))) +
+  geom_line() +
+  labs(x = "Date", y = "Incidents", color = "Control") +
+  ggthemes::scale_color_colorblind() +
+  ggthemes::theme_few() +
   theme(legend.position = "bottom")
 
 p_control <- incident_gthf %>%
   filter(!is_aggregated(region) & !is_aggregated(lhb) & is_aggregated(category) & is_aggregated(nature)) %>%
-  as_tibble() %>% select(-nature,-category) %>% 
-  ggplot(aes(x=date, y= incidents, colour = factor(lhb))) +
-  geom_line()+
-  facet_wrap(vars(factor(region)), scales = "free_y")+
-  labs(x="Date", y="Incidents", colour = "Health board")+
-  ggthemes::scale_color_colorblind()+
-  ggthemes::theme_few()+
+  as_tibble() %>%
+  select(-nature, -category) %>%
+  ggplot(aes(x = date, y = incident, color = factor(lhb))) +
+  geom_line() +
+  facet_wrap(vars(factor(region)), scales = "free_y") +
+  labs(x = "Date", y = "Incidents", color = "Health board") +
+  ggthemes::scale_color_colorblind() +
+  ggthemes::theme_few() +
   theme(legend.position = "bottom")
 
 p_priority <- incident_gthf %>%
   filter(!is_aggregated(region) & !is_aggregated(lhb) & !is_aggregated(category) & is_aggregated(nature)) %>%
-  as_tibble() %>% select(-nature,-region) %>% 
-  ggplot(aes(x=date, y= incidents, colour = factor(lhb))) +
-  geom_line()+
-  facet_wrap(vars(factor(category)), scales = "free_y")+
-  labs(x="Date", y="Incidents", colour = "Health board")+
-  ggthemes::scale_color_colorblind()+
-  ggthemes::theme_few()+
+  as_tibble() %>%
+  select(-nature, -region) %>%
+  ggplot(aes(x = date, y = incident, color = factor(lhb))) +
+  geom_line() +
+  facet_wrap(vars(factor(category)), scales = "free_y") +
+  labs(x = "Date", y = "Incidents", color = "Health board") +
+  ggthemes::scale_color_colorblind() +
+  ggthemes::theme_few() +
   theme(legend.position = "bottom")
 
 selected_nature <- c("CHESTPAIN", "STROKECVA", "BREATHING", "ABDOMINAL")
 
 p_nature_healthboard <- incident_gthf %>%
-  filter(!is_aggregated(region) & !is_aggregated(lhb) & !is_aggregated(category) & !is_aggregated(nature)) %>% 
-as_tibble() %>% mutate(nature=as.character(nature)) %>% 
-  filter(nature %in% selected_nature) %>% group_by(date,nature,lhb) %>% summarise(incidents=sum(incidents), .groups="drop") %>% 
-  ggplot(aes(x=date, y= incidents, colour = factor(lhb))) +
-  geom_line()+
-  facet_wrap(vars(factor(nature)), scales = "free_y")+
-  labs(x="Date", y="Incidents", colour = "Health board")+
-  ggthemes::scale_color_colorblind()+
-  ggthemes::theme_few()+
+  filter(!is_aggregated(region) & !is_aggregated(lhb) & !is_aggregated(category) & !is_aggregated(nature)) %>%
+  as_tibble() %>%
+  mutate(nature = as.character(nature)) %>%
+  filter(nature %in% selected_nature) %>%
+  group_by(date, nature, lhb) %>%
+  summarise(incident = sum(incident), .groups = "drop") %>%
+  ggplot(aes(x = date, y = incident, color = factor(lhb))) +
+  geom_line() +
+  facet_wrap(vars(factor(nature)), scales = "free_y") +
+  labs(x = "Date", y = "Incidents", color = "Health board") +
+  ggthemes::scale_color_colorblind() +
+  ggthemes::theme_few() +
   theme(legend.position = "none")
 
 p_total
@@ -183,7 +193,7 @@ The logarithm in @eq-poisson-regression is needed to ensure that the parameter o
 
 ## Performance evaluation
 
-Forecasting performance is evaluated using both point and probabilistic error measures. 
+Forecasting performance is evaluated using both point and probabilistic error measures.
 
 The point forecast accuracy is measured via Root Mean Squared Scaled Error (RMSSE):
 
@@ -200,7 +210,7 @@ $$
 
 $e_{j}$ is the point forecast error $j$ and $m = 1$ for non-seasonal series and $m = 7$ for daily seasonal series, $y_t$ is the observation for period $t$ and $T$ is the sample size (observations used for training the forecasting model). Smaller RMSSE values suggest more accurate forecasts. Note that the measure is scale-independent, thus allowing us to average the results across series.
 
-To measure the forecast distribution performance, we calculate  the Continuous Rank Probability Score [@gneiting2014probabilistic]. It rewards sharpness and penalizes miscalibration, so it measures overall performance. 
+To measure the forecast distribution performance, we calculate  the Continuous Rank Probability Score [@gneiting2014probabilistic]. It rewards sharpness and penalizes miscalibration, so it measures overall performance.
 
 $$
 CRPS=\frac{1}{h} \sum_{j=1}^{h} \int_{-\infty}^{\infty} \left(F^f_j(x) - F^0_j(x)\right)^2dx

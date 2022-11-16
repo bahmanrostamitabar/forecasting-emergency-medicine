@@ -4,7 +4,7 @@ There are many applications in the healthcare and in particular in EMS where a c
 
 ## Independent (base forecast)
 
-A common practice in healthcare (and EMS) to predict hierarchical and grouped series relies on producing independent forecast, also refereed to as base forecast, typically by different teams as the need for such forecasts arise. This is also known as base forecast. We observe $n$ time series at time $t$, across the entire hierarchical and grouped structure, written as $y_t$. The base forecasts of $y_{T+h}$ given data $y_1,\dots,y_T$ are denoted by $\hat{y}_h$ for h steps-ahead for all $n$ series ($n=1530$ in this study). Forecasts generated in this way are nor coherent. 
+A common practice in healthcare (and EMS) to predict hierarchical and grouped series relies on producing independent forecast, also refereed to as base forecast, typically by different teams as the need for such forecasts arise. This is also known as base forecast. We observe $n$ time series at time $t$, across the entire hierarchical and grouped structure, written as $y_t$. The base forecasts of $y_{T+h}$ given data $y_1,\dots,y_T$ are denoted by $\hat{y}_h$ for h steps-ahead for all $n$ series ($n=1530$ in this study). Forecasts generated in this way are nor coherent.
 
 ## Reconciliation methos
 
