@@ -1,4 +1,4 @@
-# Results and discussion {#sec-result}
+# Results and discussion {#sec-results}
 
 
 ## Point forecast

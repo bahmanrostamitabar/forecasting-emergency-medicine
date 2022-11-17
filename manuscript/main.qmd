@@ -1,5 +1,5 @@
 ---
-title: "Hierarchical time series forecasting in Emergency Medical Services"
+title: "Hierarchical Time Series Forecasting in Emergency Medical Services"
 author:
   - name: Bahman Rostami-Tabar
     email: rostami-tabarb@cardiff.ac.uk
