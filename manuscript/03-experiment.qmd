@@ -95,11 +95,7 @@ incident_gthf %>%
   labs(x = "Strength of trend", y = "Strength of weekly seasonality")
 ```
 
-<<<<<<< HEAD
 In addition to displaying the trend and seasonality features, we also visualize few time series at various levels of the aggregation. @fig-dataviz2 reveals different information such as trend, seasonality and noise. For example, some series depict seasonality and trend, whereas some other series report low volume of attended incidents and entropy, making them more volatile and difficult to forecast. At the level on nature of incidents combined with categories of other levels, there are many series that contain zeros with low counts. As such, the data set represents a diverse set of daily time series patterns.
-=======
-In addition to displaying the trend and seasonality features, we also visualize a few time series at various levels of the aggregation. @fig-dataviz2 reveals different information such as trend, seasonality and noise. For example, some series depict seasonality and trend, whereas some other series report low volume of attended incidents and entropy, making them more volatile and difficult to forecast. At the level on nature of incidents combined with categories of other levels, there are many series that contain zeros with low counts. As such, the data set represents a diverse set of daily time series patterns.
->>>>>>> 381e457fe673e6ac7f38d4e094ae6dc6e44b165d
 
 ```{r}
 #| label: fig-dataviz2
@@ -130,13 +126,9 @@ p_control <- incident_gthf %>%
   summarise(incident = sum(incident), .groups = "drop") %>%
   ggplot(aes(x = date, y = incident, color = factor(region))) +
   geom_line() +
-<<<<<<< HEAD
   labs(y = "Incidents", color = "Control")  +
   ggthemes::scale_color_colorblind() +
   ggthemes::theme_few() +
-=======
-  labs(y = "Incidents", color = "Control") +
->>>>>>> 381e457fe673e6ac7f38d4e094ae6dc6e44b165d
   no_x_axis
 
 p_board <- incident_gthf %>%
@@ -209,7 +201,7 @@ Despite the popularity and the relevance of automatic `ETS` in this study, it ma
 
 ## Performance evaluation
 
-To evaluate the performance of the various forecasting approaches, we split the data into a series of ten training and test sets. We use a time series cross-validation approach [@hyndman2021forecasting], with a forecast horizon of 84 days, and each training set expanding in 42-day steps. The first training set uses all data up to 2018-04-25, and the first test set uses the 84 days beginning 2018-04-26. The second training set uses all data up to 2018-06-06, with the second test set using the following 84 days. The largest training set ends on 2019-05-09, with the test set ending on 2019-07-31. Model development and hyper-parameter tuning is performed using the training data only. Forecasting performance is evaluated using both point and probabilistic error measures. While we compute forecast errors for the entire 12 weeks, we are most interested in the last 42 days of each test set, because that corresponds to how forecasts are generated for planning in practice. Forecasting performance is evaluated using both point and probabilistic error measures.
+To evaluate the performance of the various forecasting approaches, we split the data into a series of ten training and test sets. We use a time series cross-validation approach [@hyndman2021forecasting], with a forecast horizon of 84 days, and each training set expanding in 42-day steps. The first training set uses all data up to 2018-04-25, and the first test set uses the 84 days beginning 2018-04-26. The second training set uses all data up to 2018-06-06, with the second test set using the following 84 days. The largest training set ends on 2019-05-09, with the test set ending on 2019-07-31. Model development and hyper-parameter tuning is performed using the training data only. While we compute forecast errors for the entire 12 weeks, we are most interested in the last 42 days of each test set, because that corresponds to how forecasts are generated for planning in practice. Forecasting performance is evaluated using both point and probabilistic error measures.
 
 Point forecast accuracy is measured via the Mean Squared Scaled Error (MSSE) and the Mean Absolute Scaled Error (MASE). The Mean Absolute Scaled Error (MASE) [@HK06] is calculated as:
 $$
