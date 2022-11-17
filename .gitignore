@@ -10,3 +10,13 @@
 
 /.luarc.json
 *.spl
+
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.synctex.gz
+elsarticle-harv.bst
+elsarticle.cls
