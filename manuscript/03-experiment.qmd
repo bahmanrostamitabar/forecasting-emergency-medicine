@@ -92,88 +92,6 @@ incident_gthf %>%
 In addition to displaying the trend and seasonality features, we also visualize few time series at various levels of the aggregation. @fig-dataviz2 reveals different information such as trend, seasonality and noise. For example, some series depict seasonality and trend, whereas some other series report low volume of attended incidents and entropy, making them more volatile and difficult to forecast. At the level on nature of incidents combined with categories of other levels, there are many series that contain zeros with low counts. As such, the data set represents a diverse set of daily time series patterns.
 
 ```{r}
-#| label: fig-dataviz
-#| eval: false
-#| include: false
-#| dependson: "fig-feature"
-#| out.width: "70%"
-#| fig-cap: "Time series of attended incidents at various levels."
-#| fig-subcap:
-#|   - "Whole country"
-#|   - "By control area"
-#|   - "By health board and control area"
-#|   - "By health board and priority"
-#|   - "By nature of incident and health board"
-#| layout: [[44,-2, 44], [44,-2, 44], [100]]
-p_total <- incident_gthf %>%
-  filter(is_aggregated(region) & is_aggregated(lhb) & is_aggregated(category) & is_aggregated(nature)) %>%
-  autoplot() +
-  labs(x = "Date", y = "Incidents") +
-  ggthemes::theme_few()
-
-p_total_control <- incident_gthf %>%
-  filter(!is_aggregated(region) & !is_aggregated(lhb) & is_aggregated(category) & is_aggregated(nature)) %>%
-  as_tibble() %>%
-  select(-nature, -category) %>%
-  group_by(date, region) %>%
-  summarise(incident = sum(incident), .groups = "drop") %>%
-  ggplot(aes(x = date, y = incident, color = factor(region))) +
-  geom_line() +
-  labs(x = "Date", y = "Incidents", color = "Control") +
-  ggthemes::scale_color_colorblind() +
-  ggthemes::theme_few() +
-  theme(legend.position = "bottom")
-
-p_control <- incident_gthf %>%
-  filter(!is_aggregated(region) & !is_aggregated(lhb) & is_aggregated(category) & is_aggregated(nature)) %>%
-  as_tibble() %>%
-  select(-nature, -category) %>%
-  ggplot(aes(x = date, y = incident, color = factor(lhb))) +
-  geom_line() +
-  facet_wrap(vars(factor(region)), scales = "free_y") +
-  labs(x = "Date", y = "Incidents", color = "Health board") +
-  ggthemes::scale_color_colorblind() +
-  ggthemes::theme_few() +
-  theme(legend.position = "bottom")
-
-p_priority <- incident_gthf %>%
-  filter(!is_aggregated(region) & !is_aggregated(lhb) & !is_aggregated(category) & is_aggregated(nature)) %>%
-  as_tibble() %>%
-  select(-nature, -region) %>%
-  ggplot(aes(x = date, y = incident, color = factor(lhb))) +
-  geom_line() +
-  facet_wrap(vars(factor(category)), scales = "free_y") +
-  labs(x = "Date", y = "Incidents", color = "Health board") +
-  ggthemes::scale_color_colorblind() +
-  ggthemes::theme_few() +
-  theme(legend.position = "bottom")
-
-selected_nature <- c("CHESTPAIN", "STROKECVA", "BREATHING", "ABDOMINAL")
-
-p_nature_healthboard <- incident_gthf %>%
-  filter(!is_aggregated(region) & !is_aggregated(lhb) & !is_aggregated(category) & !is_aggregated(nature)) %>%
-  as_tibble() %>%
-  mutate(nature = as.character(nature)) %>%
-  filter(nature %in% selected_nature) %>%
-  group_by(date, nature, lhb) %>%
-  summarise(incident = sum(incident), .groups = "drop") %>%
-  ggplot(aes(x = date, y = incident, color = factor(lhb))) +
-  geom_line() +
-  facet_wrap(vars(factor(nature)), scales = "free_y") +
-  labs(x = "Date", y = "Incidents", color = "Health board") +
-  ggthemes::scale_color_colorblind() +
-  ggthemes::theme_few() +
-  theme(legend.position = "none")
-
-p_total
-p_total_control
-p_control
-p_priority
-p_nature_healthboard
-```
-
-
-```{r}
 #| label: fig-dataviz2
 #| dependson: "fig-feature"
 #| out.width: "100%"
@@ -187,6 +105,8 @@ p_total <- incident_gthf %>%
   filter(is_aggregated(region) & is_aggregated(lhb) & is_aggregated(category) & is_aggregated(nature)) %>%
   autoplot(incident) +
   labs(x = "", y = "Incidents") +
+  ggthemes::scale_color_colorblind() +
+  ggthemes::theme_few() +
   no_x_axis
 
 p_control <- incident_gthf %>%
@@ -198,6 +118,8 @@ p_control <- incident_gthf %>%
   ggplot(aes(x = date, y = incident, color = factor(region))) +
   geom_line() +
   labs(y = "Incidents", color = "Control")  +
+  ggthemes::scale_color_colorblind() +
+  ggthemes::theme_few() +
   no_x_axis
 
 p_board <- incident_gthf %>%
@@ -208,6 +130,8 @@ p_board <- incident_gthf %>%
   geom_line() +
   #facet_wrap(vars(factor(region)), scales = "free_y") +
   labs(y = "Incidents", color = "Health board") +
+  ggthemes::scale_color_colorblind() +
+  ggthemes::theme_few() +
   no_x_axis
 
 p_priority <- incident_gthf %>%
@@ -222,6 +146,7 @@ p_priority <- incident_gthf %>%
   geom_line() +
   scale_color_manual(values = c(Red="#ff3300", Amber = "#E69f00", Green="#009e73")) +
   labs(y = "Incidents", color = "Priority") +
+  ggthemes::theme_few() +
   no_x_axis
 
 selected_nature <- c("CHESTPAIN", "STROKECVA", "BREATHING", "ABDOMINAL")
@@ -234,7 +159,9 @@ p_nature <- incident_gthf %>%
   summarise(incident = sum(incident), .groups = "drop") %>%
   ggplot(aes(x = date, y = incident, color = nature)) +
   geom_line() +
-  labs(x = "Date", y = "Incidents", color = "Nature of incident")
+  labs(x = "Date", y = "Incidents", color = "Nature of incident")+
+  ggthemes::scale_color_colorblind() +
+  ggthemes::theme_few()
 
 p_total /
 p_control /

@@ -222,7 +222,7 @@ reconciliation \sep hierarchical time series \sep ambulance demand \sep
     attended incidents
 \end{keyword}
 \end{frontmatter}
-    \ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[breakable, borderline west={3pt}{0pt}{shadecolor}, enhanced, interior hidden, sharp corners, boxrule=0pt, frame hidden]}{\end{tcolorbox}}\fi
+    \ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[boxrule=0pt, frame hidden, sharp corners, enhanced, interior hidden, borderline west={3pt}{0pt}{shadecolor}, breakable]}{\end{tcolorbox}}\fi
 
 \hypertarget{sec-intro}{%
 \section{Introduction}\label{sec-intro}}
@@ -525,7 +525,7 @@ and then into 7 different healthboard at the bottom}
 
 \raisebox{-\height}{
 
-\includegraphics{../img/group.png}
+\includegraphics{/Users/bahmanrostami-tabar/Documents/1-research/1-research_papers/Work with Rob Hyndman/forecasting-emergency-medcine/img/group.png}
 
 }
 
@@ -695,15 +695,16 @@ model using the function \texttt{glm()} from the package in R, with the
 argument \texttt{family\ =\ poisson} to specify that we wish to fit a
 Poisson regression model.
 
-\textbf{Poisson Regression using tscount:} We consider another Poisson
+\textbf{Poisson Regression using tscount: } We consider another Poisson
 regression model that takes into account serial dependence in addition
 to covariates used in the GLM model. To that end, we use
-\texttt{tsglm()} function in \emph{tscount} package in R to model the
-attended incidents. The logarithmic link function is used to ensure that
-the parameter of Poisson distribution is always positive. This model can
-be estimated via maximization of the likelihood function based on
-Poisson mass function. The regression model captures the short range
-serial dependence by including the three order autoregressive terms.
+\texttt{tsglm()} function in \emph{tscount} package in R
+\citep{JSSv082i05} to model the attended incidents. The logarithmic link
+function is used to ensure that the parameter of Poisson distribution is
+always positive. This model can be estimated via maximization of the
+likelihood function based on Poisson mass function. The regression model
+captures the short range serial dependence by including the three order
+autoregressive terms.
 
 \textbf{Ensemble method:} we also use an ensemble method that combines
 forecasts generated from Naive, ETS, GLM and Poisson regression to form
@@ -781,7 +782,7 @@ attributes. While series could be strictly hierarchical or only grouped
 bases on some attributes, in many situation a more complex structures
 arise when attributes of interest are both nested and crossed, having
 hierarchical and grouped structure. This is also the case as discussed
-in Section~\ref{sec-data}
+in Section~\ref{sec-data}.
 
 \hypertarget{independent-base-forecast}{%
 \subsection{Independent (base
@@ -867,13 +868,200 @@ fable package in R in the experiment.
 \hypertarget{sec-result}{%
 \section{Results and discussion}\label{sec-result}}
 
-\hypertarget{point-forecast}{%
-\subsection{Point forecast}\label{point-forecast}}
+In this section, we compare the forecasting performance of Naive, ETS,
+GLM, Tscount and the ensemble model using base forecast and Minimum
+Trace (Mint) methods. We have also computed the forecast accuracy for
+Ordinary Least Square (OLS) and Weighted Least Square (WLS) approaches.
+However, they are not reported here because their accuracy is
+outperformed by Mint. We should also note that forecasts, and
+consequently their corresponding errors, are generated for the entire
+hierarchy and they could be reported at any level, if required.
 
-\hypertarget{probabilistic-forecast}{%
-\subsection{Probabilistic forecast}\label{probabilistic-forecast}}
+The overall forecasting performance is reported in
+Table~\ref{tbl-result}, in which the average forecast accuracy per
+model, method and the hierarchical level is presented. Reported forecast
+accuracy are averaged across all forecast horizons, rolling origins and
+series at each level. Table~\ref{tbl-result} presents both point and
+probabilistic forecast accuracy at total, control area, health board and
+bottom level series. Point forecast performance are reported using MASE
+and RMSSE in Table~\ref{tbl-result-1} and Table~\ref{tbl-result-2},
+respectively. Probabilistic forecast accuracy is reported using CRPS in
+Table~\ref{tbl-result-3}. The bold entries in each table identify a
+combination of method and model that performs best for the corresponding
+level (i.e.~each column), based on the smallest values of accuracy
+measures.
 
-\begin{figure}
+Table~\ref{tbl-result-1} shows that forecast reconciliation (i.e.~Mint)
+improves forecast accuracy at the higher levels of the hierarchy
+including total, control area and health board. However, it is does not
+result in accuracy improvement at the bottom level series, fro which
+base forecasts are more accurate. This might be due to the noisy
+structure of time series at the bottom level and the fact that base
+forecasts produced for the bottom of hierarchy are from well-specified
+forecasting models and therefore does not gain benefit from forecast
+reconciliation. Generally, if the bottom-level series are sufficiently
+smooth, base forecast is expected to outperform hierarchical
+reconciliation due to the better forecasts available at the level. It is
+also clear from Table~\ref{tbl-result-1} that the ensemble method
+improves forecast accuracy at total, control area and health board.
+However, this does not remain valid for bottom series where the Poisson
+regression by GLM outperforms other approaches.
+
+Table~\ref{tbl-result-2} also reports point forecast accuracy but using
+RMSSE. The outperformance of forecast reconciliation using Mint at
+higher levels of hierarchy is also confirmed by RMSSE. However, for the
+bottom series, we observe that the base forecasts generated by ETS are
+the most accurate, followed by its reconciliations forecasts.
+
+\begin{table}
+
+\caption{\label{tbl-result}Average forecast perfomance calculated on
+out-of-sample with time series cross validation applied to attended
+incident data. The best approach is highlighted in
+bold.}\begin{minipage}[t]{\linewidth}
+\subcaption{\label{tbl-result-1}Point forecast accuracy using MASE }
+
+{\centering 
+
+\tabularnewline
+
+\centering
+\begin{tabular}[t]{llllll}
+\toprule
+\multicolumn{2}{c}{ } & \multicolumn{4}{c}{MASE} \\
+\cmidrule(l{3pt}r{3pt}){3-6}
+method & model & Total & Control areas & Health boards & Bottom\\
+\midrule
+base & ensemble & 0.7543 & 0.8432 & 0.8648 & 1.004\\
+base & ets & 0.9360 & 0.9133 & 0.8884 & 1.031\\
+base & iglm & 0.8609 & 0.9083 & 0.9039 & \textbf{0.999}\\
+base & naiveecdf & 1.1396 & 1.0633 & 1.0389 & 1.017\\
+base & tscount & 0.8704 & 0.9109 & 0.9041 & 1.000\\
+\addlinespace
+mint & ensemble & \textbf{0.7332} & \textbf{0.8346} & \textbf{0.8621} & 2.251\\
+mint & ets & 0.8593 & 0.9001 & 0.8997 & 1.258\\
+mint & iglm & 0.8176 & 0.8805 & 0.8883 & 2.490\\
+mint & naiveecdf & 1.1395 & 1.0631 & 1.0389 & 2.648\\
+mint & tscount & 0.8218 & 0.8846 & 0.8913 & 2.516\\
+\bottomrule
+\end{tabular}
+
+}
+
+\end{minipage}%
+\newline
+\begin{minipage}[t]{\linewidth}
+\subcaption{\label{tbl-result-2}Point forecast accuracy using RMSSE }
+
+{\centering 
+
+\tabularnewline
+
+\centering
+\begin{tabular}[t]{llllll}
+\toprule
+\multicolumn{2}{c}{ } & \multicolumn{4}{c}{RMSSE} \\
+\cmidrule(l{3pt}r{3pt}){3-6}
+method & model & Total & Control areas & Health boards & Bottom\\
+\midrule
+base & ensemble & 0.7338 & 0.8335 & 0.8652 & 0.9885\\
+base & ets & 0.9465 & 0.9126 & 0.8915 & \textbf{0.9795}\\
+base & iglm & 0.8383 & 0.9073 & 0.9125 & 0.9958\\
+base & naiveecdf & 1.0559 & 1.0213 & 1.0188 & 1.0081\\
+base & tscount & 0.8446 & 0.9090 & 0.9114 & 1.0069\\
+\addlinespace
+mint & ensemble & \textbf{0.7153} & \textbf{0.8244} & \textbf{0.8621} & 1.2405\\
+mint & ets & 0.8510 & 0.9002 & 0.9027 & 0.9879\\
+mint & iglm & 0.8015 & 0.8814 & 0.8972 & 1.3379\\
+mint & naiveecdf & 1.0558 & 1.0211 & 1.0188 & 1.4429\\
+mint & tscount & 0.8020 & 0.8849 & 0.9003 & 1.3515\\
+\bottomrule
+\end{tabular}
+
+}
+
+\end{minipage}%
+\newline
+\begin{minipage}[t]{\linewidth}
+\subcaption{\label{tbl-result-3}Probabilistic forecast accuracy using CRPS }
+
+{\centering 
+
+\tabularnewline
+
+\centering
+\begin{tabular}[t]{llllll}
+\toprule
+\multicolumn{2}{c}{ } & \multicolumn{4}{c}{CRPS} \\
+\cmidrule(l{3pt}r{3pt}){3-6}
+method & model & Total & Control areas & Health boards & Bottom\\
+\midrule
+base & ensemble & 12.44 & 5.681 & 3.385 & 0.2421\\
+base & ets & 13.96 & 5.974 & 3.430 & 0.2422\\
+base & iglm & 14.49 & 6.061 & 3.488 & 0.2420\\
+base & naiveecdf & 30.35 & 10.887 & 5.445 & 0.3000\\
+base & tscount & 14.98 & 6.124 & 3.500 & 0.2429\\
+\addlinespace
+mint & ensemble & \textbf{12.09} & \textbf{ 5.664} & \textbf{3.383} & 0.2455\\
+mint & ets & 13.28 & 5.884 & 3.472 & \textbf{0.2412}\\
+mint & iglm & 13.35 & 5.812 & 3.394 & 0.2443\\
+mint & naiveecdf & 30.36 & 10.904 & 5.446 & 0.3103\\
+mint & tscount & 13.55 & 5.868 & 3.423 & 0.2483\\
+\bottomrule
+\end{tabular}
+
+}
+
+\end{minipage}%
+
+\end{table}
+
+Table~\ref{tbl-result-2} presents the accuracy of the forecast
+distributions measures by CRPS, which considers both forecasting
+reliability and interval sharpness. The smaller the value of CRPS, the
+better the comprehensive performance. We observe that forecast
+reconciliation results in forecast improvement, regardless of the
+hierarchical level. Ensemble method is also more accurate fore higher
+levels, but ETS performs better at the bottom level. While results show
+that forecast reconciliation does not improve point forecast at the
+bottom level, however Table~\ref{tbl-result-2} indicates that it
+generates more accurate forecasts than base method. The outperformance
+of probabilistic forecast reconciliation at the bottom level may
+highlight an important fact. The reconciliation method may improve
+forecast accuracy at certain number of quantiles at the tails of
+forecast distribution, which are critical for managing risks.
+
+Overall, our results indicate that forecast reconciliation using MinT
+method provides reliable forecasts, and all methods that reconcile using
+information at all levels of the forecast improve upon base
+(unreconciled) forecasts, except the bottom level series. For bottom
+series with less obvious patterns, base forecasts near center of
+forecast distribution might be more accurate, while forecast
+reconciliation using Mint could improve accuracy in the tails of of the
+distribution.
+
+In addition to the overall forecast accuracy presented in
+Table~\ref{tbl-result}, we also report the point and probabilistic
+forecast accuracy measures for each forecast horizon in
+Figure~\ref{fig-accuracy}. The figure focuses on the hierarchical levels
+important for decision making including total, control area and health
+board, however this could be calculated for any level. We only
+illustrate the results of the Mint method, given the its outperformance
+described in Table~\ref{tbl-result}. For the illustration purpose, we
+report the average weekly forecast accuracy instead of the daily
+forecast horizon (i.e.~84 days including freezed planning (7 weeks = 42
+days) plus future planing period (7 weeks = 42 days). Therefore, x-axis
+shows horizons from week 1 (h= 1,\ldots,7) to week 12 (h= 78,\ldots,84).
+The forecast horizon from week 7 to week 12 corresponds to the upcoming
+planning horizon, which is used by planners and decision making. For the
+point forecast, we can see that ensemble model performs much better than
+others regardless of forecast horizons. For the probabilistic forecasts,
+the distinction between forecasting models is less obvious. It is
+important to highlight that, all forecasting models outperform the Naive
+empirical distribution that is used as a Benchmark for both point and
+probabilsitic forecasts.
+
+\begin{figure}[H]
 
 {\centering \includegraphics[width=1\textwidth,height=\textheight]{main_files/figure-pdf/fig-accuracy-1.pdf}
 
@@ -887,6 +1075,63 @@ corresponding values for the training set.}
 
 \hypertarget{sec-conclusion}{%
 \section{Conclusion}\label{sec-conclusion}}
+
+Forecasting problems at Emergency Medical Services have often inherent
+hierarchical and grouped structures. For example, looking at time series
+of arrival calls in a clinical desk service, verified incidents, or
+attended incidents in a country, they could be disaggregated by various
+attributes of interest. Total demand in the country could be
+disaggregated by region, then within each region by health board, within
+each health board, by station/hospital, and so on down to the post code
+area. Alternative structure may arise when attributes of interest are
+crossed rather than nested. For example, the total demand could be
+disaggrgated by priority (e.g Red, Amber, Green) or nature of incidents.
+It is also natural to have a mixed structures, for example the total
+demand could be disaggregated by priority and also by health board.
+
+Despite the inherent hierarchical structure of the forecasting problem
+in EMS, the common practice is to produce point forecast for each time
+series independently. This practice may lead to the lack of coordination
+and possibly undesirable and conflicting outcomes. Furthermore, due to
+the asymmetric impact of resource allocation in this area, quantifying
+forecast uncertainty through probabilistic forecasts is also of value as
+it enables planners to manage associated risks. In this paper, we
+investigate the application of hierarchical forecasting methods for
+producing a probabilistic forecast of daily incident attended up to 84
+days ahead, using different forecasting methods.
+
+Our results indicates that forecast reconciliation can not only
+contribute to a more coordinated efforts through producing coherent
+forecasts when it comes to using forecasting to inform decisions in EMS,
+but also it can result in forecast accuracy improvement. Our proposed
+forecasting models combined with reconciliation approaches outperform
+the empirical distribution benchmark. We show that a substantial
+forecast improvement can be achieved at higher levels of hierarchical
+and grouped structure time series by applying forecast reconciliation
+methods. When a point forecast is of interest at the bottom level of
+series, we observe that reconciliation may not improve the forecast
+accuracy, if the bottom series are noisy and lack systematic patterns.
+However, forecast reconciliation may result in more forecast results for
+bottom series, if we are interested in the tails of forecast
+distribution rather than just center measures like mean (i.e.~point
+forecast). Producing consistent forecast are also crucial for informing
+planning activities, we also demonstrate that proposed models produce
+consistent forecasts across all forecast horizons. Therefore, we
+recommend that forecast recociliation approaches to be adopted for
+routine use in EMS, whenever hierarchical and/or grouped time series
+data need to be forecasted. Moreover, we found that using an ensemble
+forecasting model, combining al models developed in this paper, instead
+of using each individualy, works remarkably well for our mixed
+hierarchical \& grouped stucture.
+
+Further research could investigate the practical benefits of
+probabilistic hierarchical forecasting in EMS. Linking forecasts with
+its utilities (response time, resource utilisation, etc) can offer an
+opportunity to maximise benefits through more holistic planning
+approach. While, we generated count attend incident for the base
+forecast usign Poisson regression models, however the reconciles
+forecast is snot yet count. This could be also an avenue for further
+research.
 
 
 \renewcommand\refname{References}
