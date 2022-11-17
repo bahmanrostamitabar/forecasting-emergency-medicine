@@ -1,26 +1,29 @@
 # Experiment setup {#sec-experiment}
 
-We are interested in generating forecasts to inform the planning horizon of $ph= 42$ days, required by planners in the ambulance services trust. The forecast horizon in this study is $fh = 2 \times ph$ days ahead (2*42 days planning horizon). This is because the planning is generally frozen for $ph$ days and considering a forecast horizon of $ph$ days might not be helpful for planning. While forecasts are generated for $2 \times ph$ days ahead, performance evaluation is only assessed based on the last $ph$ days and not the $2 \times ph$ days. The forecasts are produced for the holdout of 365 days using time series cross-validation [@hyndman2021forecasting].
+We are interested in generating forecasts to inform the planning horizon of 42 days, required by planners in the ambulance service. The forecast horizon in this study is $2 \times 42 = 84$ days ahead, because the planning is generally frozen for 42 days and so forecasts of the next 42 days is not particularly helpful for planning. While forecasts are generated for 84 days ahead, performance evaluation is only assessed based on the last 42 days and not the whole forecast period. The forecasts are produced for various training and test sets using time series cross-validation [@hyndman2021forecasting].
 
-In the following section, we discuss the dataset, describe the forecasting methods used to generate base forecasts and present the point and probabilistic accuracy measures.
+In the following section, we discuss the dataset, describe the forecasting methods used to generate base forecasts, and present the point and probabilistic accuracy measures.
 
 ## Data {#sec-data}
 
-The dataset used in this study is from a major ambulance service trust in Great Britain. It contains information relating to the daily number of attended incidents from 1 October 2015 to 31 July 2019, disaggregated by nature of incidents, priority, the health board managing the service and the control area (or region). @fig-hierarchy depicts both the hierarchical and grouped structure of the data. @fig-hierarchy-1 illustrates the nested hierarchical structure based on control area and health board and @fig-hierarchy-2 shows the grouped structure by priority and the nature of incident.
+The dataset used in this study is from a major ambulance service in Great Britain. It contains information relating to the daily number of attended incidents from 1 October 2015 to 31 July 2019, disaggregated by nature of incidents, priority, the health board managing the service and the control area (or region). @fig-hierarchy depicts both the hierarchical and grouped structure of the data. @fig-hierarchy-1 illustrates the nested hierarchical structure based on control area and health board and @fig-hierarchy-2 shows the grouped structure by priority and the nature of incident.
 
 ```{r}
 #| label: fig-hierarchy
+#| cache: true
 #| out.width: "60%"
 #| fig-cap: "The hierarchical and grouped structure of attended incidents (ambulance demand)."
 #| fig-subcap:
-#|   - "Hierarchical structure: Attended incidents in all country is disaggregated into 3 control areas /regions and then into 7 different healthboard at the bottom"
-#|   - "Grouped structure:  Incidents could be grouped into priority (i.e. Red, Amber & Green) and the nature of attended incident (i.e. there are 35 different nature of incidents including chest pain , breathing problems, heart attack, stroke, and so on). The symbol * refers to the crossed attributes between hierarchical and grouped levels."
+#| - "Hierarchical structure: Attended incidents in all country is disaggregated into 3 control areas /regions and then into 7 different healthboard at the bottom"
+#| - "Grouped structure: Incidents could be grouped into priority (i.e. Red, Amber & Green) and the nature of attended incident (i.e. there are 35 different nature of incidents including chest pain , breathing problems, heart attack, stroke, and so on). The symbol * refers to the crossed attributes between hierarchical and grouped levels."
 #| layout: [[50],[-2], [38]]
 
 data <- data.frame(
   level1 = "Total",
-  level2 = c("Central & West", "Central & West", "Central & West",
-             "North", "South & East", "South & East", "South & East"),
+  level2 = c(
+    "Central & West", "Central & West", "Central & West",
+    "North", "South & East", "South & East", "South & East"
+  ),
   level3 = c("HD", "SB", "PO", "BC", "CV", "CT", "AB")
 )
 # transform it to a edge list!
@@ -39,9 +42,11 @@ ggraph::ggraph(mygraph, layout = "dendrogram", circular = FALSE) +
   ggraph::geom_edge_diagonal() +
   ggraph::geom_node_point(color = "#dddddd", size = 10) +
   ggraph::geom_node_text(
-    aes(label = c("All country",
-                  "Central & West", "North", "South & East",
-                  "HD", "SB", "PO", "BC", "CV", "CT", "AB"))
+    aes(label = c(
+      "All country",
+      "Central & West", "North", "South & East",
+      "HD", "SB", "PO", "BC", "CV", "CT", "AB"
+    ))
   ) +
   theme_void()
 
@@ -52,6 +57,7 @@ knitr::include_graphics(here::here("img/group.png"))
 
 ```{r}
 #| label: tbl-hierarchy
+#| cache: true
 #| tbl-cap: "Number of time series in each level for the hierarchical & grouped structure of attended incidents"
 agg_level <- tibble::tribble(
   ~Level, ~`Number of series`,
@@ -73,7 +79,7 @@ knitr::kable(agg_level, booktabs = TRUE, position = "left") %>%
   kable_classic(full_width = FALSE)
 ```
 
-Given the total number of time series, direct visual analysis is infeasible. Therefore, we first compute features of all 1530 time series [@m3pca] and display the strength of trend and weekly seasonality strength in @fig-feature. Each point represents one time series with the strength of trend in x-axis and the strength of seasonality in y-axis. It is clear that there are some series showing strong trends and/or seasonality, corresponding to series at the higher levels of the hierarchy. The majority of series show low trend and seasonality. These are time series belonging to the bottom series, series related to the nature of incidents for a given control, health board and priority level. Bottom series are dominated by noise with little or no systematic patterns.
+Given the total number of time series, direct visual analysis is infeasible. Therefore, we first compute features of all 1530 time series [@m3pca] and display the strength of trend and weekly seasonality strength in @fig-feature. Each point represents one time series with the strength of trend in x-axis and the strength of seasonality in y-axis. Both measures are on a scale of [0,1]. It is clear that there are some series showing strong trends and/or seasonality, corresponding to series at the higher levels of the hierarchy. The majority of series show low trend and seasonality. These are time series belonging to the bottom series, series related to the nature of incidents for a given control, health board and priority level. Bottom series are dominated by noise with little or no systematic patterns.
 
 ```{r}
 #| label: fig-feature
@@ -89,18 +95,25 @@ incident_gthf %>%
   labs(x = "Strength of trend", y = "Strength of weekly seasonality")
 ```
 
+<<<<<<< HEAD
 In addition to displaying the trend and seasonality features, we also visualize few time series at various levels of the aggregation. @fig-dataviz2 reveals different information such as trend, seasonality and noise. For example, some series depict seasonality and trend, whereas some other series report low volume of attended incidents and entropy, making them more volatile and difficult to forecast. At the level on nature of incidents combined with categories of other levels, there are many series that contain zeros with low counts. As such, the data set represents a diverse set of daily time series patterns.
+=======
+In addition to displaying the trend and seasonality features, we also visualize a few time series at various levels of the aggregation. @fig-dataviz2 reveals different information such as trend, seasonality and noise. For example, some series depict seasonality and trend, whereas some other series report low volume of attended incidents and entropy, making them more volatile and difficult to forecast. At the level on nature of incidents combined with categories of other levels, there are many series that contain zeros with low counts. As such, the data set represents a diverse set of daily time series patterns.
+>>>>>>> 381e457fe673e6ac7f38d4e094ae6dc6e44b165d
 
 ```{r}
 #| label: fig-dataviz2
+#| cache: true
 #| dependson: "fig-feature"
 #| out.width: "100%"
 #| fig-width: 8
 #| fig-height: 10
-#| fig-cap: "Time series of attended incidents at various levels."
-no_x_axis <- theme(axis.title.x=element_blank(),
-                   axis.text.x=element_blank(),
-                   axis.ticks.x=element_blank())
+#| fig-cap: "Time series of attended incidents at various levels. The panels show data from the whole country, by control area, by health board, by priority level, and by nature of incident. Only four of the 35 nature of incident categories are shown to avoid too much overplotting."
+no_x_axis <- theme(
+  axis.title.x = element_blank(),
+  axis.text.x = element_blank(),
+  axis.ticks.x = element_blank()
+)
 p_total <- incident_gthf %>%
   filter(is_aggregated(region) & is_aggregated(lhb) & is_aggregated(category) & is_aggregated(nature)) %>%
   autoplot(incident) +
@@ -117,9 +130,13 @@ p_control <- incident_gthf %>%
   summarise(incident = sum(incident), .groups = "drop") %>%
   ggplot(aes(x = date, y = incident, color = factor(region))) +
   geom_line() +
+<<<<<<< HEAD
   labs(y = "Incidents", color = "Control")  +
   ggthemes::scale_color_colorblind() +
   ggthemes::theme_few() +
+=======
+  labs(y = "Incidents", color = "Control") +
+>>>>>>> 381e457fe673e6ac7f38d4e094ae6dc6e44b165d
   no_x_axis
 
 p_board <- incident_gthf %>%
@@ -128,7 +145,7 @@ p_board <- incident_gthf %>%
   select(-nature, -category) %>%
   ggplot(aes(x = date, y = incident, color = factor(lhb))) +
   geom_line() +
-  #facet_wrap(vars(factor(region)), scales = "free_y") +
+  # facet_wrap(vars(factor(region)), scales = "free_y") +
   labs(y = "Incidents", color = "Health board") +
   ggthemes::scale_color_colorblind() +
   ggthemes::theme_few() +
@@ -138,13 +155,13 @@ p_priority <- incident_gthf %>%
   filter(is_aggregated(region) & is_aggregated(lhb) & !is_aggregated(category) & is_aggregated(nature)) %>%
   mutate(
     category = recode(category, RED = "Red", AMB = "Amber", GRE = "Green"),
-    category = factor(category, levels=c("Red","Amber","Green"))
+    category = factor(category, levels = c("Red", "Amber", "Green"))
   ) |>
   as_tibble() %>%
   select(-nature, -region) %>%
   ggplot(aes(x = date, y = incident, color = factor(category))) +
   geom_line() +
-  scale_color_manual(values = c(Red="#ff3300", Amber = "#E69f00", Green="#009e73")) +
+  scale_color_manual(values = c(Red = "#ff3300", Amber = "#E69f00", Green = "#009e73")) +
   labs(y = "Incidents", color = "Priority") +
   ggthemes::theme_few() +
   no_x_axis
@@ -164,37 +181,35 @@ p_nature <- incident_gthf %>%
   ggthemes::theme_few()
 
 p_total /
-p_control /
-p_board /
-p_priority /
-p_nature
+  p_control /
+  p_board /
+  p_priority /
+  p_nature
 ```
 
-
-We consider several forecasting models that account for the diverse patterns of the time series across the entire hierarchy. In developing the forecasting models, the time series of holidays are also used in addition to the attended incidents. We use public holidays, school holidays and Christmas Day and New Year's Day as predictors of incident attended. These type of holidays will  affect peoples' activities and may increase or decrease the number of attended incidents.
+We consider several forecasting models that account for the diverse patterns of the time series across the entire hierarchy. In developing the forecasting models, the time series of holidays are also used in addition to the attended incidents. We use public holidays, school holidays and Christmas Day and New Year's Day as predictors of incident attended. These type of holidays will affect peoples' activities and may increase or decrease the number of attended incidents.
 
 ## Forecasting methods
 
-Given the presence of various significant patterns in the past attended incidents, we consider three different forecasting models to generate the base forecasts. Once the base forecasts are produced, hierarchical and grouped time series methods are used to reconcile them across the all levels. We briefly discussed forecasting models in the following sections, and the hierarchical forecasting methods are discussed in @sec-htc.
+Given the presence of various significant patterns in the past attended incidents, we consider three different forecasting models to generate the base forecasts. Once the base forecasts are produced, hierarchical and grouped time series methods are used to reconcile them across all levels. We briefly discuss forecasting models in the following sections, and the hierarchical forecasting methods are discussed in @sec-htc.
 
-**Naive:** We start with a simple forecasting approach, assuming that the future days will be similar to past days. We use the empirical distribution of the past daily attended incidents to create the forecast distribution of future attended incidents. We consider the empirical distribution of the most recent year of historic data on a rolling basis to capture potential changes in behavior over time.\todo{Actually we use all the data.}
+**Naive:** We start with a simple forecasting approach, assuming that the future days will be similar to past days. We use the empirical distribution of the past daily attended incidents to create the forecast distribution of future attended incidents.
 
-**Exponential Smoothing State Space model (ETS):** ETS models [@hyndman2021forecasting] can combine trend, seasonality and error components in a time series through various forms such as additive, multiplicative or mixed. The trend component can be none ("N"), Additive ("A"), damped ("Ad") or multiplicative ("M"). The seasonality can be none ("N"), Additive ("A"), or multiplicative ("M"). The error term can also be additive ("A") or multiplicative ("M"). To forecast the attended incidents at each level, we use the `ETS()` function in the `fable` package [@fable2022] in R. To identify the best model for a given time series, the ETS function uses the corrected Akaike’s Information Criterion (AICc).
+**Exponential Smoothing State Space model (ETS):** ETS models [@hyndman2021forecasting] can combine trend, seasonality and error components in a time series through various forms that can be additive, multiplicative or mixed. The trend component can be none ("N"), Additive ("A") or damped ("Ad"); the seasonality can be none ("N"), Additive ("A"), or multiplicative ("M"); and the error term can be additive ("A") or multiplicative ("M"). To forecast the attended incidents at each level, we use the `ETS()` function in the `fable` package [@fable2022] in R. To identify the best model for a given time series, the `ETS` function uses the corrected Akaike’s Information Criterion (AICc).
 
-Despite the popularity and the relevance of automatic `ETS` in this study, however it may produce forecast distributions that are non-integer and include negative values, despite the number of attended incidents being integer and non-negative. When using `ETS`, a time series transformation approach could be used to generate strictly positive forecasts, although forecast distributions will still be non-integer. An alternative is to use  forecasting models that produce integer, non-negative forecasts. in the following section we present Generalized Linear Models (GLMs) and Poisson Regression to produce count base forecasts.
+Despite the popularity and the relevance of automatic `ETS` in this study, it may produce forecast distributions that are non-integer and include negative values, although the number of attended incidents is always integer and non-negative. When using `ETS`, a time series transformation approach could be used to generate strictly positive forecasts, although forecast distributions will still be non-integer. An alternative is to use forecasting models that produce integer, non-negative forecasts. In the following section we present Generalized Linear Models (GLMs) and Poisson time series regression to produce count base forecasts.
 
-**Generalized Linear Model (GLM):** GLMs are a family of models developed to extend the concept of linear regression models. They perform a regression by modeling the response variable as coming from a particular member of the exponential family, and then transforming the mean of the response so that the transformed mean is a linear function of the predictors. One of the models that is frequently used in practice to generate count forecasts is the Poisson regression. We will consider forecasting attended incidents using the covariates spline trend,  day of the week dummy variables (from Monday to Sunday), Fourier terms to capture yearly seasonality, public holidays (1 when is public holiday, 0 otherwise), school holidays (1 when is school holiday, 0 otherwise) and Christmas Day (1 when is Christmas Day, 0 otherwise) and New Year's Day (1 when is New Year's Day, 0 otherwise). We fit a Poisson regression model using the function `glm()` from the package in R, with the argument `family = poisson` to specify that we wish to fit a Poisson regression model.
+**Generalized Linear Model (GLM):** GLMs are a family of models developed to extend the concept of linear regression models to non-Gaussian distributions [@Faraway2016]. They model the response variable as a particular member of the exponential family, with the mean being a transformation of a linear function of the predictors. One of the models that is frequently used in practice to generate count forecasts is Poisson regression. We will consider forecasting attended incidents using the covariates spline trend, day of the week dummy variables (from Monday to Sunday), Fourier terms to capture yearly seasonality, public holidays (1 when is public holiday, 0 otherwise), school holidays (1 when is school holiday, 0 otherwise) and Christmas Day (1 when is Christmas Day, 0 otherwise) and New Year's Day (1 when is New Year's Day, 0 otherwise). We fit a Poisson regression model using the function `glm()` from the *stats* package in R, with the argument `family = poisson` to specify that we wish to fit a Poisson regression model with a log link function.
 
+**Poisson Regression using tscount:** We also consider another Poisson regression model that takes into account serial dependence, using the `tsglm()` function in the _tscount_ package in R [@JSSv082i05] to model the attended incidents. Again, the logarithmic link function is used to ensure that the parameter of Poisson distribution is always positive. This model captures the short range serial dependence by including three autoregressive terms, in addition to the same covariates that were used in the GLM model. To distinguish this from the previous GLM model, we will refer to this model as "tscount".
 
-**Poisson Regression using tscount: ** We consider another Poisson regression model that takes into account serial dependence in addition to covariates used in the GLM model. To that end, we use `tsglm()` function in _tscount_ package in R [@JSSv082i05] to model the attended incidents. The logarithmic link function is used to ensure that the parameter of Poisson distribution is always positive. This model can be estimated via maximization of the likelihood function based on Poisson mass function. The regression model captures the short range serial dependence by including the three order autoregressive terms.
-
-**Ensemble method:** we also use an ensemble method that combines forecasts generated from Naive, ETS, GLM and Poisson regression to form a mixture distribution [@combinations].
+**Ensemble method:** Finally, we use an ensemble method that combines the forecasts generated from the Naive, ETS, GLM and tscount models to form a mixture distribution [@combinations].
 
 <!-- add a sentence to describe how the point forecast and forecast distribution is created for the ensemble -->
 
 ## Performance evaluation
 
-To evaluate the performance of the various forecasting approaches, we split the data into a series of ten training and test sets. We use a time series cross-validation approach [@hyndman2021forecasting], with a forecast horizon of 84 days, and each training set expanding in 42-day steps. The first training set uses all data up to 2018-04-25, and the first test set uses the 84 days beginning 2018-04-26. The second training set uses all data up to 2018-06-06, with the second test set using the following 84 days. The largest training set ends on 2019-05-09, with the test set ending on 2019-07-31. Model development and hyper-parameter tuning is performed using the training data only. Forecasting performance is evaluated using both point and probabilistic error measures. While we compute forecast errors for the entire 12 weeks, we are most interested in the last 42 days of each test set, because that corresponds to  how forecasts are generated for planning in practice. Forecasting performance is evaluated using both point and probabilistic error measures. 
+To evaluate the performance of the various forecasting approaches, we split the data into a series of ten training and test sets. We use a time series cross-validation approach [@hyndman2021forecasting], with a forecast horizon of 84 days, and each training set expanding in 42-day steps. The first training set uses all data up to 2018-04-25, and the first test set uses the 84 days beginning 2018-04-26. The second training set uses all data up to 2018-06-06, with the second test set using the following 84 days. The largest training set ends on 2019-05-09, with the test set ending on 2019-07-31. Model development and hyper-parameter tuning is performed using the training data only. Forecasting performance is evaluated using both point and probabilistic error measures. While we compute forecast errors for the entire 12 weeks, we are most interested in the last 42 days of each test set, because that corresponds to how forecasts are generated for planning in practice. Forecasting performance is evaluated using both point and probabilistic error measures.
 
 Point forecast accuracy is measured via the Mean Squared Scaled Error (MSSE) and the Mean Absolute Scaled Error (MASE). The Mean Absolute Scaled Error (MASE) [@HK06] is calculated as:
 $$
@@ -203,9 +218,9 @@ $$
 where
 $$
   q_{j} = \frac{ e_{j}}
-    {\displaystyle\frac{1}{T-m}\sum_{t=m+1}^T |y_{t}-y_{t-m}|},
+ {\displaystyle\frac{1}{T-m}\sum_{t=m+1}^T |y_{t}-y_{t-m}|},
 $$
-and $e_{j}$ is the point forecast error for forecast horizon $j$, $m = 7$ (as we have daily seasonal series), $y_t$ is the observation for period $t$, and $T$ is the sample size (the number of observations used for training the forecasting model). The denominator is the mean absolute error of the seasonal naive method in the fitting sample of $T$ observations and is used to scale the error. Smaller MASE values suggest more accurate forecasts. Note that the measure is scale-independent, thus allowing us to average the results across series. 
+and $e_{j}$ is the point forecast error for forecast horizon $j$, $m = 7$ (as we have daily seasonal series), $y_t$ is the observation for period $t$, and $T$ is the sample size (the number of observations used for training the forecasting model). The denominator is the mean absolute error of the seasonal naive method in the fitting sample of $T$ observations and is used to scale the error. Smaller MASE values suggest more accurate forecasts. Note that the measure is scale-independent, thus allowing us to average the results across series.
 
 A related measure is MSSE [@hyndman2021forecasting], which uses squared errors rather than absolute errors:
 $$
@@ -214,9 +229,9 @@ $$ {#eq-RMSSE}
 where,
 $$
   q^2_{j} = \frac{ e^2_{j}}
-    {\displaystyle\frac{1}{T-m}\sum_{t=m+1}^T (y_{t}-y_{t-m})^2},
+ {\displaystyle\frac{1}{T-m}\sum_{t=m+1}^T (y_{t}-y_{t-m})^2},
 $$
-Again, this is scale-independent, and smaller MSSE values suggest more accurate forecasts. 
+Again, this is scale-independent, and smaller MSSE values suggest more accurate forecasts.
 
 To measure the forecast distribution accuracy, we calculate the Continuous Rank Probability Score [@gneiting2014probabilistic]. It rewards sharpness and penalizes miscalibration, so it measures overall performance of the forecast distribution.
 $$
@@ -226,4 +241,4 @@ where
 $$
   p_j = \int_{-\infty}^{\infty} \left(G_j(x) - F_j(x)\right)^2dx,
 $$
-where $G_j(x)$ is the forecasted probability distribution function for forecast horizon $j$, and $F_j(x)$ is the true probability distribution function for the same period. 
+where $G_j(x)$ is the forecasted probability distribution function for forecast horizon $j$, and $F_j(x)$ is the true probability distribution function for the same period.
