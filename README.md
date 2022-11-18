@@ -1,6 +1,6 @@
 # Forecasting emergency medicine
 
-Paper on Forecasting Welsh Ambulance Call-outs by Bahman Rostami-Tabar and Rob J Hyndman
+Paper on Forecasting Ambulance Call-outs by Bahman Rostami-Tabar and Rob J Hyndman
 
 ## Folders:
 
