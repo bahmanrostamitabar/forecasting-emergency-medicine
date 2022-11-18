@@ -27,7 +27,6 @@ keywords:
   - forecast reconciliation
   - ambulance demand
   - regression
-bibliography: bibliography.bib
 execute:
   echo: false
   message: false
@@ -45,49 +44,9 @@ format:
       cite-style: authoryear
 ---
 
-```{r}
-#| label: setup
-#| context: setup
-#| include: false
-library(fpp3)
-library(knitr)
-library(kableExtra)
-library(ggthemes)
-library(patchwork)
-# Color blind color palettes
-options(
-  ggplot2.discrete.colour = c("#D55E00", "#0072B2","#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442"),
-  ggplot2.discrete.fill = c("#D55E00", "#0072B2","#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442")
-)
-# Few theme
-ggplot2::theme_set(ggthemes::theme_few())
-```
+- **Funding information:** A funding awarded by Cardiff Business School allowed BRT to travel to Melbourne to visit RJH to discuss the research design, run the experiment and write the article.
+
+- **Author contributions:** BRT and RJH conceptualize the the study and designed the experiment. BRT obtained a funding to meet RHH at Monash University. BRT and RJH provided the analysis of the data. RJH developed the models; ML chaired the data oversight committee. BRT drafted the manuscript, and RJH contributed substantially to its revision. BRT takes responsibility for the paper as a whole.
 
 
-```{r intro, child="01-introduction.qmd"}
 
-```
-
-
-```{r literature, child="02-literature.qmd"}
-
-```
-
-
-```{r experiment, child="03-experiment.qmd"}
-
-```
-
-```{r htc, child="04-htsgts.qmd"}
-
-```
-
-```{r results, child="05-results.qmd"}
-
-```
-
-```{r conclusion, child="06-conclusion.qmd"}
-
-```
-
-# References {#references .unnumbered}
