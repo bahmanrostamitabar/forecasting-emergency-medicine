@@ -46,7 +46,4 @@ format:
 
 - **Funding information:** A funding awarded by Cardiff Business School allowed BRT to travel to Melbourne to visit RJH to discuss the research design, run the experiment and write the article.
 
-- **Author contributions:** BRT and RJH conceptualize the the study and designed the experiment. BRT obtained a funding to meet RHH at Monash University. BRT and RJH provided the analysis of the data. RJH developed the models; ML chaired the data oversight committee. BRT drafted the manuscript, and RJH contributed substantially to its revision. BRT takes responsibility for the paper as a whole.
-
-
-
+- **Author contributions:** BRT and RJH conceptualize the the study and designed the experiment. BRT obtained a funding to meet RHH at Monash University in Melbourne. BRT and RJH provided the analysis of the time series data. RJH developed forecasting models and hierarchical methods; BRT and RJH use R programming to conduct analysis. BRT drafted the manuscript, and RJH contributed substantially to its revision. BRT takes responsibility for the paper as a whole.
