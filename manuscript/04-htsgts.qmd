@@ -1,38 +1,37 @@
 # Hierarchical and grouped time series forecasting techniques {#sec-htc}
 
-There are many applications in the healthcare and in particular in EMS where a collection of time series is available. These series are generally hierarchically organized based on multiple levels such as area/region, health board and/or are aggregated at different levels in groups based on nature of demand, priority of demand or some other attributes. While series could be strictly hierarchical or only grouped bases on some attributes, in many situation a more complex structures arise when attributes of interest are both nested and crossed, having hierarchical and grouped structure. This is also the case as discussed in @sec-data.
+There are many applications in healthcare, and in particular in EMS, where a collection of time series is available. These series are generally hierarchically organized based on multiple levels such as area/region, health board and/or are aggregated at different levels in groups based on nature of demand, priority of demand, or some other attributes. While series could be strictly hierarchical or only grouped bases on some attributes, in many situation a more complex structures arise when attributes of interest are both nested and crossed, having hierarchical and grouped structure. This is also the case for our application as discussed in @sec-data.
 
 ## Independent (base forecast)
 
-A common practice in healthcare (and EMS) to predict hierarchical and grouped series relies on producing independent forecast, also refereed to as base forecast, typically by different teams as the need for such forecasts arise. This is also known as base forecast. We observe $n$ time series at time $t$, across the entire hierarchical and grouped structure, written as $y_t$. The base forecasts of $y_{T+h}$ given data $y_1,\dots,y_T$ are denoted by $\hat{y}_h$ for h steps-ahead for all $n$ series ($n=1530$ in this study). Forecasts generated in this way are nor coherent.
+A common practice in healthcare (and EMS) to predict hierarchical and grouped series relies on producing independent forecasts, also refereed to as base forecasts, typically by different teams as the need for such forecasts arise. We observe $n$ time series at time $t$, across the entire hierarchical and grouped structure, written as $y_t$. The base forecasts of $y_{T+h}$ given data $y_1,\dots,y_T$ are denoted by $\hat{y}_h$ for $h$ steps-ahead for all $n$ series ($n=1530$ in this study). Forecasts generated in this way are not coherent.
 
 ## Reconciliation methos
 
-Traditionally, alternative approaches to produce coherent forecasts for hierarchical and grouped time series involves using bottom-up and top-down methods by generating forecasts at a single level and then aggregate or disaggregate. Top-down requires having a unique structure to disaggregated forecasts generated at top level by proportions. However, given that we have multiple grouped attributes combined with the hierarchical structure, there is no unique way to disaggregate top forecast. Hence the top-down can not be used in this case, so either we can do some kind of reconciliation or must define our own top-down method for each hierarchy. The recommended approach is to use reconciliation.
-In the following sections, we first discuss some notations and then present bottom-up and forecast reconciliation approach used in this study to generate coherent forecasts.
+Traditionally, approaches to produce coherent forecasts for hierarchical and grouped time series involve using bottom-up and top-down methods by generating forecasts at a single level and then aggregating or disaggregating. Top-down methods require having a unique hierarchical structure to disaggregate forecasts generated at the top level by proportions. However, given that we have multiple grouped attributes combined with the hierarchical structure, there is no unique way to disaggregate top forecasts. Hence the top-down cannot be used in our application. The recommended approach is to use forecast reconciliation [@hyndman2011optimal]. In the following sections, we first discuss some notation, and then present bottom-up and forecast reconciliation approaches used in this study to generate coherent forecasts.
 
 ### Notations
 
-Let $b_t$ be a vector of $n_b$ "bottom-level" time series at time $t$, and let $a_t$ be a corresponding vector of $n_a = n-n_b$ aggregated time series, where
-
+Let $\bm{b}_t$ be a vector of $n_b$ "bottom-level" time series at time $t$, and let $\bm{a}_t$ be a corresponding vector of $n_a = n-n_b$ aggregated time series, where
 $$
- a_t = Ab_t
+  \bm{a}_t = \bm{A}\bm{b}_t,
 $$
-
-and $A$ is the $n_a\times n_b$ "aggregation" matrix specifying how the bottom-level series $b_t$ are to be aggregated to form $a_t$. The full vector of time series is given by
+and $\bm{A}$ is the $n_a\times n_b$ "aggregation" matrix specifying how the bottom-level series $\bm{b}_t$ are to be aggregated to form $\bm{a}_t$. The full vector of time series is given by
 $$
- y_t = \begin{bmatrix}a_t \\b_t\end{bmatrix}.
+ \bm{y}_t = \begin{bmatrix}\bm{a}_t \\\bm{b}_t\end{bmatrix}.
 $$
 This leads to the $n\times n_b$ "summing" or "structural" matrix given by
 $$
-  S = \begin{bmatrix}A \\ I_{n_b}\end{bmatrix}
+  \bm{S} = \begin{bmatrix}\bm{A} \\ \bm{I}_{n_b}\end{bmatrix}
 $$
-such that $y_t = Sb_t$.
+such that $\bm{y}_t = \bm{S}\bm{b}_t$.
 
 ### Bottom-up (BU) and linear reconciliation methods
 
-Bottom-Up is a simple approach to generate coherent forecasts. It first involves creating the base forecasts for the bottom level series. These forecasts are then aggregated to the upper levels which results in generating coherent forecasts. BU approach can capture the dynamics of the series at the bottom level, but they may be noisy and difficult to forecast as well. BU approach is limited on using only forecasts at the bottom level and does not utilize all the information available across the hierarchical and grouped structure. Forecast reconciliation approaches fill this gap and combine and reconcile all the base forecasts in order to produce coherent forecasts.
+Bottom-Up is a simple approach to generate coherent forecasts. It involves first creating the base forecasts for the bottom level series (i.e., the most disaggregated series). These forecasts are then aggregated to the upper levels which naturally results in coherent forecasts. The BU approach can capture the dynamics of the series at the bottom level, but these series may be noisy and difficult to forecast. The approach using only the data at the most disaggregated level, and so does not utilize all the information available across the hierarchical and grouped structure.
 
-Given the summing matrix and base forecasts, bottom-up and linear reconciliation methods can be written as $\tilde{y}_h = SG\hat{y}_h$ for different matrices $G$.
-
-Optimal reconciled forecasts are obtained with $G=(S'W^{-1}S)^{-1}W^{-1}$, or $\tilde{y}_h = M\hat{y}_h,$ where the $n\times n$ "mapping" matrix is given by $M = S(S'W^{-1}S)^{-1}W^{-1},$ where $\hat{y}_h$ are the $h$-step forecasts of $y_{T+h}$ given data to time $T$, and $W$ is an $n \times n$ positive definite matrix. Different choices for $W$ lead to different solutions such as Ordinary Least Square (OLS) , Weighted Least Square (WLS) and Minimum Trace (MinT) [@WicEtAl2019]. We use the implementation of these methods in the fable package in R in the experiment.
+Forecast reconciliation approaches fill this gap by combining and reconciling all the base forecasts in order to produce coherent forecasts. Linear reconciliation methods can be written [@WicEtAl2019] as
+$$
+  \tilde{\bm{y}}_h = \bm{S}(\bm{S}'\bm{W}^{-1}\bm{S})^{-1}\bm{W}^{-1}\hat{\bm{y}}_h,
+$$
+where $\bm{W}$ is an $n \times n$ positive definite matrix, and $\hat{\bm{y}}_h$ contains the $h$-step forecasts of $\bm{y}_{T+h}$ given data to time $T$. Different choices for $\bm{W}$ lead to different solutions such as Ordinary Least Squares (OLS), Weighted Least Squares (WLS) and Minimum Trace (MinT). We use the implementation of these methods in the fable package in R in the experiment.
