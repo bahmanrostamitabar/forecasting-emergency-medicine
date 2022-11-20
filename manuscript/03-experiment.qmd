@@ -183,7 +183,7 @@ We consider several forecasting models that account for the diverse patterns of 
 
 ## Forecasting methods
 
-Given the presence of various significant patterns in the past attended incidents, we consider three different forecasting models to generate the base forecasts. Once the base forecasts are produced, hierarchical and grouped time series methods are used to reconcile them across all levels. We briefly discuss forecasting models in the following sections, and the hierarchical forecasting methods are discussed in @sec-htc.
+Given the presence of various patterns in the past attended incidents, we consider three different forecasting models to generate the base forecasts. Once the base forecasts are produced, hierarchical and grouped time series methods are used to reconcile them across all levels. We briefly discuss forecasting models in the following sections, and the hierarchical forecasting methods are discussed in @sec-htc.
 
 **Naive:** We start with a simple forecasting approach, assuming that the future days will be similar to past days. We use the empirical distribution of the past daily attended incidents to create the forecast distribution of future attended incidents.
 
@@ -197,7 +197,6 @@ Despite the popularity and the relevance of automatic `ETS` in this study, it ma
 
 **Ensemble method:** Finally, we use an ensemble method that combines the forecasts generated from the Naive, ETS, GLM and TSGLM models to form a mixture distribution [@combinations].
 
-<!-- add a sentence to describe how the point forecast and forecast distribution is created for the ensemble -->
 
 ## Performance evaluation
 

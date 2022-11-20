@@ -15,9 +15,9 @@ crps <- readr::read_rds(here::here("results/crps.rds")) |>
 
 In this section, we compare the forecasting performance of the Naive, ETS, GLM and TSGLM models along with the ensemble, using base forecast and Minimum Trace (MinT) reconciliation methods. We have also computed the forecast accuracy for Ordinary Least Square (OLS) and Weighted Least Square (WLS) approaches, along with bottom up forecasting. However, they are not reported here because their accuracy is outperformed by MinT. We should also note that forecasts, and consequently their corresponding errors, are generated for the entire hierarchy and they could be reported at any level, if required. But to save space, we have reported only the top level (Total), the bottom level, and the levels corresponding to Control areas and Health boards. The latter are chosen because this is where decision-making takes place, so these forecasts are the most important.
 
-The overall forecasting performance is reported in @tbl-result, in which the average forecast accuracy over horizons 43--84 days (corresponding to the planning horizon) is presented per model, method and the hierarchical level. Reported forecast accuracy are averaged across all forecast horizons, rolling origins and series at each level. @tbl-result presents both point and probabilistic forecast accuracy at total, control area, health board and bottom level series. Point forecast performance are reported using MASE and MSSE in @tbl-result-1  and @tbl-result-2, respectively. Probabilistic forecast accuracy is reported using CRPS in @tbl-result-3. The bold entries in each table identify a combination of method and model that performs best for the corresponding level (i.e. each column), based on the smallest values of accuracy measures.
+The overall forecasting performance is reported in @tbl-result, in which the average forecast accuracy over horizons 43--84 days (corresponding to the planning horizon) is presented per model, method and the hierarchical level. Reported forecast accuracy are averaged across all forecast horizons, rolling origins and series at each level. @tbl-result presents both point and probabilistic forecast accuracy at total, control area, health board and bottom level series. Point forecast performance are reported using MASE and MSSE in @tbl-result-1  and [-@tbl-result-2], respectively. Probabilistic forecast accuracy is reported using CRPS in @tbl-result-3. The bold entries in each table identify a combination of method and model that performs best for the corresponding level (i.e. each column), based on the smallest values of accuracy measures.
 
-@tbl-result-1 and 2b show that forecast reconciliation (i.e. MinT) improves forecast accuracy at the higher levels of the hierarchy including total, control area and health board. However, it is does not result in accuracy improvement at the bottom level series, for which base forecasts are more accurate. This might be due to the noisy structure of time series at the bottom level, and possibly due to very different patterns in the aggregated series. It is also clear from @tbl-result-1 that the ensemble method improves forecast accuracy at total, control area and health board. However, this does not remain valid for bottom series where different individual methods perform best, depending on the accuracy measure.
+@tbl-result-1 and [-@tbl-result-2] show that forecast reconciliation (i.e. MinT) improves forecast accuracy at the higher levels of the hierarchy including total, control area and health board. However, it is does not result in accuracy improvement at the bottom level series, for which base forecasts are more accurate. This might be due to the noisy structure of time series at the bottom level, and possibly due to very different patterns in the aggregated series. It is also clear from @tbl-result-1 that the ensemble method improves forecast accuracy at total, control area and health board. However, this does not remain valid for bottom series where different individual methods perform best, depending on the accuracy measure.
 
 ```{r}
 #| label: tbl-result
@@ -129,14 +129,22 @@ acc_summary <- accuracy |>
     series %in% c("Total", "Control areas", "Health boards"),
     method == "mint", model != "qcomb"
   ) |>
+  mutate(model = case_when(
+    model == "naiveecdf" ~ "Naive",
+    model == "ets" ~  "ETS",
+    model == "tscount" ~ "TSGLM",
+    model == "iglm" ~ "GLM",
+    model == "ensemble" ~ "Ensemble"
+  )) |> 
   mutate(
     measure = factor(measure, levels = c("mase","msse","crps"), labels = c("MASE","MSSE","CRPS")),
     series = factor(series, levels = c("Total", "Control areas", "Health boards")),
-    model = factor(model, levels = c("naiveecdf", "ets", "tscount", "iglm", "ensemble")),
+    model = factor(model, levels = c("Naive", "ETS", "TSGLM", "GLM", "Ensemble")),
     week = factor(trunc((h - 1) / 7) + 1)
   ) |>
   group_by(week, model, measure, series) |>
-  summarise(accuracy = mean(accuracy), .groups = "drop")
+  summarise(accuracy = mean(accuracy), .groups = "drop") 
+  
 
 acc_summary |>
   ggplot(aes(x = week, y = accuracy, group = model, col = model)) +

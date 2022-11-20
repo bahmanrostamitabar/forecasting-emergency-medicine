@@ -12,7 +12,7 @@ Traditionally, approaches to produce coherent forecasts for hierarchical and gro
 
 ### Notations
 
-Let $\bm{b}_t$ be a vector of $n_b$ "bottom-level" time series at time $t$, and let $\bm{a}_t$ be a corresponding vector of $n_a = n-n_b$ aggregated time series, where
+Let $\bm{b}_t$ be a vector of $n_b$ _bottom-level_ time series at time $t$, and let $\bm{a}_t$ be a corresponding vector of $n_a = n-n_b$ aggregated time series, where
 $$
   \bm{a}_t = \bm{A}\bm{b}_t,
 $$
