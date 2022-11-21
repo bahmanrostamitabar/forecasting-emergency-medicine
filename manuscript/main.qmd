@@ -34,12 +34,17 @@ execute:
   warning: false
   cache: true
 pdf-engine: pdflatex
+prefer-html: true
 format:
+  docx:
+    number-sections: true
   elsevier-pdf:
     keep-tex: true
-    include-in-header: 
-      - text: \usepackage{bm}
-      - file: preamble.tex
+    include-in-header:
+      text: |
+        \usepackage{todonotes,mathtools,bm,amsmath,mathpazo}
+        \mathtoolsset{showonlyrefs}
+        \setlength{\parindent}{0cm}
     journal:
       name: Annals of Emergency Medicine
       formatting: preprint

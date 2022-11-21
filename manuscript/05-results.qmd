@@ -21,7 +21,7 @@ The overall forecasting performance is reported in @tbl-result, in which the ave
 
 ```{r}
 #| label: tbl-result
-#| tbl-cap: "Average forecast perfomance calculated on the test sets at forecast horizons $h=43,\\dots,84$ days, with time series cross validation applied to attended incident data. The best approach is highlighted in bold."
+#| tbl-cap: "Average forecast performance calculated on the test sets at forecast horizons $h=43,\\dots,84$ days, with time series cross validation applied to attended incident data. The best approach is highlighted in bold."
 #| tbl-subcap:
 #|   - "Point forecast accuracy using MASE"
 #|   - "Point forecast accuracy using MSSE"
@@ -32,7 +32,7 @@ set_to_bold <- function(table) {
   for(i in 3:6) {
     best <- which.min(table[[i]])
     table[[i]] <- sprintf(table[[i]], fmt="%1.3f")
-    table[[i]][best] <- cell_spec(table[[i]][best], "latex", bold=TRUE)
+    table[[i]][best] <- cell_spec(table[[i]][best], bold=TRUE)
   }
   return(table)
 }
