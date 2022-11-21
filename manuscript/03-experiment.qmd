@@ -1,6 +1,6 @@
 # Experiment setup {#sec-experiment}
 
-We are interested in generating forecasts to inform the planning horizon of 42 days, required by planners in the ambulance service. The forecast horizon in this study is $2 \times 42 = 84$ days ahead, because the planning is generally frozen for 42 days and so forecasts of the next 42 days is not particularly helpful for planning. While forecasts are generated for 84 days ahead, performance evaluation is only assessed based on the last 42 days and not the whole forecast period. The forecasts are produced for various training and test sets using time series cross-validation [@hyndman2021forecasting].
+Planners in the ambulance service work with a planning horizon of 6 weeks. That is, planning is generally frozen for the next 42 days, so any forecasts will only affect plans for the time period beyond the next 42 days. Consequently, the forecast horizon in this study is $2 \times 42 = 84$ days ahead, with performance evaluation assessed based on the last 42 days and not the whole forecast period. The forecasts are produced for various training and test sets using time series cross-validation [@hyndman2021forecasting].
 
 In the following section, we discuss the dataset, describe the forecasting methods used to generate base forecasts, and present the point and probabilistic accuracy measures.
 
@@ -14,8 +14,8 @@ The dataset used in this study is from a major ambulance service in Great Britai
 #| out.width: "60%"
 #| fig-cap: "The hierarchical and grouped structure of attended incidents (ambulance demand)."
 #| fig-subcap:
-#| - "Hierarchical structure: Attended incidents in all country is disaggregated into 3 control areas and then into 7 different healthboard"
-#| - "Grouped structure: Incidents could be grouped into priority (i.e. Red, Amber & Green) and the nature of attended incident (i.e. there are 35 different nature of incidents including chest pain , breathing problems, heart attack, stroke, and so on). The symbol * refers to the crossed attributes between hierarchical and grouped levels."
+#| - "Hierarchical structure: Attended incidents in the whole country are disaggregated into 3 control areas and then into 7 different healthboards."
+#| - "Grouped structure: Incidents could be grouped into priority (i.e. Red, Amber & Green) and the nature of attended incident (i.e. there are 35 different nature of incidents including chest pain, breathing problems, heart attack, stroke, and so on). The symbol * refers to the crossed attributes between hierarchical and grouped levels."
 #| layout: [[50],[-2], [38]]
 
 data <- data.frame(
@@ -104,7 +104,7 @@ In addition to displaying the trend and seasonality features, we also visualize 
 #| out.width: "100%"
 #| fig-width: 8
 #| fig-height: 10
-#| fig-cap: "Time series of attended incidents at various levels. The panels show data from the whole country, by control area, by health board, by priority level, and by nature of incident. Only four of the 35 nature of incident categories are shown to avoid too much overplotting."
+#| fig-cap: "Time series of attended incidents at various levels. The panels show data from the whole country (top panel), by control area, by health board, by priority level, and by nature of incident. Only four of the 35 nature of incident categories are shown to avoid too much overplotting."
 no_x_axis <- theme(
   axis.title.x = element_blank(),
   axis.text.x = element_blank(),
@@ -187,7 +187,7 @@ Given the presence of various patterns in the past attended incidents, we consid
 
 **Naive:** We start with a simple forecasting approach, assuming that the future days will be similar to past days. We use the empirical distribution of the past daily attended incidents to create the forecast distribution of future attended incidents.
 
-**Exponential Smoothing State Space model (ETS):** ETS models [@hyndman2021forecasting] can combine trend, seasonality and error components in a time series through various forms that can be additive, multiplicative or mixed. The trend component can be none ("N"), Additive ("A") or damped ("Ad"); the seasonality can be none ("N"), Additive ("A"), or multiplicative ("M"); and the error term can be additive ("A") or multiplicative ("M"). To forecast the attended incidents at each level, we use the `ETS()` function in the `fable` package [@fable2022] in R. To identify the best model for a given time series, the `ETS` function uses the corrected Akaike’s Information Criterion (AICc).
+**Exponential Smoothing State Space model (ETS):** ETS models [@hyndman2021forecasting] can combine trend, seasonality and error components in a time series through various forms that can be additive, multiplicative or mixed. The trend component can be none ("N"), Additive ("A") or damped ("Ad"); the seasonality can be none ("N"), Additive ("A"), or multiplicative ("M"); and the error term can be additive ("A") or multiplicative ("M"). To forecast the attended incidents at each level, we use the `ets()` function in the `forecast` package [@Rforecast;@HK08] in R. To identify the best model for a given time series, the `ets` function uses the corrected Akaike’s Information Criterion (AICc).
 
 Despite the popularity and the relevance of automatic `ETS` in this study, it may produce forecast distributions that are non-integer and include negative values, although the number of attended incidents is always integer and non-negative. When using `ETS`, a time series transformation approach could be used to generate strictly positive forecasts, although forecast distributions will still be non-integer. An alternative is to use forecasting models that produce integer, non-negative forecasts. In the following section we present Generalized Linear Models (GLMs) and Poisson time series regression to produce count base forecasts.
 

@@ -8,7 +8,7 @@ A common practice in healthcare (and EMS) to predict hierarchical and grouped se
 
 ## Reconciliation methos
 
-Traditionally, approaches to produce coherent forecasts for hierarchical and grouped time series involve using bottom-up and top-down methods by generating forecasts at a single level and then aggregating or disaggregating. Top-down methods require having a unique hierarchical structure to disaggregate forecasts generated at the top level by proportions. However, given that we have multiple grouped attributes combined with the hierarchical structure, there is no unique way to disaggregate top forecasts. Hence the top-down cannot be used in our application. The recommended approach is to use forecast reconciliation [@hyndman2011optimal]. In the following sections, we first discuss some notation, and then present bottom-up and forecast reconciliation approaches used in this study to generate coherent forecasts.
+Traditionally, approaches to produce coherent forecasts for hierarchical and grouped time series involve using bottom-up and top-down methods by generating forecasts at a single level and then aggregating or disaggregating. Top-down methods require having a unique hierarchical structure to disaggregate forecasts generated at the top level by proportions. However, given that we have multiple grouped attributes combined with the hierarchical structure, there is no unique way to disaggregate top forecasts. Hence the top-down approach cannot be used in our application. The recommended approach is to use forecast reconciliation [@hyndman2011optimal]. In the following sections, we first discuss some notation, and then present bottom-up and forecast reconciliation approaches used in this study to generate coherent forecasts.
 
 ### Notations
 
@@ -28,7 +28,7 @@ such that $\bm{y}_t = \bm{S}\bm{b}_t$.
 
 ### Bottom-up (BU) and linear reconciliation methods
 
-Bottom-Up is a simple approach to generate coherent forecasts. It involves first creating the base forecasts for the bottom level series (i.e., the most disaggregated series). These forecasts are then aggregated to the upper levels which naturally results in coherent forecasts. The BU approach can capture the dynamics of the series at the bottom level, but these series may be noisy and difficult to forecast. The approach using only the data at the most disaggregated level, and so does not utilize all the information available across the hierarchical and grouped structure.
+Bottom-Up is a simple approach to generate coherent forecasts. It involves first creating the base forecasts for the bottom level series (i.e., the most disaggregated series). These forecasts are then aggregated to the upper levels which naturally results in coherent forecasts. The BU approach can capture the dynamics of the series at the bottom level, but these series may be noisy and difficult to forecast. The approach uses only the data at the most disaggregated level, and so does not utilize all the information available across the hierarchical and grouped structure.
 
 Forecast reconciliation approaches fill this gap by combining and reconciling all the base forecasts in order to produce coherent forecasts. Linear reconciliation methods can be written [@WicEtAl2019] as
 $$
