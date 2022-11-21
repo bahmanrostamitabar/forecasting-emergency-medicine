@@ -14,7 +14,7 @@ The dataset used in this study is from a major ambulance service in Great Britai
 #| out.width: "60%"
 #| fig-cap: "The hierarchical and grouped structure of attended incidents (ambulance demand)."
 #| fig-subcap:
-#| - "Hierarchical structure: Attended incidents in all country is disaggregated into 3 control areas /regions and then into 7 different healthboard at the bottom"
+#| - "Hierarchical structure: Attended incidents in all country is disaggregated into 3 control areas and then into 7 different healthboard"
 #| - "Grouped structure: Incidents could be grouped into priority (i.e. Red, Amber & Green) and the nature of attended incident (i.e. there are 35 different nature of incidents including chest pain , breathing problems, heart attack, stroke, and so on). The symbol * refers to the crossed attributes between hierarchical and grouped levels."
 #| layout: [[50],[-2], [38]]
 
