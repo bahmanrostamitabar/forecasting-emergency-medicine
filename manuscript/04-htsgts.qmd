@@ -6,7 +6,7 @@ There are many applications in healthcare, and in particular in EMS, where a col
 
 A common practice in healthcare (and EMS) to predict hierarchical and grouped series relies on producing independent forecasts, also refereed to as base forecasts, typically by different teams as the need for such forecasts arise. We observe $n$ time series at time $t$, across the entire hierarchical and grouped structure, written as $y_t$. The base forecasts of $y_{T+h}$ given data $y_1,\dots,y_T$ are denoted by $\hat{y}_h$ for $h$ steps-ahead for all $n$ series ($n=1530$ in this study). Forecasts generated in this way are not coherent.
 
-## Reconciliation methos
+## Reconciliation methods
 
 Traditionally, approaches to produce coherent forecasts for hierarchical and grouped time series involve using bottom-up and top-down methods by generating forecasts at a single level and then aggregating or disaggregating. Top-down methods require having a unique hierarchical structure to disaggregate forecasts generated at the top level by proportions. However, given that we have multiple grouped attributes combined with the hierarchical structure, there is no unique way to disaggregate top forecasts. Hence the top-down approach cannot be used in our application. The recommended approach is to use forecast reconciliation [@hyndman2011optimal]. In the following sections, we first discuss some notation, and then present bottom-up and forecast reconciliation approaches used in this study to generate coherent forecasts.
 
