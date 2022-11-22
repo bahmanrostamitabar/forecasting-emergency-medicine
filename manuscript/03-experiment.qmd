@@ -53,7 +53,7 @@ ggraph::ggraph(mygraph, layout = "dendrogram", circular = FALSE) +
 knitr::include_graphics(here::here("img/group.png"))
 ```
 
-@tbl-hierarchy also displays the structure of data with the total number of series at each level. At the top level, we have the total attended incidents for the country. We can split these total attended incidents by control area, by health board, by priority or by nature of incident. There are 3 control areas breakdown by 7 local health boards. Attended incident data are categorized into 3 priority classes of red, amber and green. There are also 35 different nature of incidents such as chest pain, stroke, breathing problem, etc. In total, across all levels of disaggregation, there are 1530 time series.
+@tbl-hierarchy also displays the structure of data with the total number of series at each level. At the top level, we have the total attended incidents for the country. We can split these total attended incidents by control area, by health board, by priority or by nature of incident. There are 3 control areas breakdown by 7 local health boards. Attended incident data are categorized into 3 priority classes of red, amber, and green. There are also 35 different nature of incidents such as chest pain, stroke, breathing problem, etc. In total, across all levels of disaggregation, there are 1530 time series.
 
 ```{r}
 #| label: tbl-hierarchy
@@ -95,7 +95,7 @@ incident_gthf %>%
   labs(x = "Strength of trend", y = "Strength of weekly seasonality")
 ```
 
-In addition to displaying the trend and seasonality features, we also visualize few time series at various levels of the aggregation. @fig-dataviz2 reveals different information such as trend, seasonality and noise. For example, some series depict seasonality and trend, whereas some other series report low volume of attended incidents and entropy, making them more volatile and difficult to forecast. At the level on nature of incidents combined with categories of other levels, there are many series that contain zeros with low counts. As such, the data set represents a diverse set of daily time series patterns.
+In addition to displaying the trend and seasonality features, we also visualize few time series at various levels of the aggregation. @fig-dataviz2 reveals different information such as trend, seasonality, and noise. For example, some series depict seasonality and trend, whereas some other series report low volume of attended incidents and entropy, making them more volatile and difficult to forecast. At the level on nature of incidents combined with categories of other levels, there are many series that contain zeros with low counts. As such, the data set represents a diverse set of daily time series patterns.
 
 ```{r}
 #| label: fig-dataviz2
@@ -179,7 +179,7 @@ p_total /
   p_nature
 ```
 
-We consider several forecasting models that account for the diverse patterns of the time series across the entire hierarchy. In developing the forecasting models, the time series of holidays are also used in addition to the attended incidents. We use public holidays, school holidays and Christmas Day and New Year's Day as predictors of incident attended. These type of holidays will affect peoples' activities and may increase or decrease the number of attended incidents.
+We consider several forecasting models that account for the diverse patterns of the time series across the entire hierarchy. In developing the forecasting models, the time series of holidays are also used in addition to the attended incidents. We use public holidays, school holidays and Christmas Day and New Year's Day as predictors of incident attended. These types of holidays will affect peoples' activities and may increase or decrease the number of attended incidents.
 
 ## Forecasting methods
 
@@ -187,7 +187,7 @@ Given the presence of various patterns in the past attended incidents, we consid
 
 **Naive:** We start with a simple forecasting approach, assuming that the future days will be similar to past days. We use the empirical distribution of the past daily attended incidents to create the forecast distribution of future attended incidents.
 
-**Exponential Smoothing State Space model (ETS):** ETS models [@hyndman2021forecasting] can combine trend, seasonality and error components in a time series through various forms that can be additive, multiplicative or mixed. The trend component can be none ("N"), Additive ("A") or damped ("Ad"); the seasonality can be none ("N"), Additive ("A"), or multiplicative ("M"); and the error term can be additive ("A") or multiplicative ("M"). To forecast the attended incidents at each level, we use the `ets()` function in the `forecast` package [@Rforecast;@HK08] in R. To identify the best model for a given time series, the `ets` function uses the corrected Akaike’s Information Criterion (AICc).
+**Exponential Smoothing State Space model (ETS):** ETS models [@hyndman2021forecasting] can combine trend, seasonality, and error components in a time series through various forms that can be additive, multiplicative or mixed. The trend component can be none ("N"), Additive ("A") or damped ("Ad"); the seasonality can be none ("N"), Additive ("A"), or multiplicative ("M"); and the error term can be additive ("A") or multiplicative ("M"). To forecast the attended incidents at each level, we use the `ets()` function in the `forecast` package [@Rforecast;@HK08] in R. To identify the best model for a given time series, the `ets` function uses the corrected Akaike’s Information Criterion (AICc).
 
 Despite the popularity and the relevance of automatic `ETS` in this study, it may produce forecast distributions that are non-integer and include negative values, although the number of attended incidents is always integer and non-negative. When using `ETS`, a time series transformation approach could be used to generate strictly positive forecasts, although forecast distributions will still be non-integer. An alternative is to use forecasting models that produce integer, non-negative forecasts. In the following section we present Generalized Linear Models (GLMs) and Poisson time series regression to produce count base forecasts.
 
