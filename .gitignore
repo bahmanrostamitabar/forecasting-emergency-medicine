@@ -20,3 +20,5 @@
 *.synctex.gz
 elsarticle-harv.bst
 elsarticle.cls
+.Rdata
+.httr-oauth

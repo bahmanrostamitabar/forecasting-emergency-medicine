@@ -48,7 +48,7 @@ format:
         \mathtoolsset{showonlyrefs}
         \setlength{\parindent}{0cm}
     journal:
-      name: Annals of Emergency Medicine
+      name: Journal of Service Research
       formatting: preprint
       model: 3p
       cite-style: authoryear
@@ -101,7 +101,6 @@ ggplot2::theme_set(ggthemes::theme_few())
 
 # Reproducibility {.unnumbered}
 
-R code to produce all results in this paper is available at <https://github.com/bahmanrostamitabar/hierarchical_forecasting_EMS>
-
+R code to produce all results in this paper is available at 
 
 # References {#references .unnumbered}

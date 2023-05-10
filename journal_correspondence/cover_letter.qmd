@@ -9,16 +9,16 @@ author:
         country: United Kingdom
         postal-code: CF10 3EU
 address:
-  - Prof. Donald M. Yealy
+  - Prof. Ming-Hui Huang
   - Editor-in-Chief
-  - Annals of Emergency Medicine
+  -  Journal of Service Research
 subject: Paper submission for peer review
-opening: "Dear Prof. Yealy,"
+opening: "Dear Prof. Huang,"
 closing: "Yours sincerely"
 format: letter-pdf
 ---
 
-We would be grateful if you could consider for publication our manuscript entitled _Hierarchical Time Series Forecasting in Emergency Medical Services_ as an Original Research article in the Annals of Emergency Medicine.
+We would be grateful if you could consider for publication our manuscript entitled _Hierarchical Time Series Forecasting in Emergency Medical Services_ as an Original Research article in the Journal of Service Research.
 
 Time series forecasting problems at Emergency Medical Services have often inherent hierarchical and grouped structures. For example, the ambulance demand (e.g. arrival calls, verified incidents, attended incidents) in the country could be disaggregated by region, then within each region by health board, within each health board, by station/hospital, and so on down to the postcode area. Demand could also be disaggrgated by other attributes such as priority (e.g Red, Amber, Green) or the nature of incidents. Despite the popularity of such data structure in EMS, the common practice is to produce point forecasts for each time series independently and ignore the structure. This practice may lead to a lack of coordination and possibly undesirable and conflicting outcomes. Practices also rely on point forecasts, which do not acknowledge forecast uncertainty.
 

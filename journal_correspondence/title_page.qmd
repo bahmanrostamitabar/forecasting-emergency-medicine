@@ -41,7 +41,7 @@ format:
         \usepackage{mathpazo}
         \setlength{\parindent}{0cm}
     journal:
-      name: Annals of Emergency Medicine
+      name: Journal of Service Research
       formatting: preprint
       model: 3p
       cite-style: authoryear
