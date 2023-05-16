@@ -317,13 +317,13 @@ _– (check with Rob) for the linear reconciliation method $\tilde{y}_h = S(S'W^
 _– for the positive definite matrix W, what are the intuitions and strengths for the different solutions (Ordinary Least Squares (OLS), Weighted Least Squares (WLS) and Minimum Trace (MinT))? And how is W defined under these options respectively?_
 
 
-**Response:** Thank you or your comment. 
+**Response: (Check with Rob)** Thank you or your comment. 
 
 Ordinary Least Squares (OLS) is the simplest and most commonly used method for estimating the parameters in linear regression models. In this approach, the estimation of W is based on the assumption that all the errors have equal variance. Hence, W is simply defined as the identity matrix multiplied by a constant factor. The intuitions behind OLS is that it minimizes the sum of squared residuals between the observed and predicted values of the dependent variable, assuming the errors are normally distributed.
 
-Weighted Least Squares (WLS): WLS is an extension of OLS where the variance of the errors is assumed to be heteroscedastic, i.e., different for each observation. In this approach, W is defined as a diagonal matrix with the reciprocal of the variance of the errors on the diagonal. The intuitions behind WLS is that it assigns higher weight to observations with smaller variance of the errors, resulting in a better fit for the entire data set.
+Weighted Least Squares (WLS) is an extension of OLS where the variance of the errors is assumed to be heteroscedastic, i.e., different for each observation. In this approach, W is defined as a diagonal matrix with the reciprocal of the variance of the errors on the diagonal. The intuitions behind WLS is that it assigns higher weight to observations with smaller variance of the errors, resulting in a better fit for the entire data set.
 
-Minimum Trace (MinT): MinT is a method that aims to minimize the trace of W, subject to the constraint that W is a positive definite matrix. It is often used in cases where the number of variables is larger than the number of observations, resulting in an underdetermined system of equations. In this approach, W is defined as the inverse of the covariance matrix of the errors. The intuitions behind MinT is that it shrinks the estimates towards zero and produces more stable results, particularly when the data has multicollinearity.
+Minimum Trace (MinT) is a method that aims to minimize the trace of W, subject to the constraint that W is a positive definite matrix. It is often used in cases where the number of variables is larger than the number of observations, resulting in an underdetermined system of equations. In this approach, W is defined as the inverse of the covariance matrix of the errors. The intuitions behind MinT is that it shrinks the estimates towards zero and produces more stable results, particularly when the data has multicollinearity.
 
 _Comment 11: Minor comments_
 _Note that line count includes equations, and excludes (sub)section titles. Minus sign indicates counting from bottom._
