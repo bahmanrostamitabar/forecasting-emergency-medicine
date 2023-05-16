@@ -225,8 +225,7 @@ _General comment: This paper proposes hierarchical algorithms to forecast the Em
 
 _Comment 1: Section 3.2 of Forecasting methods covers the independent/base forecasting methods, and Section 3.3 of Performance evaluation is designed for both base and grouped forecasts. I would suggest to look further into the logic structure of Sections 3 and 4. One advice may be to push back the overview of base forecast algorithms (Section 3.2) to a new section before the main contribution of grouped forecasts in Section 4._
 
-**Response:** We appreciate your suggestion to improve the structure of the paper. We will consider moving the overview of base forecast algorithms to a separate section before Section 4 to provide a clearer delineation between the independent and hierarchical/grouped forecasts. This will help readers better understand the logic structure of the paper and facilitate easier navigation of the content.
-
+**Response:** We appreciate your suggestion to improve the structure of the paper. We have moved the overview of base forecast to a separate subsection before Section 4 to provide a clearer delineation between the independent and hierarchical/grouped forecasts. This can help readers better understand the logic structure of the paper and facilitate easier navigation of the content.
 
 
 _Comment 2: In Section 3.2, the author builds the base forecasting models._
@@ -234,95 +233,84 @@ _Comment 2-1: There should be more detail added to ETS and Ensemble method. What
 
 **Response:**  We agree that providing more detail on the ETS and Ensemble methods, as well as other methods, would enhance the understanding of our proposed approach. In the revised version, we have added more detailed explanations on these methods, including their mathematical formulations, assumptions, and limitations. We will also provide additional references to the Ensemble method and further explanations on how it is applied in our study.
 
-
 _Comment 2-2: In ETS, there are trend, seasonality and a property about the error terms. Have all combination options been considered? If not, how has it been evaluated?_
-
 
 **Response:** Since we had a large number of time series (1530), we did not manually evaluate all possible combinations of trend, seasonality, and error terms in ETS for each time series. Instead we used an automatic algorithm to select the most appropriate model for each time series based on statistical criteria such as Akaike's Information Criterion (AIC). The automatic algorithm considered a mix of different component forms, depending on the specific characteristics of each time series. We have added additional details on the automatic algorithm used in the revised version of the paper.
 
 _Comment 2-3: GLM and TSGLM are regression approaches, sometimes with exogenous variables like holiday indicators. I would suggest to include explicit model formulas (probably R-formatted like y ~ a + b + c) to list all the input predictors._
 
 
-**Response:**
-
+**Response:** Thank you for your comment. We agree that it would be helpful to readers to have more information about the specific input predictors used in the GLM and TSGLM models. To address this, we have revised the manuscript to include the model formulas in R-format, as you suggested.
 
 
 _Comment 3: Section 3.3 stakes different measures for performance evaluation. I suggest to give more detailed references opposed to just the paper, i.e., equation numbers._
 
 
-**Response:**
+**Response:** Thank you, we have revised the manuscript to include a more detailed reference for each equation used in the performance evaluation. Specifically, we have included the paper citation along with the equation number, so that readers can easily locate the relevant equation and read more about its derivation and interpretation.
 
 
-
-_Comment 4: The author extracts the trend and weekly seasonality of the data, and demonstrates their strengths in Figure 2. The follow-up analysis and forecast depend on the Poisson assumption most of the time due to the nature of non-negative count time series data._
-
-
-**Response:**
+_Comment 4: The author extracts the trend and weekly seasonality of the data, and demonstrates their strengths in Figure 2. The follow-up analysis and forecast depend on the Poisson assumption most of the time due to the nature of non-negative count time series data. Is there any verification conducted to confirm the Poisson patterns in the data? Are over-dispersion and/or under-dispersion going to be potential issues? It may suffice to include statements from relative references._
 
 
+**Response:** Thank you for your follow-up comment regarding the Poisson assumption used in our analysis. Regarding the potential issues of over-dispersion and under-dispersion, we acknowledge in the manuscript that these can be concerns when using Poisson regression models and included references to relevant literature that discuss these issues in more detail. We use the Poisson distribution to model the count data in our analysis. This is because the Poisson distribution is appropriate for count data that are non-negative and discrete, and it produces strictly positive forecasts. This is particularly important for some of the time series in our dataset, especially the bottom-level series, which have low volume and are more susceptible to producing negative forecasts if other distributions were used. Additionally, we have developed a flexible framework that can incorporate any forecasting model, but it is important to note that the intention of this paper is not to provide a comprehensive list of models. Instead, our focus is on demonstrating the usefulness of our framework for incorporating base forecasts generated by any model and producing hierarchical coherent forecasts.
 
-_Comment 5: Is there any verification conducted to confirm the Poisson patterns in the data? Are over-dispersion and/or under-dispersion going to be potential issues? It may suffice to include statements from relative references._
-
-
-**Response:**
+_Comment 5: ETS seems to have the disadvantage of not producing integer valued forecasts. There are certainly other ways to do forecasting for integer valued time series. What about INAR or INGARCH? On the other hand, tsglm() seems to allow for those options but it is not clear what has been used._
 
 
+**Response:** We used ETS models because they are relatively simple, easy to understand, widely used, and well-established in the time series forecasting literature. They are particularly useful for modeling time series with multiple components, such as trend, seasonality, and/or cycles, and they are flexible and can be adapted to time series data with different patterns. This makes them appropriate for this study given the various patterns in the 1530 time series we analyzed.
 
-_Comment 6: ETS seems to have the disadvantage of not producing integer valued forecasts. There are certainly other ways to do forecasting for integer valued time series. What about INAR or INGARCH? On the other hand, tsglm() seems to allow for those options but it is not clear what has been used._
+We acknowledge that ETS models do not necessarily produce integer-valued forecasts, which may be a disadvantage for certain applications. However, we note that rounding the forecasts can be a practical solution to address this issue. The impact of rounding on forecast accuracy depends on the level of hierarchy and the scale of the data. For high volume demand situations, rounding effects may be negligible, and forecast accuracy calculations can ignore integer effects. However, low volume demand settings, such as forecasting at the bottom level of the hierarchy, may be more susceptible to rounding effects.
 
+Furthermore, we did consider other models specifically designed for integer-valued time series, such as TSGLM and GLM. We acknowledge that there are other methods available, such as INAR or INGARCH models. However, the intention of this study was not to provide a comprehensive list of forecasting models, but rather to develop a framework that can incorporate any forecasting model.
 
-**Response:**
+_Comment 6 (Check with Rob): How to understand the stationarity of the time series? Is it going to impact the analysis if the errors are assumed additive and the heteroscedasticity is present?_
 
+**Response:** Thank you for your question. 
 
+Thank you for your comment. Stationarity refers to the property of a time series where its statistical properties (such as mean, variance) remain constant over time. In practical terms, a stationary time series has consistent behavior over time, regardless of when it is observed. To assess the stationarity of a time series we could extrcat features based on a test such as the Kwiatkowski-Phillips-Schmidt-Shin (KPSS) test. These tests check whether a time series has a unit root, which is a stochastic trend that causes non-stationarity. Some models, such as ETS models, are designed to work with non-stationary time series. GLM and TSGLM can handle non-stationary time series by allowing for time-varying parameters that can capture changes in the underlying chnages of the data over time. They also allow for the inclusion of external regressors in the model, which can further help to capture different patterns in the data and be adapted to a wide range of time series , including non-stationary data.
 
-_Comment 7: How to understand the stationarity of the time series? Is it going to impact the analysis if the errors are assumed additive and the heteroscedasticity is present?_
+Regarding your question about the impact of additive errors and heteroscedasticity on the analysis, in general, assuming additive errors does not require stationarity of the time series. However, if the time series is not stationary, the estimation of the error terms may be biased. Heteroscedasticity, which refers to the changing variance of the error terms over time, may also affect the estimation of the model parameters and the forecast accuracy that can be addressed by using a Box-Cox transformation.
 
+_Comment 7: And if the errors are assumed multiplicative in a Poisson sense, what are the possible adjustments to verify or handle the stationarity before forecasting?_
 
-**Response:**
-
-
-
-_Comment 8: And if the errors are assumed multiplicative in a Poisson sense, what are the possible adjustments to verify or handle the stationarity before forecasting?_
-
-
-**Response:**
+**Response:**  Thank you for the question A possible adjustment could be applying the Box-Cox transformation before the forecasting. Also, alternative models such as the Negative Binomial Regression may be more appropriate. Both GLM and TSGLM allow for the use of  Negative Binomial, if required.
 
 
+_Comment 8: The author introduces the algorithm for estimating the distributional forecasts of the data, and measures the accuracy using CRPS. With the distributional forecasts, how do the confidence intervals behave?_
 
-_Comment 9: The author introduces the algorithm for estimating the distributional forecasts of the data, and measures the accuracy using CRPS._
+**Response:** Thank you. The performance of the distributional forecasts can be evaluated using the CRPS, which is a scoring rule that account for the shape and width of the predictive distribution. The CRPS rewards sharpness and calibration by assigning lower scores to forecasts with sharper distributions, and to forecasts that are well-calibrated. Thus, it is a metric that combines both sharpness and miscalibration into a single score, making it a useful tool for evaluating the performance of probabilistic forecasts.
 
-
-**Response:**
-
-
-
-_– With the distributional forecasts, how do the confidence intervals behave?_
+Calibration refers to the statistical consistency between the distributional forecasts and the observations. It measures how well the predicted probabilities match the actual probabilities. On the other hand, sharpness refers to the concentration of the forecast distributions --- a sharp forecast distribution results in narrow prediction intervals, indicating high confidence in the forecast. A model is well-calibrated if the predicted probabilities match the actual probabilities, and it is sharp if it is confident in its predictions.
 
 
-**Response:**
+_Comment 9: As mentioned in P20 L14, the algorithm gives more accurate forecast results concerning the tails of the distribution. How does such outperformance visualized regarding this statement, and what to be read from the forecast distributions for risk management?_
 
 
-_– As mentioned in P20 L14, the algorithm gives more accurate forecast results concerning the tails of the distribution. How does such outperformance visualized regarding this statement, and what to be read from the forecast distributions for risk management?_
-
-
-**Response:**
-
+**Response:** Thank you for your comment. In response to your question, we have included an additional visualization to demonstrate the tails of the forecast distribution for a given time series. While the center of the distribution may represent the most likely scenario, it may not necessarily capture the full range of potential outcomes that can affect decision-making at EMS. Therefore, a better understanding of the tails of the distribution can provide more valuable insights for managers to better prepare for and mitigate risks. Therefore, the accuracy of the tail forecasts can be critical for emergency planning and response.
 
 _Comment 10: The author briefly explains the model setup and estimation routines. The conciseness of the paper is greatly appreciated. In the meantime, an appendix chapter or a separate file of supplementary material might be expected for brief elaboration on some ideas and technical derivations. For example:_
 
-**Response:**
+**Response:** Thank you for your comment and feedback. We appreciate your suggestion of adding supplementary material to provide more technical details and elaboration on some ideas. To respond to your queries, we have included the GitHub repository which includes all materials including data and R codes used in the paper. Additionally, we have included further explanation in the revisions of the paper.
 
 _-how are the strengths of trend and weekly seasonality estimated and scaled to [0, 1]?_
 
-**Response:**
+**Response:** Thank you for the comment. In this paper, the strength of trend and seasonality were calculated using the "STL" (Seasonal and Trend decomposition using Loess) decomposition method, which is a widely used and flexible method for decomposing time series data into trend, seasonal, and remainder components. The decomposition of a time series  $y_t$ is written as $y_t = T_t + S_{t} + R_t$, where $T_t$ is the smoothed trend component, $S_t$ is the seasonal component and $R_t$ is a remainder component. The strength of trend is defined as:
+$$F_T = \max\left(0, 1 - \frac{\text{Var}(R_t)}{\text{Var}(T_t+R_t)}\right)$$
+For strongly trended data, the seasonally adjusted data should have much more variation than the remainder component. Therefore Var($R_t$)/Var($T_t+R_t$) should be relatively small. But for data with little or no trend, the two variances should be approximately the same.
+
+The strength of seasonality is defined similarly:
+$$F_S = \max\left(0, 1 - \frac{\text{Var}(R_t)}{\text{Var}(S_{t}+R_t)}\right).$$
+ series with seasonal strength  $F_S$, close to 0 exhibits almost no seasonality, while a series with strong seasonality will have $F_S$ close to 1 because Var($R_t$) will be much smaller than Var($S_t+R_t$).
 
 
 _– for the aggregated time series a_t = A b_t, how is the ‘aggregation’ matrix A determined?_
 
 
-**Response:**
+**Response:** Thank you. The aggregation matrix A is determined by the structure of the hierarchy. It maps the bottom-level time series to the corresponding higher-level time series, and recursively aggregates the time series at each level up to the top-level time series. The matrix A is typically predefined based on the structure of the hierarchy, and it remains fixed throughout the forecasting process. (Maybe we can show an example)
 
-_– for the linear reconciliation method $\tilde{y}_h = S(S'W^{-1}S)^{-1}W^{-1}\hat{y}_h,$ how is it derived?_
+
+
+_– (check with Rob) for the linear reconciliation method $\tilde{y}_h = S(S'W^{-1}S)^{-1}W^{-1}\hat{y}_h,$ how is it derived?_
 
 
 **Response:**
@@ -331,64 +319,70 @@ _– for the linear reconciliation method $\tilde{y}_h = S(S'W^{-1}S)^{-1}W^{-1}
 _– for the positive definite matrix W, what are the intuitions and strengths for the different solutions (Ordinary Least Squares (OLS), Weighted Least Squares (WLS) and Minimum Trace (MinT))? And how is W defined under these options respectively?_
 
 
-**Response:**
+**Response:** Thank you or your comment. 
+
+Ordinary Least Squares (OLS) is the simplest and most commonly used method for estimating the parameters in linear regression models. In this approach, the estimation of W is based on the assumption that all the errors have equal variance. Hence, W is simply defined as the identity matrix multiplied by a constant factor. The intuitions behind OLS is that it minimizes the sum of squared residuals between the observed and predicted values of the dependent variable, assuming the errors are normally distributed.
+
+Weighted Least Squares (WLS): WLS is an extension of OLS where the variance of the errors is assumed to be heteroscedastic, i.e., different for each observation. In this approach, W is defined as a diagonal matrix with the reciprocal of the variance of the errors on the diagonal. The intuitions behind WLS is that it assigns higher weight to observations with smaller variance of the errors, resulting in a better fit for the entire data set.
+
+Minimum Trace (MinT): MinT is a method that aims to minimize the trace of W, subject to the constraint that W is a positive definite matrix. It is often used in cases where the number of variables is larger than the number of observations, resulting in an underdetermined system of equations. In this approach, W is defined as the inverse of the covariance matrix of the errors. The intuitions behind MinT is that it shrinks the estimates towards zero and produces more stable results, particularly when the data has multicollinearity.
 
 _Comment 11: Minor comments_
 _Note that line count includes equations, and excludes (sub)section titles. Minus sign indicates counting from bottom._
 
-**Response:**
+**Response:** Thank you for providing minor comment. We have corrected the text accordingly.
 
 
 _- P13, L1 & L3, it might be good to not indent after the equation if the paragraph does not end. The same concern applies to the other equations in the paper._
 
-**Response:**
+**Response:** Thank you for your comment. We have removed the indentation after equations in paragraphs that do not end.
 
 
 _- P14, L3, for the Continuous Rank Probability Score, how is the true probability distribution function F_j (x) determined?_
 
+**Response:** Thank you. CRPS measures the difference between the forecasted cumulative distribution function (CDF) and the actual CDF of the forecast variable. The CRPS is computed as the integral of the squared difference between the forecasted CDF and the actual CDF, over the range of possible values. To provide a more specific example, suppose we have a time series of ambulance demand, and we want to forecast the demand for the next day The true probability in each day is the probability of observing the actual demand, which is always 1. The CRPS measures the difference between the forecasted probability distribution of the demand and the actual probability distribution of the demand. The yellow area in the plot of the forecasted CDF and the actual CDF highlights this difference.
 
-**Response:**
-
+```{r, out.width= "60%"}
+knitr::include_graphics("figure/crps.jpg")
+```
 
 _- P17, L-6, “it is does” → “it does”._
 
 
-**Response:**
+**Response:** This is now corrected.
 
 
 _- P18, L8, “Mint” → “MinT”._
 
-**Response:**
+**Response:** The typo has been fixed now.
 
 _In References, try to maintain a consistent format in terms of the inclusion (e.g., P22, L10 & L-4 & L-1) or exclusion of the url links._
 
-**Response:**
+**Response:** Thank you for your suggestion.Throughout, we ensured that a consistent format was maintained in the References section regarding the inclusion or exclusion of URL links.
 
 
 _P26, Figure 1(a) overlaps with Figure 1(b) and turns to be cropped at the right side._
 
 
-**Response:**
+**Response:** The issue has been fixed now.
 
 
 _In Table 2, the top row (of column names) is unclear with the line change (“areas” and “boards”)._
 
-**Response:**
-
+**Response:** Thank you. We have reviewed Table 2 revised the table to make the column names more clear and consistent with Table 1.
 
 # Reviewer 3
 
 _General comments: This paper looks at improving forecasts in emergency medical services by exploiting the hierarchical and grouped nature of the different timeseries that related to different levels of decision making. The paper is generally well written and the dataset is interesting. The abstract and introduction also have several elements that triggered my interest as a reader. Unfortunately, the rest of the paper did not live up to some of my expectations, which I will detail below._
 
-**Response:**
-
+**Response:** We are glad to hear that the abstract and introduction piqued your interest as a reader and that you found the dataset engaging. However, we are sorry to learn that other aspects of the paper did not meet your expectations. Your feedback is valuable to us, and we have carefully considered it in our revision to address your concerns. Thank you for bringing these points to our attention.
 
 _Comment 1: Method_
 _Comment 1-a. The middle and backend of the paper feel more like a forecasting exercise. In many ways this paper reads more as a paper for a forecasting journal then a paper for JSR. Also, in this forecasting exercise many relevant choices, such as how the trend and seasonality enter the model happen in a black box for the reader, whereas the impact of these choices can be substantial, I think. For example, for a bottom level time series an additive seasonality component might be beneficial, but in its role for reconciling the higher level series it might be that a multiplicative term would have been better._
 
-**Response:**
+**Response:** Thank you for your feedback. We completely understand your concerns and acknowledge that transparency in our modeling process is crucial, and we would like to provide further information on how different forms of the trend and seasonality enter the model. For the exponential smoothing model (ETS), using an automatic algorithm, specifically the `ETS()` function in the fable package of R, to select the most appropriate model for each time series based on statistical criteria such as Akaike's Information Criterion (AIC). This approach allowed us to select the most appropriate components based on the individual characteristics of each time series, which was necessary given the large number of time series (1530) in our dataset. As a result, a mix of different component forms (additive or multiplicative) were used, depending on the specific characteristics of each time series at different level of the hierarchy. We hope that this information provides a better understanding of our approach to modeling.
 
-_Comment 1-b. Related to point 1.a I was also wondering if an integrated estimation method would not be beneficial. This might go at the expense of reproducibility, as those models might rely less on built-in functions of R. I want to be careful in making concrete suggestions, but my first intuition would be to consider a Dynamic Hierarchical Linear Model (e.g., Gamerman and Migon 1993; Neelamegham and Chintagunta 2004). The transfer functions in these models could be based on the “summing” or “structural” matrices the authors mention in section 4.2.1. The authors could still keep the two-step approach as alternative to show how it differs from an integrated approach. If differences are small, the latter could still serve as a reproducibility/managerial tool._
+_Comment 1-b (Rob to check). Related to point 1.a I was also wondering if an integrated estimation method would not be beneficial. This might go at the expense of reproducibility, as those models might rely less on built-in functions of R. I want to be careful in making concrete suggestions, but my first intuition would be to consider a Dynamic Hierarchical Linear Model (e.g., Gamerman and Migon 1993; Neelamegham and Chintagunta 2004). The transfer functions in these models could be based on the “summing” or “structural” matrices the authors mention in section 4.2.1. The authors could still keep the two-step approach as alternative to show how it differs from an integrated approach. If differences are small, the latter could still serve as a reproducibility/managerial tool._
 
 **Response:**
 
@@ -397,20 +391,40 @@ _Comment 2: Implications_
 _Comment 2-a: The implications of the paper are not clear to me. The authors mention that the performance is better for the ensemble method, but they do not show what the impact of this is. Looking at Figure 4 it does not seem like the ensemble method is performing a lot better than the other non-naïve methods. The paper would benefit from some economic interpretation of the better performances. For example, how much more efficient can allocation of medical services be? This comes back to my point 1.a that currently it feels more like a forecasting exercise, but misses the actual impact on the medical services._
 
 
-**Response:**
+**Response:** Thank you for your valuable feedback. We appreciate your comment and agree that providing an economic interpretation of the improved performances would greatly enhance the significance of our findings. We acknowledge that a forecast serves a purpose beyond its own existence and ideally it should enable the best utility such as the efficiency of allocating medical services, response time, and cost, informed by the forecast.
 
+While we recognize the importance of evaluating the quality of a forecast by considering its impact on decision-making processes, it is crucial to address the data requirements and methodology involved in measuring this impact. To comprehensively assess the implications of forecast, it would be necessary to have access to further data beyond ambulance demand across the hierarchy such as different decision types, capacity data, constraint in the decision system, etc. This additional data would provide insights into the specific decisions that rely on the forecasts, allowing for a more accurate evaluation of the impact on medical services. Unfortunately, obtaining such data is not feasible and accessible within the scope of our current study. Moreover, measuring the impact of forecasts would require a different approach that extends beyond the forecasting itself. It would involve developing and implementing simulation models that can simulate the decision-making processes based on the forecast inputs. These models would evaluate the quality of the final decision, considering the utilities that are of particular importance to the EMS context.
+
+While we were unable to measure the specific economic impacts and utilities of forecasts largely due to data limitations in the current study, we believe that our research lays a strong foundation for future research investigations, as well as practical implementation in EMS. The proposed forecasting framework and forecast reconciliation methods offer a robust framework that can be extended and integrated with operational information to evaluate decision quality and forecast utility in EMS. EMS can use this advanced forecasting framework that exploit the hierarchical and grouped structure of demand time series, and apply forecast reconciliation methods to generate coherent point and probabilistic forecasts that use all available data at all levels of disaggregation. 
+
+Moreover, future research can build upon this foundation by incorporating additional data and implementing simulation modeling techniques. This would enable a more comprehensive evaluation of the economic impact, efficiency gains, and utility of the forecasted results in the context of EMS. In future investigations, we aim to explore this avenue by incorporating operational information, simulating decision processes, and assessing the impact on utilities that are significant to the EMS. To that end, we have started presenting this study to different ambulance services and we hope to establish a collaboration that allow us to access data and decisions made across the hierarchy to evaluate its impact.
+
+We appreciate your thoughtful comment, and we will take it into account for future research. 
 
 _Comment 2-b: Throughout the paper the authors mention that one of the strengths of their model is that they look beyond point estimates. What I understand is that they use the CRPS statistic for this. However, this is again very mechanic. It would be much more valuable to show when and how actual observations are within the prediction interval, as I can imagine that having both too wide or too narrow confidence intervals could lead to wrong allocation decisions._
 
 
-**Response:**
+**Response:** Thank you for your insightful comment. In our study, we chose the Continuous Ranked Probability Score (CRPS) as one of our evaluation metrics because it provides a comprehensive assessment of forecast quality and allows for the comparison of different models. The CRPS strikes a balance between calibration and sharpness of forecast distributions. Calibration refers to the statistical consistency between the forecasted distributions and the actual observations. It measures how well the predicted probabilities align with the observed probabilities. On the other hand, sharpness refers to the concentration of the forecast distributions --- a sharp forecast distribution results in narrow prediction intervals, indicating a high level of confidence in the forecast. A well-calibrated model matches the predicted probabilities to the actual probabilities, while a sharp model is confident in its predictions.  The CRPS rewards sharpness and calibration by assigning lower scores to forecasts with sharper distributions, and to forecasts that are well-calibrated. Thus, it is a metric that combines both sharpness and miscalibration into a single score, making it a useful tool for evaluating the performance of probabilistic forecasts. 
+
+In the context of emergency medical services, it is crucial to consider the implications of forecasts that are not well-calibrated or not sharp. If a forecast is not well-calibrated, it means that the predicted probabilities do not accurately reflect the actual probabilities of events, leading to potential biases in decision-making processes. For example, if the forecast consistently underestimates the demand for ambulance services, it could result in inadequate resource allocation and delayed responses to emergencies. Conversely, if the forecast consistently overestimates the demand, it may lead to unnecessary allocation of resources and increased costs. On the other hand, the sharpness of a forecast is an indicator of the level of confidence in the predictions. When a forecast is not sharp, it suggests a lack of confidence in the estimated outcomes. This can have implications for decision-making processes within emergency medical services. If the intervals are excessively wide, decision-makers may adopt overly conservative strategies, leading to underutilization of resources and potentially delayed responses. Conversely, if the intervals are excessively narrow, decision-makers may take overly aggressive actions, risking resource shortages and potential errors in resource allocation. Therefore, it is crucial to assess both calibration and sharpness of forecast to ensure effective decision-making within emergency medical services.
 
 
 _Comment 3: Generalizability_
 _Comment 3-a: Another concern I have is the generalizability, especially for the service industry. The grouped and hierarchical nature seems very specific for the type of service of medical emergencies. And although the service is highly relevant and important, I am wondering whether the authors can’t broaden the scope somewhat in the introduction and/or implications. If not I would specifically address this in the limitations._
 
-**Response:**
+**Response:** Thank you for raising the concern about the generalizability of our proposed framework in the context of the service industry. We appreciate your feedback and have addressed it in the revised paper.
 
+While our study primarily focuses on the domain of emergency medical services, we would like to emphasize that the framework we propose is applicable to a wide range of industries, including the service industry. Wherever there are collections of related time series structured hierarchically and/or in a grouped manner, our framework can be utilized to provide accurate forecasts. The grouped and hierarchical structure of time series data is a common characteristic across many sectors, and it arises when data can be naturally organized into various levels of aggregation or when there are dependencies and relationships among different entities within the system.
+
+For example, in the supply chain industry, accurately forecasting demand at different levels of the distribution network, such as regional warehouses or retail stores, is essential for efficient inventory management and minimizing stockouts. Our framework enables the reconciliation of forecasts to ensure consistency and alignment across the supply chain, leading to improved decision-making and operational efficiency.
+
+In the financial industry, where investments span multiple asset classes, geographical regions, or customer segments, our framework can be applied to forecast portfolio performance, asset allocation, or customer demand. By considering the hierarchical structure of the data, financial institutions can make informed investment decisions, manage risk effectively, and meet the specific demands of different customer segments.
+
+In the transportation sector, our framework can support forecasting transportation demand at various levels, such as across different states or regions, to optimize route planning and resource allocation. Similarly, in the hospitality and tourism industry, our framework can be utilized to forecast demand rates at state, regional, and department levels, facilitating strategic pricing, capacity planning, and revenue management for hotels and other travel-related businesses.
+
+Furthermore, in call centers, accurately forecasting call volumes at different levels of the call center hierarchy is crucial for workforce management and resource allocation. By applying our framework, call centers can generate accurate forecasts for different skill groups, shifts, and locations, enabling efficient staffing and optimal service levels to meet customer demands.
+
+In summary, the strength of our proposed framework lies in its ability to handle and reconcile time series data structured hierarchically and/or in a grouped manner. This characteristic can be found across a multitude of service industries, making our framework applicable in various contexts. By considering the relationships and dependencies within the data, our approach can contribute to more accurate forecasts, more coordinated activities due to consistent forecasts and potentially improved decision-making.
 
 I wish the authors all the best with their research further
 
