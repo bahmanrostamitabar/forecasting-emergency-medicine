@@ -2,6 +2,7 @@ library(tidyverse)
 library(hts)
 library(readr)
 library(furrr)
+library(fabletools)
 source(here::here("rscript/hts/htsplus.R"))
 source(here::here("rscript/hts/glm.R"))
 source(here::here("rscript/hts/tscount.R"))
@@ -25,14 +26,16 @@ for (i in seq(origins)) {
   train <- incident_gts
   train$bts <- subset(train$bts, end = nrow(incident_gts$bts) - origins[i])
   # Create reconciled sample paths for different models
-  # reconcile_sample_paths(train, model_function = "ets")
+  reconcile_sample_paths(train, model_function = "ets")
   reconcile_sample_paths(train, model_function = "tscount")
-  # reconcile_sample_paths(train, model_function = "iglm")
-  # reconcile_sample_paths(train, model_function = "naiveecdf")
+  reconcile_sample_paths(train, model_function = "iglm")
+  reconcile_sample_paths(train, model_function = "naiveecdf")
 }
 
-create_ensembles()
-create_qcomb()
+create_ensembles() # Include naive
+create_ensembles(models_to_use = c("ets","iglm","tscount")) #Don't include naive
+create_qcomb() # Include naive
+create_qcomb(models_to_use = c("ets","iglm","tscount")) #Don't include naive
 
 # Accuracy
 

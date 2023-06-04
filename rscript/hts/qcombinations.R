@@ -35,7 +35,11 @@ create_qcomb <- function(models_to_use = "all") {
 
 create_specific_qcomb <- function(models, method, origin) {
   # Form file name for saving results
-  filename <- paste0(storage_folder, "qcomb_", origin, "_sim_", method, ".rds")
+  if(all(models == "all")) {
+    filename <- paste0(storage_folder, "qcomb_", origin, "_sim_", method, ".rds")
+  } else {
+    filename <- paste0(storage_folder, "qcomb2_", origin, "_sim_", method, ".rds")
+  }
   # Check if this has already been run
   if (fs::file_exists(filename)) {
     # Just use the previous results
@@ -45,6 +49,12 @@ create_specific_qcomb <- function(models, method, origin) {
   # Find simulation files
   files <- fs::dir_ls(storage_folder, glob = paste0("*_", origin, "_sim_", method, ".rds"))
   files <- files[!grepl("ensemble", files)]
+  files <- files[!grepl("qcomb", files)]
+  if(all(models != "all")) {
+    # Remove naive
+    files <- files[!grepl("naive*", files)]
+  }
+
   # For each training set, load available simulation files and compute quantiles
   # with same average quantiles
   prob <- seq(0.001, 0.999, by=0.001)

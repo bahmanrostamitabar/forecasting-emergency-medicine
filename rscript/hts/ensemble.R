@@ -35,7 +35,11 @@ create_ensembles <- function(models_to_use = "all") {
 
 create_specific_ensemble <- function(models, method, origin) {
   # Form file name for saving results
-  filename <- paste0(storage_folder, "ensemble_", origin, "_sim_", method, ".rds")
+  if(all(models == "all")) {
+    filename <- paste0(storage_folder, "ensemble_", origin, "_sim_", method, ".rds")
+  } else {
+    filename <- paste0(storage_folder, "ensemble2_", origin, "_sim_", method, ".rds")
+  }
   # Check if this has already been run
   if (fs::file_exists(filename)) {
     # Just use the previous results
@@ -44,6 +48,12 @@ create_specific_ensemble <- function(models, method, origin) {
 
   # Find simulation files
   files <- fs::dir_ls(storage_folder, glob = paste0("*_", origin, "_sim_", method, ".rds"))
+  files <- files[!grepl("ensemble", files)]
+  files <- files[!grepl("qcomb", files)]
+  if(all(models != "all")) {
+    # Remove naive
+    files <- files[!grepl("naive*", files)]
+  }
   # For each training set, combine available simulation files
   new_sim <- array(0, c(1224, 84, 1000 * length(files)))
   for (j in seq_along(files)) {
