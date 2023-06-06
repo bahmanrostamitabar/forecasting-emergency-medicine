@@ -13,7 +13,7 @@ compute_accuracy <- function(train, measure = "mse") {
   files <- fs::dir_ls(storage_folder, glob = paste0("*_sim_*.rds"))
   # Find models
   models <- str_remove(files, storage_folder) |>
-    str_extract("[a-zA-Z]*_") |>
+    str_extract("[a-zA-Z0-9]*_") |>
     str_remove("_") |>
     unique()
   # Find methods

@@ -44,8 +44,8 @@ msse1 <- rmsse |>
     h > 42
   ) |>
   mutate(model = factor(model,
-    levels = c("naiveecdf","ets","iglm","tscount","ensemble"),
-    labels = c("Naive", "ETS", "GLM", "TSGLM","Ensemble")),
+    levels = c("naiveecdf","ets","iglm","tscount","ensemble","ensemble2"),
+    labels = c("Naive", "ETS", "GLM", "TSGLM","Ensemble","Ensemble2")),
     method = factor(method, levels = c("base", "mint"), labels = c("Base", "MinT")),
   ) |>
   group_by(method, model, series) |>
@@ -61,8 +61,8 @@ mase1 <- mase |>
   ) |>
   mutate(
     model = factor(model,
-      levels = c("naiveecdf","ets","iglm","tscount","ensemble"),
-      labels = c("Naive", "ETS", "GLM", "TSGLM","Ensemble")),
+      levels = c("naiveecdf","ets","iglm","tscount","ensemble","ensemble2"),
+      labels = c("Naive", "ETS", "GLM", "TSGLM","Ensemble","Ensemble2")),
     method = factor(method, levels = c("base", "mint"), labels = c("Base", "MinT"))
   ) |>
   group_by(method, model, series) |>
@@ -76,8 +76,8 @@ crps1 <- readr::read_rds(here::here("results/crps.rds")) |>
          h > 42
   ) |>
   mutate(model = factor(model,
-    levels = c("naiveecdf","ets","iglm","tscount","ensemble"),
-    labels = c("Naive", "ETS", "GLM", "TSGLM","Ensemble")),
+    levels = c("naiveecdf","ets","iglm","tscount","ensemble","ensemble2"),
+    labels = c("Naive", "ETS", "GLM", "TSGLM","Ensemble","Ensemble2")),
     method = factor(method, levels = c("base", "mint"), labels = c("Base", "MinT"))
   ) |>
   group_by(method, model, series) |>
@@ -134,12 +134,13 @@ acc_summary <- accuracy |>
     model == "ets" ~  "ETS",
     model == "tscount" ~ "TSGLM",
     model == "iglm" ~ "GLM",
-    model == "ensemble" ~ "Ensemble"
+    model == "ensemble" ~ "Ensemble",
+    model == "ensemble2" ~ "Ensemble2"
   )) |> 
   mutate(
     measure = factor(measure, levels = c("mase","msse","crps"), labels = c("MASE","MSSE","CRPS")),
     series = factor(series, levels = c("Total", "Control areas", "Health boards")),
-    model = factor(model, levels = c("Naive", "ETS", "TSGLM", "GLM", "Ensemble")),
+    model = factor(model, levels = c("Naive", "ETS", "TSGLM", "GLM", "Ensemble", "Ensemble2")),
     week = factor(trunc((h - 1) / 7) + 1)
   ) |>
   group_by(week, model, measure, series) |>
