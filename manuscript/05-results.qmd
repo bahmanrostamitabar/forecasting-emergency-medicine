@@ -41,7 +41,8 @@ msse1 <- rmsse |>
   filter(
     method %in% c("mint", "base"),
     model != "qcomb",
-    h > 42
+    h > 42,
+    model != "ensemble2"
   ) |>
   mutate(model = factor(model,
     levels = c("naiveecdf","ets","iglm","tscount","ensemble","ensemble2"),
@@ -57,7 +58,8 @@ mase1 <- mase |>
   filter(
     method %in% c("mint", "base"),
     model != "qcomb",
-    h > 42
+    h > 42,
+    model != "ensemble2"
   ) |>
   mutate(
     model = factor(model,
@@ -73,7 +75,8 @@ mase1 <- mase |>
 crps1 <- readr::read_rds(here::here("results/crps.rds")) |>
   filter(method %in% c("mint", "base"),
          model != "qcomb",
-         h > 42
+         h > 42,
+         model != "ensemble2"
   ) |>
   mutate(model = factor(model,
     levels = c("naiveecdf","ets","iglm","tscount","ensemble","ensemble2"),
