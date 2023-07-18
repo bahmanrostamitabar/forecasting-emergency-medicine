@@ -63,6 +63,7 @@ library(knitr)
 library(kableExtra)
 library(ggthemes)
 library(patchwork)
+library(scales)
 # Color blind color palettes
 options(
   ggplot2.discrete.colour = c("#D55E00", "#0072B2","#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442"),

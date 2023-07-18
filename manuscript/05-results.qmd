@@ -17,11 +17,11 @@ In this section, we compare the forecasting performance of the Naive, ETS, GLM, 
 
 The overall forecasting performance is reported in @tbl-result, in which the average forecast accuracy over horizons 43--84 days (corresponding to the planning horizon) is presented per model, method, and the hierarchical level. Reported forecast accuracy is averaged across all forecast horizons, rolling origins, and series at each level. @tbl-result presents both point and probabilistic forecast accuracy at total, control area, health board and bottom level series. Point forecast performance is reported using MASE and MSSE in @tbl-result-1  and [-@tbl-result-2], respectively. Probabilistic forecast accuracy is reported using CRPS in @tbl-result-3. The bold entries in each table identify a combination of method and model that performs best for the corresponding level (i.e. each column), based on the smallest values of accuracy measures.
 
-@tbl-result-1 and [-@tbl-result-2] show that forecast reconciliation (i.e. MinT) improves forecast accuracy at the higher levels of the hierarchy including total, control area and health board. However, it is does not result in accuracy improvement at the bottom level series, for which base forecasts are more accurate. This might be due to the noisy structure of time series at the bottom level, and possibly due to very different patterns in the aggregated series. It is also clear from @tbl-result-1 that the ensemble method improves forecast accuracy at total, control area and health board. However, this does not remain valid for bottom series where different individual methods perform best, depending on the accuracy measure.
+@tbl-result-1 and [-@tbl-result-2] show that forecast reconciliation (i.e. MinT) improves forecast accuracy at the higher levels of the hierarchy including total, control area and health board. However, it does not result in accuracy improvement at the bottom level series, for which base forecasts are more accurate. This might be due to the noisy structure of time series at the bottom level, and possibly due to very different patterns in the aggregated series. It is also clear from @tbl-result-1 that the ensemble method improves forecast accuracy at total, control area and health board. However, this does not remain valid for bottom series where different individual methods perform best, depending on the accuracy measure. \textcolor{teal}{While the forecast reconciliation approach aims to enhance forecast accuracy, its effectiveness may not always be guaranteed, especially if the bottom-level series exhibit excessive noise and lack systematic patterns. Despite this, reconciling forecasts at the bottom level can offer advantages by generating coherent forecasts that facilitate alignment in planning across various teams within an organization, promote better coordination, and prevent conflicting decisions. Moreover, even when dealing with noisy and irregular bottom-level series, reconciliation can still improve forecast accuracy at higher levels of the hierarchy by leveraging the information available across the hierarchy. Therefore, although the bottom-level forecasts may not be highly accurate on their own, reconciling them with higher-level forecasts can still provide a more consistent view of future demand and potentially yield more accurate forecasts at other levels.}
 
 ```{r}
 #| label: tbl-result
-#| tbl-cap: "Average forecast performance calculated on the test sets at forecast horizons $h=43,\\dots,84$ days, with time series cross validation applied to attended incident data. The best approach is highlighted in bold."
+#| tbl-cap: "Average forecast performance calculated on the test sets at forecast horizons $h=43,\\dots,84$ days, with time series cross validation applied to attended incident data. The testset consists of 462 days. The best approach is highlighted in bold."
 #| tbl-subcap:
 #|   - "Point forecast accuracy using MASE"
 #|   - "Point forecast accuracy using MSSE"
@@ -86,15 +86,15 @@ crps1 <- readr::read_rds(here::here("results/crps.rds")) |>
   select(Method = method, Model = model, Total, `Control areas`, `Health boards`, Bottom) |>
   set_to_bold()
 
-kbl(mase1, booktabs = TRUE, escape = FALSE, align="llrrrr") |>
+kbl(mase1, booktabs = TRUE, escape = FALSE, align="llcccc") |>
   add_header_above(c(" " = 2, "MASE" = 4)) |>
   kable_styling(latex_options = c("hold_position"))
 
-kbl(msse1, booktabs = TRUE, escape = FALSE, align="llrrrr") |>
+kbl(msse1, booktabs = TRUE, escape = FALSE, align="llcccc") |>
   add_header_above(c(" " = 2, "MSSE" = 4)) |>
   kable_styling(latex_options = c("hold_position"))
 
-kbl(crps1, booktabs = TRUE, escape = FALSE, align="llrrrr") |>
+kbl(crps1, booktabs = TRUE, escape = FALSE, align="llcccc") |>
   add_header_above(c(" " = 2, "CRPS" = 4)) |>
   kable_styling(latex_options = c("hold_position"))
 ```
@@ -103,15 +103,13 @@ kbl(crps1, booktabs = TRUE, escape = FALSE, align="llrrrr") |>
 
 Overall, our results indicate that forecast reconciliation using the MinT method provides reliable forecasts and improves upon the base (unreconciled) forecasts at all levels except the bottom-level series. But even there, forecast reconciliation using MinT improves accuracy in the tails of the distribution.
 
-In addition to the overall forecast accuracy presented in @tbl-result, we also report the point and probabilistic forecast accuracy measures for each forecast horizon in @fig-accuracy. The figure focuses on the hierarchical levels important for decision-making including total, control area, and health board; however, the accuracy could be calculated for any level. We only illustrate the results of the MinT method, given its strong performance described in @tbl-result. For illustration purposes, we report the average weekly forecast accuracy instead of the daily forecast horizon, as this reduces the visual noise in the figure. Thus, the x-axis shows horizons from week 1 ($h= 1,\dots,7$) to week 12 ($h= 78,\dots,84$). The forecast horizon from week 7 to week 12 corresponds to the upcoming planning horizon, which is used by planners and decision-makers. For both the point forecast and distributional accuracy  we can see that the ensemble approach performs best across almost all horizons, with the biggest differences at the highest levels of aggregation. It is important to highlight that, all forecasting models outperform the Naive empirical distribution that is used as a benchmark for both point and probabilistic forecasts.
-
 
 ```{r}
 #| label: fig-accuracy
 #| fig-width: 8
 #| fig-height: 5
 #| out.width: "100%"
-#| fig-cap: "Average accuracy by week for 12 weeks using MinT reconciliation. CRPS is relative to a naive Empirical Cumulative Distribution Function (ECDF). MASE and MSSE are relative to the corresponding values for the training set."
+#| fig-cap: "Average accuracy by week for 12 weeks using MinT reconciliation. The total number of days used to calculate the accuracy in the test set is 462. Forecasts are generateled every 42 days, therefore we use 11 samples to calculate the average accuracy. CRPS is relative to a naive Empirical Cumulative Distribution Function (ECDF). MASE and MSSE are relative to the corresponding values for the training set."
 #| fig-pos: "H"
 crps <- crps |>
   pivot_longer(ensemble:tscount, names_to = "model", values_to = "crps")
@@ -156,3 +154,52 @@ acc_summary |>
   ggthemes::scale_color_colorblind() +
   ggthemes::theme_few()
 ```
+
+In addition to the overall forecast accuracy presented in @tbl-result, we also report the point and probabilistic forecast accuracy measures for each forecast horizon in @fig-accuracy. The figure focuses on the hierarchical levels important for decision-making including total, control area, and health board; however, the accuracy could be calculated for any level. We only illustrate the results of the MinT method, given its strong performance described in @tbl-result. For illustration purposes, we report the average weekly forecast accuracy instead of the daily forecast horizon, as this reduces the visual noise in the figure. Thus, the x-axis shows horizons from week 1 ($h= 1,\dots,7$) to week 12 ($h= 78,\dots,84$). The forecast horizon from week 7 to week 12 corresponds to the upcoming planning horizon, which is used by planners and decision-makers. For both the point forecast and distributional accuracy  we can see that the ensemble approach performs best across almost all horizons, with the biggest differences at the highest levels of aggregation. It is important to highlight that, all forecasting models outperform the Naive empirical distribution that is used as a benchmark for both point and probabilistic forecasts.
+
+\textcolor{teal}{Despite using Poisson regression models to create count distributions of attended incidents for the base forecasts, it is important to note that the reconciled forecast distributions do not maintain a count format. In practical scenarios, there might be a need to use integer forecasts. Count forecast reconciliation is an active area of research, and it would be interesting to explore how our approach could be adapted to generate count-reconciled probabilistic forecasts in future studies. One possible approach to address this is by rounding the forecasts. However, the impact of rounding on forecast accuracy varies depending on the level of hierarchy and the scale of the data. In situations with high-volume demand, the effects of rounding may become negligible, and forecast accuracy calculations can overlook integer effects. On the other hand, in low-volume demand settings, such as forecasts at the bottom level of the hierarchy, integer (rounding) effects may have a more noticeable influence on forecast accuracy.}
+
+
+## An illustration of probabilistic forecast for EMS demand
+
+
+@fig-forecast-density \textcolor{teal}{provides an illustrative example of a probabilistic forecast for future demand, one day ahead, regarding the total attended incidents in the PO health board. The black dashed line in the graph represents the point forecast, which presents a single numerical estimate for the future number of attended incidents. Due to the complexity of including such plots for the entire hierarchy and 84 days ahead, only one example is presented here for 1 day ahead. However, it is feasible to generate these plots for the entire hierarchy and for any forecast horizon if necessary.}
+
+
+\textcolor{teal}{In practice, point forecasts are commonly used, but they have limitations as they ignore the uncertainty associated with the forecast, leading to wrong decisions. In contrast, probabilistic forecasts offer an alternative approach to anticipate future demand. Rather than providing a single value, they assign likelihoods to all possible demand outcomes, acknowledging that different numbers of attended incidents are possible, but with varying likelihoods.}
+
+\textcolor{teal}{The purpose of probabilistic forecasting, as demonstrated in} @fig-forecast-density, \textcolor{teal}{is to quantify uncertainty. Decisions based on these forecasts could focus on the tails of the distribution: unexpected high demand leading to crowding and inefficiency, or unexpectedly low demand resulting in wasted resources. Such forecasts are valuable tools for decision-makers and planners, especially when dealing with low-probability, high-cost situations. Different EMS managements may have varying risk attitudes depending on resource availability, making it crucial to consider the entire distribution when making decisions. For instance, these forecasts enable management to calculate the probability of demand exceeding a certain threshold of available resources (e.g., 90\%), which can serve as an informative early warning measure for crowdedness.}
+
+\textcolor{teal}{It is important to note that while point forecasts and prediction intervals can be obtained from the probabilistic forecasts, the reverse is not possible. A single number cannot be used to directly derive a probabilistic forecast. Prediction intervals, although helpful in indicating possible ranges, do not provide information on the probabilities of low or high demand.}
+
+\textcolor{teal}{In EMS planning, future demand is just one aspect to consider. Other inputs, such as capacity, should also be treated as probability distributions to adopt a probabilistic approach to planning. To extract valuable insights and make informed decisions from probabilistic forecasts, specialized numerical tools are required, as the forecasts themselves are typically represented as explicit probability density functions or Monte Carlo generators.}
+
+```{r}
+#| label: fig-forecast-density
+#| fig-width: 8
+#| fig-height: 5
+#| out.width: "100%"
+#| fig-cap: "An illustrative example of forecast distribution of ambulance demand (i.e. total incidence attended) in PO health board for 1 day ahead. x-axis shows all possible outcomes that may occur, with thier likelihhod in y-aixs"
+#| fig-pos: "H"
+incident_gthf <- readr::read_rds(here::here("data/incidents_gt.rds"))
+
+incident_cv <- incident_gthf |> filter(lhb == "PO",is_aggregated(category),is_aggregated(nature))
+fit <- incident_cv %>%
+  model(
+    ets = ETS(sqrt(incident))
+  )
+set.seed(1)
+fcst <- fit %>% generate(h=1, times = 5000, bootstrap = TRUE)
+p1 <- ggplot(data=fcst,aes(x=.sim, y=..density..)) +
+  geom_histogram(binwidth = 1, fill="#d3d3d3", color="black")+
+  geom_vline(data=fcst,aes(xintercept = (mean(.sim))), color="black", linetype="dashed", linewidth=1)+
+  scale_x_continuous(breaks = seq(25,70,5))+
+  scale_y_continuous(labels=percent)+
+  ggthemes::theme_few()+
+    labs(y="Density", x = "Demand", title = "Probabilistic forecast of ambulance demand for 1 day ahead")
+p1
+```
+
+
+
+

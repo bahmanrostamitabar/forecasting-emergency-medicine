@@ -20,17 +20,6 @@
   publisher={Elsevier}
 }
 
-@article{JSSv082i05,
- title={tscount: An {R} Package for Analysis of Count Time Series Following Generalized Linear Models},
- volume={82},
- abstract={The R package tscount provides likelihood-based estimation methods for analysis and modeling of count time series following generalized linear models. This is a flexible class of models which can describe serial correlation in a parsimonious way. The conditional mean of the process is linked to its past values, to past observations and to potential covariate effects. The package allows for models with the identity and with the logarithmic link function. The conditional distribution can be Poisson or negative binomial. An important special case of this class is the so-called INGARCH model and its log-linear extension. The package includes methods for model fitting and assessment, prediction and intervention analysis. This paper summarizes the theoretical background of these methods. It gives details on the implementation of the package and provides simulation results for models which have not been studied theoretically before. The usage of the package is illustrated by two data examples. Additionally, we provide a review of R packages which can be used for count time series analysis. This includes a detailed comparison of tscount to those packages.},
- number={5},
- journal={Journal of Statistical Software},
- author={Liboschik, Tobias and Fokianos, Konstantinos and Fried, Roland},
- year={2017},
- pages={1–51}
-}
-
 @article{clemen1989combining,
   title={Combining forecasts: A review and annotated bibliography},
   author={Clemen, Robert T},
@@ -42,12 +31,25 @@
   publisher={Elsevier}
 }
 
+@article{JSSv082i05,
+ title={tscount: An {R} Package for Analysis of Count Time Series Following Generalized Linear Models},
+ volume={82},
+ doi={10.18637/jss.v082.i05},
+ abstract={The R package tscount provides likelihood-based estimation methods for analysis and modeling of count time series following generalized linear models. This is a flexible class of models which can describe serial correlation in a parsimonious way. The conditional mean of the process is linked to its past values, to past observations and to potential covariate effects. The package allows for models with the identity and with the logarithmic link function. The conditional distribution can be Poisson or negative binomial. An important special case of this class is the so-called INGARCH model and its log-linear extension. The package includes methods for model fitting and assessment, prediction and intervention analysis. This paper summarizes the theoretical background of these methods. It gives details on the implementation of the package and provides simulation results for models which have not been studied theoretically before. The usage of the package is illustrated by two data examples. Additionally, we provide a review of R packages which can be used for count time series analysis. This includes a detailed comparison of tscount to those packages.},
+ number={5},
+ journal={Journal of Statistical Software},
+ author={Liboschik, Tobias and Fokianos, Konstantinos and Fried, Roland},
+ year={2017},
+ pages={1–51}
+}
+
 @book{hyndman2021forecasting,
   title={Forecasting: principles and practice},
   author={Hyndman, Rob J and Athanasopoulos, George},
   year={2021},
   publisher={OTexts},
-  edition = {3rd}
+  edition = {3rd},
+  url = {https://OTexts.com/fpp3}
 }
 
 @article{ekstrom2015forecasting,
@@ -91,6 +93,7 @@ number = {3},
 pages = {1197-1213},
 year = {2022},
 issn = {0169-2070},
+doi = {10.1016/j.ijforecast.2020.01.001},
 author = {Bahman Rostami-Tabar and Florian Ziel},
 keywords = {Forecasting, Emergency department, Forecast accuracy, Special events, Health},
 abstract = {Accurate daily forecast of Emergency Department (ED) attendance helps roster planners in allocating available resources more effectively and potentially influences staffing. Since special events affect human behaviours, they may increase or decrease the demand for ED services. Therefore, it is crucial to model their impact and use them to forecast future attendance to improve roster planning and avoid reactive strategies. In this paper, we propose, for the first time, a forecasting model to generate both point and probabilistic daily forecast of ED attendance. We model the impact of special events on ED attendance by considering real-life ED data. We benchmark the accuracy of our model against three time-series techniques and a regression model that does not consider special events. We show that the proposed model outperforms its benchmarks across all horizons for both point and probabilistic forecasts. Results also show that our model is more robust with an increasing forecasting horizon. Moreover, we provide evidence on how different types of special events may increase or decrease ED attendance. Our model can easily be adapted for use not only by EDs but also by other health services. It could also be generalised to include more types of special events.}
@@ -369,13 +372,14 @@ abstract = {Accurate daily forecast of Emergency Department (ED) attendance help
 
 
 @INPROCEEDINGS{9659837,
-  author={Hermansen, Anna and Mengshoel, Ole Jakob},
+  author={Haugsbø Hermansen, Anna and Mengshoel, Ole Jakob},
   booktitle={2021 IEEE Symposium Series on Computational Intelligence (SSCI)},
   title={Forecasting Ambulance Demand using Machine Learning: A Case Study from {Oslo}, {Norway}},
   year={2021},
   volume={},
   number={},
-  pages={01-10}}
+  pages={01-10},
+  doi={10.1109/SSCI50451.2021.9659837}}
 
   @article{aringhieri2017emergency,
   title={Emergency medical services and beyond: Addressing new challenges through a wide literature review},
@@ -386,6 +390,8 @@ abstract = {Accurate daily forecast of Emergency Department (ED) attendance help
   year={2017},
   publisher={Elsevier}
 }
+
+
 
 @article{panagiotelis2023probabilistic,
   title={Probabilistic forecast reconciliation: Properties, evaluation and score optimisation},
@@ -399,13 +405,12 @@ abstract = {Accurate daily forecast of Emergency Department (ED) attendance help
 }
 
 
-
-
 @Manual{fable2022,
   title = {{fable}: Forecasting models for tidy time series},
   author = { Mitchell O'Hara-Wild and Rob Hyndman and Earo Wang and Gabriel Caceres},
   year = {2022},
-  note = {{R} package version 0.3.2}
+  note = {{R} package version 0.3.2},
+  url = {https://fable.tidyverts.org/}
 }
 
 
@@ -433,6 +438,8 @@ abstract = {Accurate daily forecast of Emergency Department (ED) attendance help
 @article{WicEtAl2019,
   abstract  = {AbstractLarge collections of time series often have aggregation constraints due to product or geographical groupings. The forecasts for the most disaggregated series are usually required to add-up exactly to the forecasts of the aggregated series, a constraint we refer to as “coherence”. Forecast reconciliation is the process of adjusting forecasts to make them coherent. The reconciliation algorithm proposed by Hyndman et al. (2011) is based on a generalized least squares estimator that requires an estimate of the covariance matrix of the coherency errors (i.e., the errors that arise due to incoherence). We show that this matrix is impossible to estimate in practice due to identifiability conditions. We propose a new forecast reconciliation approach that incorporates the information from a full covariance matrix of forecast errors in obtaining a set of coherent forecasts. Our approach minimizes the mean squared error of the coherent forecasts across the entire collection of time series under the assumption of unbiasedness. The minimization problem has a closed form solution. We make this solution scalable by providing a computationally efficient representation. We evaluate the performance of the proposed method compared to alternative methods using a series of simulation designs which take into account various features of the collected time series. This is followed by an empirical application using Australian domestic tourism data. The results indicate that the proposed method works well with artificial and real data.},
   author    = {Wickramasuriya, Shanika L. and Athanasopoulos, George and Hyndman, Rob J.},
+  doi       = {10.1080/01621459.2018.1448825},
+  file      = {:C\:/Users/gathana/Dropbox (Personal)/PDFs/Wickramasuriya, Athanasopoulos, Hyndman - 2019 - Optimal Forecast Reconciliation for Hierarchical and Grouped Time Series Through Trace.pdf:pdf},
   issn      = {1537274X},
   journal   = {Journal of the American Statistical Association},
   keywords  = {Aggregation,Australian tourism,Coherent forecasts,Contemporaneous error correlation,Forecast combinations,Spatial correlations},
@@ -440,6 +447,7 @@ abstract = {Accurate daily forecast of Emergency Department (ED) attendance help
   pages     = {804--819},
   publisher = {Taylor & Francis},
   title     = {Optimal Forecast Reconciliation for Hierarchical and Grouped Time Series Through Trace Minimization},
+  doi       = {10.1080/01621459.2018.1448825},
   volume    = {114},
   year      = {2019}
 }
@@ -460,7 +468,8 @@ abstract = {Accurate daily forecast of Emergency Department (ED) attendance help
   author = {Xiaoqian Wang and Rob J Hyndman and Feng Li and Yanfei Kang},
   journal = {International Journal of Forecasting},
   note = {in press},
-  year   = 2022
+  year   = 2022,
+  url    = {robjhyndman.com/publications/combinations/}
 }
 
 @article{HK06,
@@ -499,8 +508,9 @@ abstract = {Accurate daily forecast of Emergency Department (ED) attendance help
     title = {{forecast}: Forecasting functions for time series and linear models},
     author = {Rob Hyndman and George Athanasopoulos and Christoph Bergmeir and Gabriel Caceres and Leanne Chhay and Mitchell O'Hara-Wild and Fotios Petropoulos and Slava Razbash and Earo Wang and Farah Yasmeen},
     year = {2022},
-    note = {{R} package version 8.19}
-  }
+    note = {{R} package version 8.19},
+    url = {https://pkg.robjhyndman.com/forecast/},
+  } LaTeX users is
 
  @Article{HK08,
     title = {Automatic time series forecasting: the forecast package for {R}},
@@ -509,10 +519,11 @@ abstract = {Accurate daily forecast of Emergency Department (ED) attendance help
     volume = {26},
     number = {3},
     pages = {1--22},
-    year = {2008}
+    year = {2008},
+    doi = {10.18637/jss.v027.i03},
   }
-  
-  @article{makridakis2022m5,
+
+@article{makridakis2022m5,
   title={The M5 competition: Background, organization, and implementation},
   author={Makridakis, Spyros and Spiliotis, Evangelos and Assimakopoulos, Vassilios},
   journal={International Journal of Forecasting},
@@ -540,27 +551,6 @@ abstract = {Accurate daily forecast of Emergency Department (ED) attendance help
   pages={187--191},
   year={1972},
   publisher={Taylor \& Francis}
-}
-
-@article{pennings2017integrated,
-  title={Integrated hierarchical forecasting},
-  author={Pennings, Clint LP and Van Dalen, Jan},
-  journal={European Journal of Operational Research},
-  volume={263},
-  number={2},
-  pages={412--418},
-  year={2017},
-  publisher={Elsevier}
-}
-
-@article{villegas2018supply,
-  title={Supply chain decision support systems based on a novel hierarchical forecasting approach},
-  author={Villegas, Marco A and Pedregal, Diego J},
-  journal={Decision Support Systems},
-  volume={114},
-  pages={29--36},
-  year={2018},
-  publisher={Elsevier}
 }
 
 @article{ostrom2010moving,
@@ -605,4 +595,26 @@ abstract = {Accurate daily forecast of Emergency Department (ED) attendance help
   pages={227--239},
   year={2000},
   publisher={Sage Publications Sage CA: Thousand Oaks, CA}
+}
+
+
+@article{pennings2017integrated,
+  title={Integrated hierarchical forecasting},
+  author={Pennings, Clint LP and Van Dalen, Jan},
+  journal={European Journal of Operational Research},
+  volume={263},
+  number={2},
+  pages={412--418},
+  year={2017},
+  publisher={Elsevier}
+}
+
+@article{villegas2018supply,
+  title={Supply chain decision support systems based on a novel hierarchical forecasting approach},
+  author={Villegas, Marco A and Pedregal, Diego J},
+  journal={Decision Support Systems},
+  volume={114},
+  pages={29--36},
+  year={2018},
+  publisher={Elsevier}
 }
