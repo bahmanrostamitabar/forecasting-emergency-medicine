@@ -159,6 +159,7 @@
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
   pdftitle={Hierarchical Time Series Forecasting in Emergency Medical Services},
+  pdfauthor={Bahman Rostami-Tabar; Rob J. Hyndman},
   pdfkeywords={healthcare, emergency services, forecast
 reconciliation, ambulance demand, regression},
   colorlinks=true,
@@ -174,9 +175,26 @@ reconciliation, ambulance demand, regression},
 \begin{frontmatter}
 \title{Hierarchical Time Series Forecasting in Emergency Medical
 Services}
+\author[1]{Bahman Rostami-Tabar%
+\corref{cor1}%
+}
+ \ead{rostami-tabarb@cardiff.ac.uk} 
+\author[2]{Rob J. Hyndman%
+%
+}
+ \ead{Rob.Hyndman@monash.edu} 
 
+\affiliation[1]{organization={Cardiff University, Cardiff Business
+School},country={United Kingdom},countrysep={,},postcode={CF10
+3EU},postcodesep={}}
+\affiliation[2]{organization={Monash University, Department of
+Econometrics and Business
+Statistics},country={Australia},countrysep={,},postcode={VIC
+3800},postcodesep={}}
 
 \cortext[cor1]{Corresponding author}
+
+
         
 \begin{abstract}
 Accurate forecasts of ambulance demand are crucial inputs when planning
@@ -208,7 +226,7 @@ reconciliation \sep ambulance demand \sep
     regression
 \end{keyword}
 \end{frontmatter}
-    \ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[interior hidden, borderline west={3pt}{0pt}{shadecolor}, boxrule=0pt, enhanced, frame hidden, sharp corners, breakable]}{\end{tcolorbox}}\fi
+    \ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[enhanced, breakable, sharp corners, boxrule=0pt, interior hidden, frame hidden, borderline west={3pt}{0pt}{shadecolor}]}{\end{tcolorbox}}\fi
 
 \hypertarget{sec-intro}{%
 \section{Introduction}\label{sec-intro}}
@@ -445,7 +463,7 @@ summarized as following:
 \toprule
 Reference & Year & Variable & Horizon & Method & Metric & Probabilistic & Reconciliation\\
 \midrule
-Current study & 2023 & Ambulance demand & 84 days & Naïve;  Exponential Smoothing State Space (ETS), Poisson regression using Generalized Linear Model (GLM) and tscount (TSGLM), a simple empirical distribution and an ensemble method & MASE, MSSE, CRPS & YES & YES\\
+Current study & 2023 & Ambulance demand & 84 days & Stationary,  Exponential Smoothing State Space (ETS), Poisson regression using Generalized Linear Model (GLM) and tscount (TSGLM), a simple empirical distribution and an ensemble method & MASE, MSSE, CRPS & YES & YES\\
 Al-Azzani et al. & 2021 & Call volume & 7 , 30 ,  90 days & ARIMA, Holt Winters, Multiple Regression, and Singular Spectrum Analysis & RMSE, MAPE & NO & NO\\
 Haugsbø et al. & 2021 & Ambulance demand in Spatio-temporal & 1hour & MLP, LSTM & MAE, MSE, Cross-Entropy & YES & NO\\
 Grekousis et al. & 2019 & Locations of incidents & 1 hour & MLP and Hungarian algorithm & RMSE & NO & NO\\
@@ -1260,6 +1278,7 @@ avenue for future research.
 \addcontentsline{toc}{section}{Reproducibility}
 
 R code to produce all results in this paper is available at
+https://github.com/bahmanrostamitabar/forecasting-emergency-medcine
 
 
 \renewcommand\refname{References}
