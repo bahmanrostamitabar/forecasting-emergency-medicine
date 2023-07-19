@@ -226,7 +226,7 @@ reconciliation \sep ambulance demand \sep
     regression
 \end{keyword}
 \end{frontmatter}
-    \ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[boxrule=0pt, frame hidden, enhanced, borderline west={3pt}{0pt}{shadecolor}, interior hidden, breakable, sharp corners]}{\end{tcolorbox}}\fi
+    \ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[borderline west={3pt}{0pt}{shadecolor}, sharp corners, frame hidden, boxrule=0pt, interior hidden, enhanced, breakable]}{\end{tcolorbox}}\fi
 
 \hypertarget{sec-intro}{%
 \section{Introduction}\label{sec-intro}}
@@ -384,9 +384,9 @@ The tool contains options that allow generating forecasts at various
 levels of granularity; however, it ignores the structure of the
 hierarchical and grouped relationships, preventing aligned decision
 making and coordination. \citet{al2021empirical}
-\textcolor{teal}{utilises real data from the Welsh Ambulance Service to explore the forecast accuracy of four forecasting approaches: ARIMA, Holt Winters, Multiple Regression, and Singular Spectrum Analysis (SSA) in predicting call volume demand accurately. The aim is to compare these approaches with the current method across various planning horizons (7 days, 30 days, and 90 days) for both total call volume and category-specific demand. Forecast accuracy performance is evaluated using root mean square error (RMSE) and mean absolute percentage error (MAPE) are calculated. The findings indicate that ARIMA performs the best in predicting weekly and monthly demand. However, when it comes to long-term demand, the SSA method proves to be the most effective.}
+\textcolor{teal}{utilises data from the Welsh Ambulance Service to explore the forecast accuracy of four forecasting approaches: ARIMA, Holt Winters, Multiple Regression, and Singular Spectrum Analysis (SSA) in predicting call volume demand. The aim is to compare these approaches with the current method across various planning horizons (7 days, 30 days, and 90 days) for both total call volume and category-specific demand. Forecast accuracy performance is evaluated using root mean square error (RMSE) and mean absolute percentage error (MAPE). The findings indicate that ARIMA performs the best in predicting weekly and monthly demand. However, when it comes to long-term demand, the SSA method proves to be the most effective.}
 \citet{ibrahim2016modeling}
-\textcolor{teal}{conducted a case study to assess the effectiveness of multiple forecasting methods: the multiplicative univariate forecasting model (MU), univariate mixed-effects model (ME), bivariate mixed-effects model (BME1), and bivariate mixed-effects model (BME2). Real-life call centre data was utilised to forecast for periods of 1, 7, and 14 days ahead, using only a limited dataset of 42 days. The performance of these forecasting methods was evaluated using two metrics: RMSE for point forecasts and coverage probability for the 95\% prediction interval. The findings indicate that the ME consistently produces the most accurate point forecasts. On the other hand, BME1 and BME2 demonstrate superior coverage probabilities when forecasting for one day or one week ahead. For a two-week leading period, MU shows better coverage probability.}
+\textcolor{teal}{conducted a case study to assess the effectiveness of multiple forecasting methods: the multiplicative univariate forecasting model (MU), univariate mixed-effects model (ME), bivariate mixed-effects model (BME1), and bivariate mixed-effects model (BME2). Call centre data were utilised to forecast for periods of 1, 7, and 14 days ahead, using only a limited dataset of 42 days. The performance of these forecasting methods was evaluated using two metrics: RMSE for point forecasts and coverage probability for the 95\% prediction interval. The findings indicate that the ME consistently produces the most accurate point forecasts. On the other hand, BME1 and BME2 demonstrate superior coverage probabilities when forecasting for one day or one week ahead. For a two-week leading period, MU shows better coverage probability.}
 
 \citet{9659837} investigate forecasting EMS demand in a high
 Spatio-temporal resolution of 1km\(^2\) spatial regions and 1-hr time
@@ -465,10 +465,10 @@ Reference & Year & Variable & Horizon & Method & Metric & Probabilistic & Reconc
 \midrule
 Current study & 2023 & Ambulance demand & 84 days & Naïve;  Exponential Smoothing State Space (ETS), Poisson regression using Generalized Linear Model (GLM) and tscount (TSGLM), a simple empirical distribution and an ensemble method & MASE, MSSE, CRPS & YES & YES\\
 Al-Azzani et al. & 2021 & Call volume & 7 , 30 ,  90 days & ARIMA, Holt Winters, Multiple Regression, and Singular Spectrum Analysis & RMSE, MAPE & NO & NO\\
-Haugsbø et al. & 2021 & Ambulance demand in Spatio-temporal & 1hour & MLP, LSTM & MAE, MSE, Cross-Entropy & Yes & NO\\
+Haugsbø et al. & 2021 & Ambulance demand in Spatio-temporal & 1hour & MLP, LSTM & MAE, MSE, Cross-Entropy & YES & NO\\
 Grekousis et al. & 2019 & Locations of incidents & 1 hour & MLP and Hungarian algorithm & RMSE & NO & NO\\
 Ibrahim et al. & 2016 & Call volume & 1, 7 , 14 days & multiplicative univariate forecasting, univariate mixed-effects, bivariate mixed-effects model, and bivariate mixed-effects & RMSE, prediction interval coverage & Partial & NO\\
-Vile et al. & 2012 & Ambulance demand & 7, 14, 21,  28 day & Singular Spectrum Analysis, ARIMA,  Holt-Winters & RMSE & No & NO\\
+Vile et al. & 2012 & Ambulance demand & 7, 14, 21,  28 day & Singular Spectrum Analysis, ARIMA,  Holt-Winters & RMSE & NO & NO\\
 Sasaki et al. & 2010 & Ambulance demand & 5 years & OLS regression & R\textasciicircum{}2 & NO & NO\\
 \bottomrule
 \end{tabular}}
@@ -612,7 +612,7 @@ series with the strength of trend in x-axis and the strength of
 seasonality in y-axis. Both measures are on a scale of {[}0,1{]}.
 
 \textcolor{teal}{In this paper, the strength of trend and seasonality were calculated using the "STL" (Seasonal and Trend decomposition using Loess) decomposition method, as described by}
-\citet{kang2017visualising}.
+\citet{mstl}.
 \textcolor{teal}{STL is a widely used and flexible method for decomposing time series data into trend, seasonal, and remainder components. The decomposition of a time series  $y_t$ is written as $y_t = T_t + S_{t} + R_t$, where $T_t$ is the smoothed trend component, $S_t$ is the seasonal component and $R_t$ is a remainder component. The strength of trend is defined as:}
 \[F_T = \max\left(0, 1 - \frac{\text{Var}(R_t)}{\text{Var}(T_t+R_t)}\right)\]
 \textcolor{teal}{For strongly trended data, the seasonally adjusted data should have much more variation than the remainder component. Therefore Var($R_t$)/Var($T_t+R_t$) should be relatively small. But for data with little or no trend, the two variances should be approximately the same.}
@@ -643,7 +643,7 @@ specific time series.}
 \end{figure}
 
 In addition to displaying the trend and seasonality features, we also
-visualize few time series at various levels of the aggregation.
+visualize a few time series at various levels of aggregation.
 Figure~\ref{fig-dataviz2} reveals different information such as trend,
 seasonality, and noise. For example, some series depict seasonality and
 trend, whereas some other series report low volume of attended incidents
@@ -687,11 +687,11 @@ levels. We briefly discuss forecasting models in the following sections,
 and the hierarchical forecasting methods are discussed in
 Section~\ref{sec-htc}.
 
-\textbf{Naive:} We start with a simple forecasting approach, assuming
-that the future days will be similar to past days. We use the empirical
-distribution of the past daily attended incidents to create the forecast
-distribution of future attended incidents.
-\textcolor{teal}{We have chosen the naive method as a benchmark due to its widespread usage and simplicity, making it easily understandable for users. Forecasts serve as inputs for various decision-making systems that frequently employ simulations, wherein it is common to utilize the empirical distribution of demand as a forecast. Additionally, the naive method has shown surprisingly high accuracy. Hence, any forecasting approach that can offer superior results compared to the naive method would validate its practical use, otherwise there is no necessity for employing more complex methods.}
+\textbf{Stationary:} We start with a simple forecasting approach,
+assuming that the future days will be similar to past days. We use the
+empirical distribution of the past daily attended incidents to create
+the forecast distribution of future attended incidents.
+\textcolor{teal}{We have chosen this "stationary" method as a benchmark due to its widespread usage and simplicity, making it easily understandable for users. Forecasts serve as inputs for various decision-making systems that frequently employ simulations, wherein it is common to utilize the empirical distribution of demand as a forecast. Additionally, the stationary method has shown surprisingly high accuracy. Hence, any forecasting approach that can offer superior results compared to the stationary method would validate its practical use, otherwise there is no necessity for employing more complex methods.}
 
 \textbf{Exponential Smoothing State Space model (ETS):} ETS models
 \citep{hyndman2021forecasting} can combine trend, seasonality, and error
@@ -705,7 +705,7 @@ the \texttt{forecast} package \citep{Rforecast, HK08} in R. To identify
 the best model for a given time series, the \texttt{ets} function uses
 the corrected Akaike's Information Criterion (AICc).
 
-\textcolor{teal}{In our study, we use an automated algorithm to determine the suitable configuration for the trend, seasonality, and error terms in each time series. Specifically, we utilize the `ETS()` function in the fable package of R, which employs statistical criteria like Akaike's Information Criterion (AIC) to identify the optimal model for each time series. Given the large number of time series we work with (1530), it is impractical to manually select the appropriate form for each component in every time series. Consequently, the automated algorithm selects the most fitting components based on the unique characteristics of each individual time series. As a result, a combination of additive or multiplicative forms for the components are employed, depending on the specific attributes of each time series.}
+\textcolor{teal}{In our study, we use an automated algorithm to determine the suitable configuration for the trend, seasonality, and error terms in each time series. Specifically, we utilize the `ETS()` function in the fable package of R, which employs Akaike's Information Criterion (AIC) to identify the optimal model for each time series. Given the large number of time series we work with (1530), it is impractical to manually select the appropriate form for each component in every time series. Consequently, the automated algorithm selects the best model based on the unique characteristics of each individual time series. As a result, a combination of additive or multiplicative forms for the components are employed, depending on the specific attributes of each time series.}
 
 Despite the popularity and the relevance of automatic \texttt{ETS} in
 this study, it may produce forecast distributions that are non-integer
@@ -727,16 +727,14 @@ the models that is frequently used in practice to generate count
 forecasts is Poisson regression.
 
 \textcolor{teal}{Suppose the time series is denoted by $y_1,\dots,y_T$, then the Poisson GLM can be written as}
-
 \begin{align*}
   y_t &\sim \text{Poisson}(\lambda_t) \\
   \text{where}\qquad
   \log(\lambda_t) &= \bm{x}_t'\bm{\beta},
 \end{align*}
-
-\textcolor{teal}{and $\bm{x}_t$ is a vector of covariates, $\beta$ is a vector of coefficients, and $\lambda_t$ is the parameter of Poisson distribution. In our model, these include cubic splines for the time trend, day-of-week dummy variables (from Monday to Sunday), Fourier terms to capture the yearly seasonality, dummy variables indicating public holidays (1 when is public holiday, 0 otherwise), school holidays (1 when is school holiday, 0 otherwise) and Christmas Day (1 when is Christmas Day, 0 otherwise) and New Year's Day (1 when is New Year's Day, 0 otherwise). The Fourier terms are as defined in}
-\citet{hyndman2021forecasting}
-\textcolor{teal}{(Section 7.4). This model takes account of weekly seasonality and annual seasonality. Monthly seasonality is exceedingly rare in time series data, and does not occur in ambulance demand. There is no reason, for example, for incidents to occur more at some times of the month than others.}
+\textcolor{teal}{and $\bm{x}_t$ is a vector of covariates, $\beta$ is a vector of coefficients, and $\lambda_t$ is the mean of the Poisson distribution. In our model, these include cubic splines for the time trend, day-of-week dummy variables (from Monday to Sunday), Fourier terms to capture the yearly seasonality, dummy variables indicating public holidays (1 when is public holiday, 0 otherwise), school holidays (1 when is school holiday, 0 otherwise) and Christmas Day (1 when is Christmas Day, 0 otherwise) and New Year's Day (1 when is New Year's Day, 0 otherwise). The Fourier terms are as defined in}
+\citet[Section 7.4]{hyndman2021forecasting}
+\textcolor{teal}{This model takes account of weekly seasonality and annual seasonality. Monthly seasonality is exceedingly rare in time series data, and does not occur in ambulance demand. There is no reason, for example, for incidents to occur more at some times of the month than others.}
 
 We fit a Poisson regression model using the function \texttt{glm()} from
 the \emph{stats} package in R, with the argument
@@ -750,35 +748,33 @@ including autoregressive terms, in addition to the same covariates that
 were used in the GLM model. To distinguish this from the previous GLM
 model, we will refer to this model as \texttt{TSGLM}.
 
-\textcolor{teal}{The Poisson TSGLM is similar to GLM with an additional component accounting for serial correlation (i.e. autoregressive). The term serial dependence refers to situations where the ambulance demand at a given time point exhibits correlation with the demand at previous time points. Put simply, past values of the time series influence the current values, and various techniques can be employed to model this influence. TSGLM can be written as}
-
+\textcolor{teal}{The Poisson TSGLM is similar to GLM with an additional autoregressive component accounting for serial correlation. The term serial dependence refers to situations where the ambulance demand at a given time point exhibits correlation with the demand at previous time points, after accounting for the exogenous covariates. Put simply, past values of the time series influence the current values, and various techniques can be employed to model this influence. TSGLM can be written as}
 \begin{align*}
   y_t &\sim \text{Poisson}(\lambda_t) \\
   \text{where}\qquad
-  \log(\lambda_t) &= (\bm{y}_{t-k}'+\bm{x}_t')\bm{\beta},
+  \log(\lambda_t) &= (\bm{y}_{t-k}' , \bm{x}_t')\bm{\beta},
 \end{align*}
-
-\textcolor{teal}{${y}_{t-k}$ is a vector of k lagged values. The TSGLM model explicitly accounts for serial dependence by including lagged values (i.e. past values) of the ambulance demand in the model. This is important in EMS forecasting because it allows the model to capture patterns in the data that are dependent on the past values of the time series, which might not be captured via the predictor variables.}
+\textcolor{teal}{and ${y}_{t-k}$ is a vector of $k$ lagged values. The TSGLM model explicitly accounts for serial dependence by including lagged values (i.e. past values) of the ambulance demand in the model. This is important in EMS forecasting because it allows the model to capture patterns in the data that are dependent on the past values of the time series, which might not be captured via the predictor variables.}
 
 \textcolor{teal}{We use the `tsglm()` function in the `tscount` package in R}
 \citep{JSSv082i05}
-\textcolor{teal}{to model the attended incidents. Again, the logarithmic link function is used to ensure that the parameter of Poisson distribution is always positive.}
+\textcolor{teal}{to model the attended incidents. Again, the logarithmic link function is used to ensure that the mean of the Poisson distribution is always positive.}
 
 \textcolor{teal}{Provided accidents occur independently, they will inherently follow a Poisson distribution}
-\citep[p156-158]{feller1991introduction}.
+\citep[p156--158]{feller1991introduction}.
 \textcolor{teal}{Hence, it is reasonable to assume a Poisson distribution in this context. To account for changes over time, we incorporate trend and seasonality covariates, as well as public holiday effects, allowing the mean of the Poisson distribution to vary. However, it is important to note that if there are additional factors influencing the mean of the Poisson distribution, which are not accounted for in our model, we might observe over-dispersion or under-dispersion in the data.}
 
 \textbf{Ensemble method:}
-\textcolor{teal}{Finally, one effective strategy for improving forecast accuracy includes the simultaneous application of multiple forecasting methods on a given time series, followed by averaging the forecasts, rather than relying on separate forecasts generated by each individual method}
+\textcolor{teal}{Finally, one effective strategy for improving forecast accuracy includes the simultaneous application of multiple forecasting methods on a given time series, followed by combining the forecasts, rather than relying on separate forecasts generated by each individual method}
 \citep{clemen1989combining}.
-\textcolor{teal}{In this paper, we use an ensemble method that combines the forecasts generated from the Naive, ETS, GLM and TSGLM models using a simple average to form a mixture distribution}
+\textcolor{teal}{In this paper, we use an ensemble method that combines the forecasts generated from the Stationary, ETS, GLM and TSGLM models using a simple average to form a mixture distribution}
 \citep{combinations}.
 
 \textcolor{teal}{To generate forecast probability distributions using above methods, we use a form of bootstrapping, described in}
 \citet{panagiotelis2023probabilistic}.
-\textcolor{teal}{This involves simulating 1000 future sample paths from each of the model, by bootstrapping the model residuals, taking into account the cross-sectional correlations between the different aggregated and disaggregated series. In this way, we can generate an empirical distribution of forecasts for each model. The ensemble forecast distribution is a simple mixture of these empirical distributions.}
+\textcolor{teal}{This involves simulating 1000 future sample paths from each of the models, by bootstrapping the model residuals, taking into account the cross-sectional correlations between the different aggregated and disaggregated series. In this way, we can generate an empirical distribution of forecasts for each model. The ensemble forecast distribution is a simple mixture of these empirical distributions.}
 
-\textcolor{teal}{It is important to emphasize that the aim of this study is not to provide an exhaustive compilation of forecasting models or promote a particular model class. Instead, we have developed a flexible framework that can accommodate any forecasting models. Our primary objective is to demonstrate its practicality and effectiveness in integrating base forecasts from any model and generating coherent forecasts within a hierarchical structure.}
+\textcolor{teal}{It is important to emphasize that the aim of this study is not to provide an exhaustive compilation of forecasting models, or to promote a particular model class. Instead, we have developed a flexible framework that can accommodate any forecasting models. Our primary objective is to demonstrate its practicality and effectiveness in integrating base forecasts from any model and generating coherent forecasts within a hierarchical structure.}
 
 \hypertarget{performance-evaluation}{%
 \subsection{Performance evaluation}\label{performance-evaluation}}
@@ -799,7 +795,7 @@ last 42 days of each test set, because that corresponds to how forecasts
 are generated for planning in practice. Forecasting performance is
 evaluated using both point and probabilistic error measures.
 
-\textcolor{teal}{The error metrics provided below consider a forecasting horizon denoted by j, representing the number of time periods ahead we are predicting. In our study, this forecasting horizon ranges from 1 to 84 days, $j= 1,2,\dots, 84$.}
+\textcolor{teal}{The error metrics provided below consider a forecasting horizon denoted by $j$, representing the number of time periods ahead we are predicting. In our study, this forecasting horizon ranges from 1 to 84 days, $j= 1,2,\dots, 84$.}
 
 Point forecast accuracy is measured via the Mean Squared Scaled Error
 (MSSE) and the Mean Absolute Scaled Error (MASE). The Mean Absolute
@@ -830,7 +826,7 @@ errors rather than absolute errors:
 \] Again, this is scale-independent, and smaller MSSE values suggest
 more accurate forecasts.
 
-\textcolor{teal}{Using of scale-independent measures, such as MASE and MSSE, enables more significant comparisons between time series at different levels and scales, as these measures are not influenced by the data's magnitude. This aspect holds particular importance in our study, as we work with time series at various levels of hierarchy. These time series show varying scales, resulting in different magnitudes of error. By employing scale-independent measures, we can meaningfully assess the forecast accuracy across the entire hierarchy, ensuring a more robust comparison.}
+\textcolor{teal}{Using scale-independent measures, such as MASE and MSSE, enables more appropriate comparisons between time series at different levels and scales, as these measures are not influenced by the magnitude of the data. This is of particular importance in our study, as we work with time series at various levels of hierarchy, with varying scales, resulting in different magnitudes of error. By employing scale-independent measures, we can meaningfully assess the forecast accuracy across the entire hierarchy, ensuring a more robust comparison.}
 
 To measure the forecast distribution accuracy, we calculate the
 Continuous Rank Probability Score
@@ -845,14 +841,14 @@ performance of the forecast distribution.
 for forecast horizon \(j\), and \(F_j(x)\) is the true probability
 distribution function for the same period.
 
-\textcolor{teal}{Calibration refers to the statistical consistency between the distributional forecasts and the observations. It measures how well the predicted probabilities match the actual. On the other hand, sharpness refers to the concentration of the forecast distributions --- a sharp forecast distribution results in narrow prediction intervals, indicating high confidence in the forecast. A model is well-calibrated if the predicted probabilities match the actual, and it is sharp if it is confident in its predictions. The CRPS rewards sharpness and calibration by assigning lower scores to forecasts with sharper distributions, and to forecasts that are well-calibrated. Thus, it is a metric that combines both sharpness and miscalibration into a single score, making it a useful tool for evaluating the performance of probabilistic forecasts.}
+\textcolor{teal}{Calibration refers to the statistical consistency between the distributional forecasts and the observations. It measures how well the predicted probabilities match the observations. On the other hand, sharpness refers to the concentration of the forecast distributions --- a sharp forecast distribution results in narrow prediction intervals, indicating high confidence in the forecast. A model is well-calibrated if the predicted probabilities match the distribution of the observations, and it is sharp if it is confident in its predictions. The CRPS rewards sharpness and calibration by assigning lower scores to forecasts with sharper distributions, and to forecasts that are well-calibrated. Thus, it is a metric that combines both sharpness and miscalibration into a single score, making it a useful tool for evaluating the performance of probabilistic forecasts.}
 
 \textcolor{teal}{CRPS can be considered an average of all possible Winkler scores}
 \citep[Section 5.9]{winkler1972decision, hyndman2021forecasting}
-\textcolor{teal}{or percentile scores} \citep[section
+\textcolor{teal}{or percentile scores} \citep[Section
 5.9]{hyndman2021forecasting},
 \textcolor{teal}{and thus provides an evaluation of all possible prediction intervals or quantiles.}
-\textcolor{teal}{A specific prediction interval could be evaluated using a Winkler score. Certain situations may also require assessing accuracy for a particular quantile, such as lower (e.g 5\%) or higher (e.g. 95\%) quantiles. In such cases, a percentile score  becomes useful in meeting this specific requirement.}
+\textcolor{teal}{A specific prediction interval could be evaluated using a Winkler score. Certain situations may also require assessing accuracy for a particular quantile, such as lower (e.g 5\%) or higher (e.g. 95\%) quantiles. In such cases, a percentile score becomes useful in meeting this specific requirement.}
 
 \hypertarget{sec-htc}{%
 \section{Hierarchical and grouped time series forecasting
@@ -909,24 +905,22 @@ at time \(t\), and let \(\bm{a}_t\) be a corresponding vector of
 \] and \(\bm{A}\) is the \(n_a\times n_b\) ``aggregation'' matrix
 specifying how the bottom-level series \(\bm{b}_t\) are to be aggregated
 to form \(\bm{a}_t\).
-\textcolor{teal}{The aggregation matrix $A$ is determined by the structure of the hierarchy. It maps the bottom-level time series to the corresponding higher-level time series. The matrix $A$ is typically predefined based on the structure of the hierarchy, and it remains fixed throughout the forecasting process. For example, if there are two bottom-level series, and one aggregated series (equal to the sum of the two bottom-level series), then $A = \begin{bmatrix} 1 1 \end{bmatrix}$.
-}
-
-The full vector of time series is given by \[
+\textcolor{teal}{The aggregation matrix $\bm{A}$ is determined by the structure of the hierarchy. It maps the bottom-level time series to the corresponding higher-level time series. For example, if there are two bottom-level series, and one aggregated series (equal to the sum of the two bottom-level series), then $\bm{A} = \begin{bmatrix} 1 ~~ 1 \end{bmatrix}$.
+} The full vector of time series is given by \[
  \bm{y}_t = \begin{bmatrix}\bm{a}_t \\\bm{b}_t\end{bmatrix}.
 \] This leads to the \(n\times n_b\) ``summing'' or ``structural''
 matrix given by \[
   \bm{S} = \begin{bmatrix}\bm{A} \\ \bm{I}_{n_b}\end{bmatrix}
 \] such that \(\bm{y}_t = \bm{S}\bm{b}_t\).
 
-\textcolor{teal}{The term "level bottom series" relates to the most disaggregated series within the hierarchical and grouped time series structure. For instance, in Table 2, each distinct combination of values in Control area (e.g. South \& East), Health board (e.g. CV), Priority (e.g. Green), and Nature of incident (e.g. Chest pain) corresponds to one individual time series. In the dataset at hand, there are 691 unique combinations, resulting in 691 bottom level time series. The "aggregate time series" describes how these bottom-level series are combined to create higher-level series. For instance, to obtain the incidents at the national level (i.e. all country level), the time series are aggregated across all Control areas, Health boards, Priorities, and Natures of incidents. Any desired aggregation level can be achieved based on the data structure, utilizing the bottom level series available.}
+\textcolor{teal}{The term "bottom-level series" relates to the most disaggregated series within the hierarchical and grouped time series structure. For instance, in Table 2, each distinct combination of values in Control area (e.g. South \& East), Health board (e.g. CV), Priority (e.g. Green), and Nature of incident (e.g. Chest pain), corresponds to one individual time series. In the dataset at hand, there are 691 unique combinations, resulting in 691 bottom level time series. The "aggregate time series" describes how these bottom-level series are combined to create higher-level series. For instance, to obtain the incidents at the national level (i.e. all country level), the time series are aggregated across all Control areas, Health boards, Priorities, and Natures of incidents. Any desired aggregation level can be achieved based on the data structure, utilizing the bottom-level series available.}
 
 \hypertarget{bottom-up-bu-and-linear-reconciliation-methods}{%
 \subsubsection{Bottom-up (BU) and linear reconciliation
 methods}\label{bottom-up-bu-and-linear-reconciliation-methods}}
 
 Bottom-Up is a simple approach to generate coherent forecasts. It
-involves first creating the base forecasts for the bottom level series
+involves first creating the base forecasts for the bottom-level series
 (i.e., the most disaggregated series). These forecasts are then
 aggregated to the upper levels which naturally results in coherent
 forecasts. The BU approach can capture the dynamics of the series at the
@@ -952,11 +946,11 @@ given data to time \(T\). Different choices for \(\bm{W}\) lead to
 different solutions such as Ordinary Least Squares (OLS), Weighted Least
 Squares (WLS) and Minimum Trace (MinT).
 
-\textcolor{teal}{Ordinary Least Squares (OLS) is the simplest and most commonly used method for estimating the parameters in linear regression models. In this approach, the estimation of W is based on the assumption that all the errors have equal variance. Hence, W is simply defined as the identity matrix multiplied by a constant factor. The intuition behind OLS is that it minimizes the sum of squared residuals between the observed and predicted values of the dependent variable. The main weakness of this approach is that it does not take account of the different scales of the base time series; the aggregated series will usually have higher variance than the disaggregated series, simply because the values are larger, but OLS treats all series the same. A strength of the approach is that it is simple, and does not involve estimating a covariance matrix.}
+\textcolor{teal}{Ordinary Least Squares (OLS) is the simplest and most commonly used method for estimating the parameters in linear regression models. In this approach, the estimation of $\bm{W}$ is based on the assumption that all the errors have equal variance. Hence, $\bm{W}$ is simply defined as the identity matrix multiplied by a constant factor. The intuition behind OLS is that it minimizes the sum of squared residuals between the observed and predicted values of the dependent variable. The main weakness of this approach is that it does not take account of the different scales of the base time series; the aggregated series will usually have higher variance than the disaggregated series, simply because the values are larger, but OLS treats all series the same. A strength of the approach is that it is simple, and does not involve estimating a covariance matrix.}
 
-\textcolor{teal}{Weighted Least Squares (WLS) is an extension of OLS where the variance of the errors is assumed to be heteroscedastic, i.e., different for each series. But it assumes that the errors of each series are uncorrelated with each other. In this approach, W is defined as a diagonal matrix with the variance of the errors on the diagonal. The intuition behind WLS is that it assigns higher weight to series with smaller error variance, and thereby takes into account the different scales of the base time series. The main weakness of this approach is that it ignores the relationships between series. A strength of WLS is that it is relatively easy to compute W as it is based only on error variances which are readily estimated.}
+\textcolor{teal}{Weighted Least Squares (WLS) is an extension of OLS where the variance of the errors is assumed to be heteroscedastic, i.e., different for each series. But it assumes that the errors of each series are uncorrelated with each other. In this approach, $\bm{W}$ is defined as a diagonal matrix with the variance of the errors on the diagonal. The intuition behind WLS is that it assigns higher weight to series with smaller error variance, and thereby takes into account the different scales of the base time series. The main weakness of this approach is that it ignores the relationships between series. A strength of WLS is that it is relatively easy to compute $\bm{W}$ as it is based only on error variances which are readily estimated.}
 
-\textcolor{teal}{Minimum Trace (MinT) is a further generalization where W is defined as the covariance matrix of the base forecast errors. So it takes account of both the scale of each series, and the relationships between the series.}
+\textcolor{teal}{Minimum Trace (MinT) is a further generalization where $\bm{W}$ is defined as the covariance matrix of the base forecast errors. So it takes account of both the scale of each series, and the relationships between the series.}
 \citet{WicEtAl2019}
 \textcolor{teal}{showed that this approach gives the optimal reconciled forecasts in the sense that the sum of the forecast variances is minimized. The main weakness of this approach is that it is difficult to estimate the full covariance matrix. In practice, we usually need to use a shrinkage estimate where the off-diagonal elements are shrunk towards zero.}
 
@@ -970,19 +964,19 @@ the experiment.
 \hypertarget{sec-results}{%
 \section{Results and discussion}\label{sec-results}}
 
-In this section, we compare the forecasting performance of the Naive,
-ETS, GLM, and TSGLM models along with the ensemble, using base forecast
-and Minimum Trace (MinT) reconciliation methods. We have also computed
-the forecast accuracy for Ordinary Least Square (OLS) and Weighted Least
-Square (WLS) approaches, along with bottom-up forecasting. However, they
-are not reported here because their accuracy is outperformed by MinT. We
-should also note that forecasts, and consequently their corresponding
-errors, are generated for the entire hierarchy and they could be
-reported at any level, if required. But to save space, we have reported
-only the top level (Total), the bottom level, and the levels
-corresponding to Control areas and Health boards. The latters are chosen
-because this is where decision-making takes place, so these forecasts
-are the most important.
+In this section, we compare the forecasting performance of the
+Stationary, ETS, GLM, and TSGLM models along with the ensemble, using
+base forecast and Minimum Trace (MinT) reconciliation methods. We have
+also computed the forecast accuracy for Ordinary Least Square (OLS) and
+Weighted Least Square (WLS) approaches, along with bottom-up
+forecasting. However, they are not reported here because their accuracy
+is outperformed by MinT. We should also note that forecasts, and
+consequently their corresponding errors, are generated for the entire
+hierarchy and they could be reported at any level, if required. But to
+save space, we have reported only the top level (Total), the bottom
+level, and the levels corresponding to Control areas and Health boards.
+The latters are chosen because this is where decision-making takes
+place, so these forecasts are the most important.
 
 The overall forecasting performance is reported in
 Table~\ref{tbl-result}, in which the average forecast accuracy over
@@ -991,7 +985,7 @@ presented per model, method, and the hierarchical level. Reported
 forecast accuracy is averaged across all forecast horizons, rolling
 origins, and series at each level. Table~\ref{tbl-result} presents both
 point and probabilistic forecast accuracy at total, control area, health
-board and bottom level series. Point forecast performance is reported
+board and bottom-level series. Point forecast performance is reported
 using MASE and MSSE in Table~\ref{tbl-result-1} and \ref{tbl-result-2},
 respectively. Probabilistic forecast accuracy is reported using CRPS in
 Table~\ref{tbl-result-3}. The bold entries in each table identify a
@@ -1002,7 +996,7 @@ measures.
 Table~\ref{tbl-result-1} and \ref{tbl-result-2} show that forecast
 reconciliation (i.e.~MinT) improves forecast accuracy at the higher
 levels of the hierarchy including total, control area and health board.
-However, it does not result in accuracy improvement at the bottom level
+However, it does not result in accuracy improvement at the bottom-level
 series, for which base forecasts are more accurate. This might be due to
 the noisy structure of time series at the bottom level, and possibly due
 to very different patterns in the aggregated series. It is also clear
@@ -1010,7 +1004,7 @@ from Table~\ref{tbl-result-1} that the ensemble method improves forecast
 accuracy at total, control area and health board. However, this does not
 remain valid for bottom series where different individual methods
 perform best, depending on the accuracy measure.
-\textcolor{teal}{While the forecast reconciliation approach aims to enhance forecast accuracy, its effectiveness may not always be guaranteed, especially if the bottom-level series exhibit excessive noise and lack systematic patterns. Despite this, reconciling forecasts at the bottom level can offer advantages by generating coherent forecasts that facilitate alignment in planning across various teams within an organization, promote better coordination, and prevent conflicting decisions. Moreover, even when dealing with noisy and irregular bottom-level series, reconciliation can still improve forecast accuracy at higher levels of the hierarchy by leveraging the information available across the hierarchy. Therefore, although the bottom-level forecasts may not be highly accurate on their own, reconciling them with higher-level forecasts can still provide a more consistent view of future demand and potentially yield more accurate forecasts at other levels.}
+\textcolor{teal}{While the forecast reconciliation approach aims to enhance forecast accuracy, its effectiveness is not guaranteed, especially if the bottom-level series exhibit excessive noise and lack systematic patterns. Despite this, reconciling forecasts at the bottom level can offer advantages by generating coherent forecasts that facilitate alignment in planning across various teams within an organization, promote better coordination, and prevent conflicting decisions. Moreover, even when dealing with noisy and irregular bottom-level series, reconciliation can still improve forecast accuracy at higher levels of the hierarchy by leveraging the information available across the hierarchy. Therefore, although the bottom-level forecasts may not be highly accurate on their own, reconciling them with higher-level forecasts can still provide a more consistent view of future demand and potentially yield more accurate forecasts at other levels.}
 
 \begin{table}
 
@@ -1032,13 +1026,13 @@ bold.}\begin{minipage}[t]{\linewidth}
 \cmidrule(l{3pt}r{3pt}){3-6}
 Method & Model & Total & Control areas & Health boards & Bottom\\
 \midrule
-Base & Naive & 1.139 & 1.059 & 1.047 & 1.019\\
+Base & Stationary & 1.139 & 1.059 & 1.047 & 1.019\\
 Base & ETS & 0.963 & 0.930 & 0.899 & 1.038\\
 Base & GLM & 0.910 & 0.940 & 0.923 & \textbf{1.002}\\
 Base & TSGLM & 0.911 & 0.939 & 0.924 & 1.005\\
 Base & Ensemble & 0.782 & 0.856 & 0.876 & 1.008\\
 \addlinespace
-MinT & Naive & 1.138 & 1.059 & 1.047 & 2.651\\
+MinT & Stationary & 1.138 & 1.059 & 1.047 & 2.651\\
 MinT & ETS & 0.877 & 0.916 & 0.915 & 1.289\\
 MinT & GLM & 0.848 & 0.901 & 0.902 & 2.493\\
 MinT & TSGLM & 0.852 & 0.903 & 0.903 & 2.513\\
@@ -1064,13 +1058,13 @@ MinT & Ensemble & \textbf{0.753} & \textbf{0.844} & \textbf{0.872} & 2.260\\
 \cmidrule(l{3pt}r{3pt}){3-6}
 Method & Model & Total & Control areas & Health boards & Bottom\\
 \midrule
-Base & Naive & 1.169 & 1.056 & 1.062 & 1.031\\
+Base & Stationary & 1.169 & 1.056 & 1.062 & 1.031\\
 Base & ETS & 0.979 & 0.875 & 0.816 & \textbf{0.975}\\
 Base & GLM & 0.813 & 0.897 & 0.875 & 1.009\\
 Base & TSGLM & 0.822 & 0.901 & 0.875 & 1.050\\
 Base & Ensemble & 0.599 & 0.729 & 0.774 & 0.993\\
 \addlinespace
-MinT & Naive & 1.168 & 1.057 & 1.062 & 2.095\\
+MinT & Stationary & 1.168 & 1.057 & 1.062 & 2.095\\
 MinT & ETS & 0.785 & 0.852 & 0.845 & 0.994\\
 MinT & GLM & 0.720 & 0.827 & 0.837 & 1.803\\
 MinT & TSGLM & 0.722 & 0.833 & 0.839 & 1.851\\
@@ -1096,13 +1090,13 @@ MinT & Ensemble & \textbf{0.560} & \textbf{0.706} & \textbf{0.765} & 1.557\\
 \cmidrule(l{3pt}r{3pt}){3-6}
 Method & Model & Total & Control areas & Health boards & Bottom\\
 \midrule
-Base & Naive & 30.387 & 10.882 & 5.500 & 0.302\\
+Base & Stationary & 30.387 & 10.882 & 5.500 & 0.302\\
 Base & ETS & 14.309 & 6.074 & 3.476 & 0.244\\
 Base & GLM & 15.396 & 6.253 & 3.576 & 0.244\\
 Base & TSGLM & 15.316 & 6.227 & 3.575 & 0.245\\
 Base & Ensemble & 12.978 & \textbf{5.727} & 3.430 & 0.243\\
 \addlinespace
-MinT & Naive & 30.368 & 10.902 & 5.498 & 0.313\\
+MinT & Stationary & 30.368 & 10.902 & 5.498 & 0.313\\
 MinT & ETS & 13.515 & 5.967 & 3.547 & \textbf{0.243}\\
 MinT & GLM & 13.839 & 5.917 & 3.453 & 0.246\\
 MinT & TSGLM & 14.000 & 5.947 & 3.455 & 0.248\\
@@ -1148,9 +1142,9 @@ the tails of the distribution.
 MinT reconciliation. The total number of days used to calculate the
 accuracy in the test set is 462. Forecasts are generateled every 42
 days, therefore we use 11 samples to calculate the average accuracy.
-CRPS is relative to a naive Empirical Cumulative Distribution Function
-(ECDF). MASE and MSSE are relative to the corresponding values for the
-training set.}
+CRPS is relative to a stationary Empirical Cumulative Distribution
+Function (ECDF). MASE and MSSE are relative to the corresponding values
+for the training set.}
 
 \end{figure}
 
@@ -1171,23 +1165,23 @@ and decision-makers. For both the point forecast and distributional
 accuracy we can see that the ensemble approach performs best across
 almost all horizons, with the biggest differences at the highest levels
 of aggregation. It is important to highlight that, all forecasting
-models outperform the Naive empirical distribution that is used as a
-benchmark for both point and probabilistic forecasts.
+models outperform the stationary empirical distribution that is used as
+a benchmark for both point and probabilistic forecasts.
 
-\textcolor{teal}{Despite using Poisson regression models to create count distributions of attended incidents for the base forecasts, it is important to note that the reconciled forecast distributions do not maintain a count format. In practical scenarios, there might be a need to use integer forecasts. Count forecast reconciliation is an active area of research, and it would be interesting to explore how our approach could be adapted to generate count-reconciled probabilistic forecasts in future studies. One possible approach to address this is by rounding the forecasts. However, the impact of rounding on forecast accuracy varies depending on the level of hierarchy and the scale of the data. In situations with high-volume demand, the effects of rounding may become negligible, and forecast accuracy calculations can overlook integer effects. On the other hand, in low-volume demand settings, such as forecasts at the bottom level of the hierarchy, integer (rounding) effects may have a more noticeable influence on forecast accuracy.}
+\textcolor{teal}{Despite using Poisson regression models to create count distributions of attended incidents for the base forecasts, it is important to note that the reconciled forecast distributions do not maintain a count format. In practical scenarios, there might be a need to use integer forecasts. Count forecast reconciliation is an active area of research, and it would be interesting to explore how our approach could be adapted to generate count-reconciled probabilistic forecasts in future studies. One possible approach to address this is by rounding the forecasts. However, the impact of rounding on forecast accuracy varies depending on the level of hierarchy and the scale of the data. In situations with high-volume demand, the effects of rounding may be negligible, and forecast accuracy calculations can overlook integer effects. On the other hand, in low-volume demand settings, such as forecasts at the bottom level of the hierarchy, integer (rounding) effects may have a more noticeable influence on forecast accuracy.}
 
 \hypertarget{an-illustration-of-probabilistic-forecast-for-ems-demand}{%
 \subsection{An illustration of probabilistic forecast for EMS
 demand}\label{an-illustration-of-probabilistic-forecast-for-ems-demand}}
 
 Figure~\ref{fig-forecast-density}
-\textcolor{teal}{provides an illustrative example of a probabilistic forecast for future demand, one day ahead, regarding the total attended incidents in the PO health board. The black dashed line in the graph represents the point forecast, which presents a single numerical estimate for the future number of attended incidents. Due to the complexity of including such plots for the entire hierarchy and 84 days ahead, only one example is presented here for 1 day ahead. However, it is feasible to generate these plots for the entire hierarchy and for any forecast horizon if necessary.}
+\textcolor{teal}{provides an illustrative example of a probabilistic forecast for future demand, one day ahead, of the total attended incidents in the PO health board. The black dashed line in the graph represents the point forecast (the mean of the distribution), which presents a single numerical estimate for the future number of attended incidents. Due to the complexity of including such plots for the entire hierarchy and 84 days ahead, only one example is presented here for 1 day ahead. However, it is feasible to generate these plots for the entire hierarchy and for any forecast horizon if necessary.}
 
 \textcolor{teal}{In practice, point forecasts are commonly used, but they have limitations as they ignore the uncertainty associated with the forecast, leading to wrong decisions. In contrast, probabilistic forecasts offer an alternative approach to anticipate future demand. Rather than providing a single value, they assign likelihoods to all possible demand outcomes, acknowledging that different numbers of attended incidents are possible, but with varying likelihoods.}
 
 \textcolor{teal}{The purpose of probabilistic forecasting, as demonstrated in}
 Figure~\ref{fig-forecast-density},
-\textcolor{teal}{is to quantify uncertainty. Decisions based on these forecasts could focus on the tails of the distribution: unexpected high demand leading to crowding and inefficiency, or unexpectedly low demand resulting in wasted resources. Such forecasts are valuable tools for decision-makers and planners, especially when dealing with low-probability, high-cost situations. Different EMS managements may have varying risk attitudes depending on resource availability, making it crucial to consider the entire distribution when making decisions. For instance, these forecasts enable management to calculate the probability of demand exceeding a certain threshold of available resources (e.g., 90\%), which can serve as an informative early warning measure for crowdedness.}
+\textcolor{teal}{is to quantify uncertainty. Decisions based on these forecasts could focus on the tails of the distribution: unexpectedly high demand leading to crowding and inefficiency, or unexpectedly low demand resulting in wasted resources. Such forecasts are valuable tools for decision-makers and planners, especially when dealing with low-probability, high-cost situations. Different EMS managements may have varying risk attitudes depending on resource availability, making it crucial to consider the entire distribution when making decisions. For instance, these forecasts enable management to calculate the probability of demand exceeding a certain threshold of available resources (e.g., 90\%), which can serve as an informative early warning measure for crowdedness.}
 
 \textcolor{teal}{It is important to note that while point forecasts and prediction intervals can be obtained from the probabilistic forecasts, the reverse is not possible. A single number cannot be used to directly derive a probabilistic forecast. Prediction intervals, although helpful in indicating possible ranges, do not provide information on the probabilities of low or high demand.}
 
@@ -1199,10 +1193,12 @@ Figure~\ref{fig-forecast-density},
 
 }
 
-\caption{\label{fig-forecast-density}An illustrative example of forecast
-distribution of ambulance demand (i.e.~total incidence attended) in PO
-health board for 1 day ahead. x-axis shows all possible outcomes that
-may occur, with thier likelihhod in y-aixs}
+\caption{\label{fig-forecast-density}An illustrative example of the
+forecast distribution of ambulance demand (i.e.~total incidence
+attended) for the PO health board for 1 day ahead. The horizontal axis
+shows all possible outcomes that may occur, with their likelihood shown
+on the vertical axis. The dashed line indicates the mean of the
+distribution.}
 
 \end{figure}
 
@@ -1269,7 +1265,7 @@ avenue for future research.
 
 \textcolor{teal}{Although our study primarily focuses on Emergency Medical Services, it is essential to emphasize that the framework we propose has broad applicability across various service industries}
 \citep{ostrom2010moving}.
-\textcolor{teal}{Our approach is particularly valuable in situations where time series data is structured hierarchically and/or grouped, a common characteristic found in many sectors. This occurs when data can be naturally organized into different levels of hierarchies or when dependencies and relationships exist among entities within the system. For instance, in the supply chains }
+\textcolor{teal}{Our approach is particularly valuable in situations where time series data is structured hierarchically and/or grouped, a common characteristic found in many sectors. This occurs when data can be naturally organized into different levels of hierarchies or when dependencies and relationships exist among entities within the system. For instance, in supply chains}
 \citep{shugan2000advance},
 \textcolor{teal}{demand forecasting at different levels of the distribution network, such as regional warehouses or retail stores, is vital for efficient inventory management and minimizing stockouts. Our framework allows the reconciliation of forecasts, ensuring consistency and alignment throughout the supply chain, leading to improved decision-making and operational efficiency. In the financial industry}
 \citep{kimes1998strategic},
