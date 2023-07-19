@@ -148,7 +148,9 @@ acc_summary <- accuracy |>
   summarise(accuracy = mean(accuracy), .groups = "drop")
 
 
-acc_summary |>
+acc_summary |>   filter(
+    model != "Ensemble2"
+  ) |> 
   ggplot(aes(x = week, y = accuracy, group = model, col = model)) +
   geom_line() +
   geom_point(size = .5) +
