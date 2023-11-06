@@ -20,10 +20,13 @@ There are generally two main streams of research related to forecasting ambulanc
 
 This paper concerns the problem of hierarchical forecasting in EMS and generates and evaluates both point and probabilistic forecast across different levels of the hierarchy, hence addressing some important gaps identified in the literature.
 
-```{r summarylit, echo=FALSE, cache=FALSE}
+```{r}
 #| label: tbl-literature
+#| echo: false
+#| cache: false
+#| tbl-cap: "Summary of some studies on forecasting in Emergency Medical Services"
 library(kableExtra)
 li <- readxl::read_xlsx("../literature_table/table.xlsx")
-knitr::kable(li, booktabs = T, linesep = "",caption = "Summary of some studies on forecasting in Emergency Medical Services") |>  kableExtra::kable_styling(latex_options = c("scale_down","hold_position"), font_size =11) |> column_spec(3,"6em") |>
-  column_spec(4,"4em") |> column_spec(5,"10em")  |> column_spec(6,"8em") |>  kableExtra::landscape()
+knitr::kable(li, booktabs = T, linesep = "") |>  kableExtra::kable_styling(latex_options = c("scale_down","hold_position"), font_size =11) |> column_spec(3,"6em") |>
+  column_spec(4,"4em") |> column_spec(5,"10em")  |> column_spec(6,"8em") |> landscape()
 ```

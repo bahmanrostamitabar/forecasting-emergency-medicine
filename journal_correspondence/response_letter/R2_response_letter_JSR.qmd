@@ -1,0 +1,158 @@
+---
+title: "Response letter - Manuscript ID JSR-22-468.R1"
+bibliography: bibliography.bib
+format:
+  pdf:
+    pdf-engine: pdflatex
+    papersize: a4
+    geometry: "margin = 2.5cm"
+    include-in-header: header.tex
+---
+
+Dear Professor Malthouse
+
+Please find enclosed a revised version of our paper submitted for peer review for the *Journal of Service Research*. Your comments have been very much appreciated and we have tried to suitably modify/amend our paper for those comments to be reflected in the revised version.
+
+We quote below the detailed referees’ comments that are followed by our response. In all cases, we point out, where necessary, the corresponding amendments in the new version of the paper and highlighted them in teal (greenish-blue color).
+
+
+# Editor comment
+
+*My decision on this manuscript was not easy. On the one hand, the reviewers rate the importance of the work as "important" and "very important." They also see "major" potential impact. They acknowledge that you made major changes to the first version of the MS. I personally appreciate you highlighting the changes you made to the manuscript in a blue font and see your substantial improvements to R1. On the other hand the review team feels like many comments from the first round were not addressed. R1 and the AE are asking for model details, clarifications and elaborations. They continue to find typos (R2 notes issues with subscripts and both reviewers mention formatting issues). Simple suggestions like mentioning extended application areas in the introduction, which will help in the positioning of the article for JSR readers, were ignored. They appreciate the example you have added, but suggest adding details. I see these comments as constructive in that their goal is to improve the readability of your manuscript for the JSR and other readers, which will ultimately mean that readers will understand your work so that it realizes its full potential impact. While many of our readers have strong methodological training, JSR is also read by more managerial and policy-oriented scholars; it is important that articles are written in a way to reach both audiences. This expands the reach and impact of your work.*
+
+*In order to gain final acceptance, I ask for you to go back and address the clarifications, details, etc. Please write a point-by-point response and highlight the changes in the manuscript by using a different colored font. I do not plan to send this out for review again. I reserve the right to reject the work if there is not sufficient progress made in addressing the issues identified by the review team in the next submission. (Bahman)*
+
+Response:  
+
+# Associate Editor
+
+We received two very good reviews that came up with justified concern and mixed recommendations. Let me add additional comments.
+
+## AE comments
+
+_Comment 1. The authors need to score higher on the economic insights. Their example did not impress me, and I was hoping to receive more intuition as to why their approach works better. (Rob?)_
+
+  **Response:**
+
+_Comment 2. The authors miss opportunities. I appreciate that the authors summarize previous research in Table 1. Yet, there is nothing in Table 1 that helps the reader understand why the current research has the limitations that the authors state on page 8 (Bahman)._
+
+  **Response:**
+
+_Comment 3. I highly appreciate that the authors intend to provide data and code via their GitHub repository. No doubt, the resulting transparency is a major strength of this manuscript. Yet, the authors could still do a much better job in outlining to the readers that the authors have done a good job. (Rob?)_
+
+  **Response:**
+
+_Comment 4.I felt that the authors did not address the following concern that I outlined in the last round of review: “It would also help to have a rather detailed example, maybe even a numerical example, to better describe why separate forecasts at different levels can cause problems. Right now, it sounds plausible that such problems occur, but you are still rather vague concerning the details of these problems. (Rob?)”_
+
+  **Response:**
+
+_Comment 5. I also had the following comments in the previous round of review: “Make sure that all tables and figures are self-contained” and “If possible, display the number of observations in all tables and figures with statistical results”. Unfortunately, Figure 1 is not self-contained (e.g., abbreviations are not explained). Figure 2 could also contain the correlation and the number of observations. (Bahman)_
+
+  **Response:**
+
+_Comment 6. I was also hoping for an example that not only describes the problem that the authors solve, but that allows us to better understand the basic idea behind the authors’ solution. (Rob?)_
+
+  **Response:**
+
+
+
+# Reviewer 1
+
+_**Overall Review:** _
+
+_The authors have made revisions to address some of the concerns raised in the initial review, which has improved certain aspects of the manuscript. Additions have been made to explain the trend and seasonality strength measures, provide the GLM equation, and resolve minor formatting issues. These changes are beneficial. (Bahman)_
+  
+_However, critical concerns around model specifics, validation methodology, results analysis, and terminology remain unclear or insufficiently addressed. Major issues persist with detailing the ETS configurations, clarifying serial dependence in TSGLM, justifying the naive method’s inclusion, explaining training/testing data splits for tuning, defining the forecast horizon, elaborating the CRPS metric, providing dataset-specific examples for hierarchical forecasting concepts, distinguishing between hierarchical forecasting approaches, validating the comparison technique, and discussing practical implications of non-integer forecasts._
+
+_The lack of clarity and details in these important methodological areas continues to undermine the credibility and reproducibility of the study. Furthermore, the authors do not sufficiently leverage the results to provide managerial insights for EMS planning. More in-depth analysis of the forecast accuracy patterns across timescales, hierarchy levels, and model configurations would strengthen the practical implications._
+
+_In summary, while I acknowledge the efforts to improve the manuscript in certain aspects, there remains a critical need for enhancing model specifics, methodology descriptions, results analysis, and terminology usage._
+
+  **Response:** 
+
+
+
+_Comment 1. The authors added brief explanations of the trend and seasonality strength measures in response to Comment #3. While this provides more context, a citation or reference for these specific definitions would further strengthen this section (Bahman)._
+
+  **Response:** 
+
+_Comment 2. The revisions partially address the lack of model detail raised in Comment #4, but some components are still unclear (Bahman):_
+
+  **Response:** 
+  
+_Comment 2.1. For ETS, it is now stated that an automated algorithm selects the best configuration, but no information is given on what options are available for trend, seasonality, etc. Listing the choices would help the reader. (Bahman)._
+
+  **Response:** 
+  
+_Comment 2.2. The equation for the GLM model is now provided, but the description still does not mention monthly seasonality. This should be explicitly addressed. (Bahman)_
+
+  **Response:** 
+
+_Comment 2.3. The concept of ”serial dependence” in TSGLM needs more clarification and specificity to the EMS context. (Bahman)_
+
+  **Response:** 
+  
+_Comment 2.4. The rationale for including the naive method in the ensemble is still not provided. Its apparent poor performance suggests it should be excluded (Rob, Bahman)._
+
+  **Response:** 
+
+_Comment 3. The explanation of the training/validation/testing data split in Comment #5 remains unclear. The authors should explicitly state if tuning is done on the training set only or if a separate validation set is used. (Bahman)_
+
+  **Response:** 
+  
+_Comment 4. The forecast horizon explanation in Comment #6 is still ambiguous. The time unit (days, weeks, etc.) should be clearly defined. (Bahman)_
+
+  **Response:** 
+  
+_Comment 5. Comment #7 regarding the CRPS metric lacks sufficient clarification. Explicitly defining concepts like sharpness and miscalibration would strengthen this section. Additionally, more specifics are needed on the forecast distribution derivation. (Rob)_
+
+  **Response:** 
+  
+_Comment 6. Section 4.2 still lacks concrete examples tying the hierarchical forecasting concepts to the EMS dataset, as noted in Comment #8. This example-based explanation needs enhancement. (Bahman)_
+
+  **Response:** 
+  
+_Comment 7. Comment #9 about clarifying the differences between various hierarchical forecasting approaches does not seem to be addressed. This terminology is still confusing in Section 4.2.2 and requires revision. (Rob)_
+
+  **Response:** 
+  
+_Comment 8. Comment #10 questioning the validation approach of comparing base and reconciled forecasts is not addressed. The authors should explain why this is an appropriate evaluation technique. (Rob)_
+
+  **Response:** 
+
+_Comment 9. My concerns in Comment #11 about non-integer forecasts and rounding do not appear to be addressed. This practical issue needs to be discussed. (Bahman)_
+
+  **Response:** 
+  
+# Reviewer 2
+
+_General comment: The author revised the manuscript upon the review comments and I appreciate the detailed introductions added to the body of the paper.I provide some follow-up comments below for consideration and reference. (Bahman)_
+
+  **Response:** 
+
+
+_Comment 1. Might be good to at least briefly mention the extended applicability of the idea early in the introduction section. (Bahman)_
+
+  **Response:** 
+  
+_Comment 2. It is confusing to have the abbreviations BME1 and BME2 listed with the same full name while no explanations or references are given. This is at Section 2, Page 7. (Bahman)_
+
+  **Response:** 
+  
+_Comment 3. The author added great details to the methods mentioned in Section 3.2, such as the well-explained model specifications of GLM and TSGLM. Make sure typos are corrected, especially notation-wise such as subscripts. (Bahman)_
+
+  **Response:** 
+  
+_Comment 4. It may be good to consider an alternatively way of providing details to the linear reconciliation method. For instance, the main equation \tilde{y}_h is still missing important reasoning about how it is derived. With some better descriptions of how it is derived, such as an objective function, the follow-up paragraphs for the three methods can be more concisely summarised with better readability. (Rob)_
+
+  **Response:** 
+  
+_Comment 5. The new Section 5.1 provided details about how to obtain and understand the distributional forecasts of the method. Indeed, this can be considered a major selling point of the work, and hence I would always appreciate further addressing and discussions about the probabilistic outperformance of the idea. For example, it might be good to include figures with fitting coverage of the training data, as well as some additional appendix figures for other example series probably at different hierarchy levels. It is not necessary to refer them in the main paper, but some self-explanatory captions should suffice. Besides, comparison with competing methods regarding the same aspect would be a plus. (Bahman)_
+
+  **Response:** 
+
+_Comment 6. There are still formatting issues in the included tables. (Bahman)_
+
+  **Response:** 
+
+# References {#references .unnumbered}
