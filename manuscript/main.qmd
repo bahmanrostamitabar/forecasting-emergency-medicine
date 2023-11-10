@@ -102,6 +102,6 @@ ggplot2::theme_set(ggthemes::theme_few())
 
 # Reproducibility {.unnumbered}
 
-R code to produce all results in this paper is available at https://github.com/bahmanrostamitabar/forecasting-emergency-medcine
+R code to produce all results in this paper is available at [github.com/bahmanrostamitabar/forecasting-emergency-medicine](https://github.com/bahmanrostamitabar/forecasting-emergency-medicine). The repository contains the raw data, all R scripts used in experiments as well as the results used in this paper, along with the raw files for producing this paper. Full instructions are provided in the repository. 
 
 # References {#references .unnumbered}

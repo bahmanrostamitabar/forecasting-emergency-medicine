@@ -40,9 +40,18 @@ _Comment 2. The authors miss opportunities. I appreciate that the authors summar
 
 _Comment 3. I highly appreciate that the authors intend to provide data and code via their GitHub repository. No doubt, the resulting transparency is a major strength of this manuscript. Yet, the authors could still do a much better job in outlining to the readers that the authors have done a good job. (Rob?)_
 
+We have now extended the reproducibility section to say the following:
+
+> R code to produce all results in this paper is available at [github.com/bahmanrostamitabar/forecasting-emergency-medicine](https://github.com/bahmanrostamitabar/forecasting-emergency-medicine). The repository contains the raw data, all R scripts used in experiments as well as the results used in this paper, along with the raw files for producing this paper. Full instructions are provided in the repository. 
+
+
+[Bahman: can you please fix the spelling of medicine in the name of the repo]
+
   **Response:**
 
 _Comment 4.I felt that the authors did not address the following concern that I outlined in the last round of review: “It would also help to have a rather detailed example, maybe even a numerical example, to better describe why separate forecasts at different levels can cause problems. Right now, it sounds plausible that such problems occur, but you are still rather vague concerning the details of these problems. (Rob?)”_
+
+We have now added a more detailed but simple example in the introduction.
 
   **Response:**
 
@@ -51,6 +60,8 @@ _Comment 5. I also had the following comments in the previous round of review: �
   **Response:**
 
 _Comment 6. I was also hoping for an example that not only describes the problem that the authors solve, but that allows us to better understand the basic idea behind the authors’ solution. (Rob?)_
+
+The example in the introduction should serve this purpose.
 
   **Response:**
 
@@ -144,6 +155,8 @@ _Comment 3. The author added great details to the methods mentioned in Section 3
   **Response:** 
   
 _Comment 4. It may be good to consider an alternatively way of providing details to the linear reconciliation method. For instance, the main equation \tilde{y}_h is still missing important reasoning about how it is derived. With some better descriptions of how it is derived, such as an objective function, the follow-up paragraphs for the three methods can be more concisely summarised with better readability. (Rob)_
+
+We have now reworded this section, and added some more details about the objective function which is optimized.
 
   **Response:** 
   
