@@ -15,24 +15,19 @@ crps <- readr::read_rds(here::here("results/crps.rds")) |>
 
 In this section, we compare the forecasting performance of the Stationary, ETS, GLM, and TSGLM models along with the ensemble, using base forecast and Minimum Trace (MinT) reconciliation methods. We have also computed the forecast accuracy for Ordinary Least Square (OLS) and Weighted Least Square (WLS) approaches, along with bottom-up forecasting. However, they are not reported here because their accuracy is outperformed by MinT. We should also note that forecasts, and consequently their corresponding errors, are generated for the entire hierarchy and they could be reported at any level, if required. But to save space, we have reported only the top level (Total), the bottom level, and the levels corresponding to Control areas and Health boards. The latters are chosen because this is where decision-making takes place, so these forecasts are the most important.
 
-The overall forecasting performance is reported in @tbl-result, in which the average forecast accuracy over horizons 43--84 days (corresponding to the planning horizon) is presented per model, method, and the hierarchical level. Reported forecast accuracy is averaged across all forecast horizons, rolling origins, and series at each level. @tbl-result presents both point and probabilistic forecast accuracy at total, control area, health board and bottom-level series. Point forecast performance is reported using MASE and MSSE in @tbl-result-1  and [-@tbl-result-2], respectively. Probabilistic forecast accuracy is reported using CRPS in @tbl-result-3. The bold entries in each table identify a combination of method and model that performs best for the corresponding level (i.e. each column), based on the smallest values of accuracy measures.
+The overall forecasting performance is reported in @tbl-result, in which the average forecast accuracy over horizons 43--84 days (corresponding to the planning horizon) is presented per model, method, and the hierarchical level. Reported forecast accuracy is averaged across all forecast horizons, rolling origins, and series at each level. @tbl-result presents both point and probabilistic forecast accuracy at total, control area, health board and bottom-level series. Point forecast performance is reported using MASE and MSSE, while probabilistic forecast accuracy is reported using CRPS. The bold entries in each table identify a combination of method and model that performs best for the corresponding level (i.e. each column), based on the smallest values of accuracy measures.
 
-@tbl-result-1 and [-@tbl-result-2] show that forecast reconciliation (i.e. MinT) improves forecast accuracy at the higher levels of the hierarchy including total, control area and health board. However, it does not result in accuracy improvement at the bottom-level series, for which base forecasts are more accurate. This might be due to the noisy structure of time series at the bottom level, and possibly due to very different patterns in the aggregated series. It is also clear from @tbl-result-1 that the ensemble method improves forecast accuracy at total, control area and health board. However, this does not remain valid for bottom series where different individual methods perform best, depending on the accuracy measure. \textcolor{teal}{While the forecast reconciliation approach aims to enhance forecast accuracy, its effectiveness is not guaranteed, especially if the bottom-level series exhibit excessive noise and lack systematic patterns. Despite this, reconciling forecasts at the bottom level can offer advantages by generating coherent forecasts that facilitate alignment in planning across various teams within an organization, promote better coordination, and prevent conflicting decisions. Moreover, even when dealing with noisy and irregular bottom-level series, reconciliation can still improve forecast accuracy at higher levels of the hierarchy by leveraging the information available across the hierarchy. Therefore, although the bottom-level forecasts may not be highly accurate on their own, reconciling them with higher-level forecasts can still provide a more consistent view of future demand and potentially yield more accurate forecasts at other levels.}
+@tbl-result shows that forecast reconciliation (i.e. MinT) improves point forecast accuracy at the higher levels of the hierarchy including total, control area and health board. However, it does not result in accuracy improvement at the bottom-level series, for which base forecasts are more accurate. This might be due to the noisy structure of time series at the bottom level, and possibly due to very different patterns in the aggregated series. It is also clear from @tbl-result that the ensemble method improves forecast accuracy at total, control area and health board. However, this does not remain valid for bottom series where different individual methods perform best, depending on the accuracy measure. \textcolor{teal}{While the forecast reconciliation approach aims to enhance forecast accuracy, its effectiveness is not guaranteed, especially if the bottom-level series exhibit excessive noise and lack systematic patterns. Despite this, reconciling forecasts at the bottom level can offer advantages by generating coherent forecasts that facilitate alignment in planning across various teams within an organization, promote better coordination, and prevent conflicting decisions. Moreover, even when dealing with noisy and irregular bottom-level series, reconciliation can still improve forecast accuracy at higher levels of the hierarchy by leveraging the information available across the hierarchy. Therefore, although the bottom-level forecasts may not be highly accurate on their own, reconciling them with higher-level forecasts can still provide a more consistent view of future demand and potentially yield more accurate forecasts at other levels.}
 
 ```{r}
 #| label: tbl-result
-#| tbl-cap: "Average forecast performance calculated on the test sets at forecast horizons $h=43,\\dots,84$ days, with time series cross validation applied to attended incident data. The testset consists of 462 days. The best approach is highlighted in bold."
-#| tbl-subcap:
-#|   - "Point forecast accuracy using MASE"
-#|   - "Point forecast accuracy using MSSE"
-#|   - "Probabilistic forecast accuracy using CRPS"
-#| layout-nrow: 3
+#| tbl-cap: "Average forecast performance calculated on the test sets at forecast horizons $h=43,\\dots,84$ days, with time series cross validation applied to attended incident data. The test set consists of 462 days. The best approach is highlighted in bold. Point forecast accuracy is measured using MASE and MSSE, while probabilistic forecast accuracy is measured using CRPS."
 #Set minimum in column to bold
 set_to_bold <- function(table) {
   for(i in 3:6) {
     best <- which.min(table[[i]])
     table[[i]] <- sprintf(table[[i]], fmt="%1.3f")
-    table[[i]][best] <- cell_spec(table[[i]][best], bold=TRUE)
+    table[[i]][best] <- paste0("\\textbf{",table[[i]][best],"}")
   }
   return(table)
 }
@@ -88,21 +83,14 @@ crps1 <- readr::read_rds(here::here("results/crps.rds")) |>
   pivot_wider(names_from = series, values_from = crps) |>
   select(Method = method, Model = model, Total, `Control areas`, `Health boards`, Bottom) |>
   set_to_bold()
-
-kbl(mase1, booktabs = TRUE, escape = FALSE, align="llcccc") |>
-  add_header_above(c(" " = 2, "MASE" = 4)) |>
-  kable_styling(latex_options = c("hold_position"))
-
-kbl(msse1, booktabs = TRUE, escape = FALSE, align="llcccc") |>
-  add_header_above(c(" " = 2, "MSSE" = 4)) |>
-  kable_styling(latex_options = c("hold_position"))
-
-kbl(crps1, booktabs = TRUE, escape = FALSE, align="llcccc") |>
-  add_header_above(c(" " = 2, "CRPS" = 4)) |>
-  kable_styling(latex_options = c("hold_position"))
+bind_rows(mase1, msse1, crps1) |> 
+  kable(format = "latex", booktabs = TRUE, escape = FALSE, align = "llrrrr") |> 
+  pack_rows("MSSE", 1, 10) |> 
+  pack_rows("MASE", 11, 20, hline_before = TRUE) |>
+  pack_rows("CRPS", 21, 30, hline_before = TRUE) 
 ```
 
-@tbl-result-3 presents the accuracy of the forecast distributions measures by CRPS, which considers both forecasting reliability and interval sharpness. The smaller the value of CRPS, the better the comprehensive performance. We observe that forecast reconciliation results in forecast improvement for the total and health board level. CRPS is almost identical at the control area and botom levels. Base forecasts are slightly better at the control area level, while reconciliation is marginally accurate than base at the bottom level. The ensemble method is also more accurate for higher levels, but ETS performs well at the bottom level. @tbl-result-3 indicates that reconciliation using Mint  generates accurate *distributional* forecasts. The marginal improvement in the average probabilistic forecast accuracy at the bottom level might be due to the reconciliation method giving improved forecast accuracy in the tails of the forecast distribution, which are critical for managing risks.
+@tbl-result presents the accuracy of the forecast distributions measures by CRPS, which considers both forecasting reliability and interval sharpness. The smaller the value of CRPS, the better the comprehensive performance. We observe that forecast reconciliation results in forecast improvement for the total and health board level. CRPS is almost identical at the control area and botom levels. Base forecasts are slightly better at the control area level, while reconciliation is marginally accurate than base at the bottom level. The ensemble method is also more accurate for higher levels, but ETS performs well at the bottom level. @tbl-result also indicates that reconciliation using Mint  generates accurate *distributional* forecasts. The marginal improvement in the average probabilistic forecast accuracy at the bottom level might be due to the reconciliation method giving improved forecast accuracy in the tails of the forecast distribution, which are critical for managing risks.
 
 Overall, our results indicate that forecast reconciliation using the MinT method provides reliable forecasts and improves upon the base (unreconciled) forecasts at all levels except the bottom-level series. But even there, forecast reconciliation using MinT improves accuracy in the tails of the distribution.
 
@@ -150,7 +138,7 @@ acc_summary <- accuracy |>
 
 acc_summary |>   filter(
     model != "Ensemble2"
-  ) |> 
+  ) |>
   ggplot(aes(x = week, y = accuracy, group = model, col = model)) +
   geom_line() +
   geom_point(size = .5) +

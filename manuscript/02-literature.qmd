@@ -10,7 +10,7 @@ There are generally two main streams of research related to forecasting ambulanc
 
 @tbl-literature provides a summary of some studies in the literature on forecasting in Emergency Medical Services. We note a number of limitations in the literature of EMS forecasting, that encourage us to undertake this research. These limitations are summarized as following:
 
-1. Current studies ignore the inherent hierarchical and/or grouped structure of the time series data, and the relationship between series at different levels of hierarchy. While the hierarchical forecasting methodology has been developed and applied in various domains over the past 10 years [@panagiotelis2022probabilistic], it has never been explored in this area.
+1. Current studies ignore the inherent hierarchical and/or grouped structure of the time series data, and the relationship between series at different levels of hierarchy. While the hierarchical forecasting methodology has been developed and applied in various domains over the past 10 years [@panagiotelis2023probabilistic], it has never been explored in this area.
 
 2. Current research is mainly concerned with generating point forecasts at a single level of hierarchy. There is a lack of studies considering the entire forecast distribution of daily ambulance demand for the whole hierarchy to better represent the uncertainty of future demand, providing a risk management tool for planners.
 
@@ -26,7 +26,12 @@ This paper concerns the problem of hierarchical forecasting in EMS and generates
 #| cache: false
 #| tbl-cap: "Summary of some studies on forecasting in Emergency Medical Services"
 library(kableExtra)
-li <- readxl::read_xlsx("../literature_table/table.xlsx")
-knitr::kable(li, booktabs = T, linesep = "") |>  kableExtra::kable_styling(latex_options = c("scale_down","hold_position"), font_size =11) |> column_spec(3,"6em") |>
-  column_spec(4,"4em") |> column_spec(5,"10em")  |> column_spec(6,"8em") |> landscape()
+readxl::read_xlsx("../literature_table/table.xlsx") |>
+  knitr::kable(booktabs = T, linesep = "") |>
+  kable_styling(latex_options = "scale_down", font_size =11) |>
+  column_spec(3,"6em") |>
+  column_spec(4,"4em") |>
+  column_spec(5,"10em")  |>
+  column_spec(6,"8em") |>
+  landscape()
 ```
