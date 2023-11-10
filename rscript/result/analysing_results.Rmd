@@ -11,7 +11,6 @@ library(tidyverse)
 ```
 
 ```{r read-result, options}
-
 hts_result_ets <- read_rds("result/ets_hts_rmsse_long_h.rds")
 hts_result_arima <- read_rds("result/arima_hts_rmsse_long_h.rds")
 result <- hts_result_ets %>% bind_rows(hts_result_arima)
@@ -23,159 +22,187 @@ sum(is.infinite(rm$error2_scale))
 
 
 ```{r label, options}
+rmsse_approach_level_id <- rmse_for_analysis %>%
+  group_by(level, approach, .id) %>%
+  summarise(rmsse = sqrt(mean(error2_scale)), .groups = "drop")
 
-rmsse_approach_level_id <-  rmse_for_analysis %>% group_by(level,approach,.id) %>%
-  summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
 
-
-rmsse_approach_id <-  rmsse_approach_level_id %>% group_by(approach,level) %>%
-  summarise(rmsse=mean(rmsse), .groups = "drop")
+rmsse_approach_id <- rmsse_approach_level_id %>%
+  group_by(approach, level) %>%
+  summarise(rmsse = mean(rmsse), .groups = "drop")
 ```
 
 
 # overall
 
 ```{r label, options}
-r <- rmsse_approach_level_id %>% group_by(approach) %>%
-  summarise(mean_rmsse=mean(rmsse), median_rmsse=median(rmsse), .groups = "drop")
+r <- rmsse_approach_level_id %>%
+  group_by(approach) %>%
+  summarise(mean_rmsse = mean(rmsse), median_rmsse = median(rmsse), .groups = "drop")
 r
-
 ```
 
 ## Total
 
 ```{r label, options}
-rmsse_total <- rmse_for_analysis %>% filter(level=="Total") %>% dplyr::select(-level) %>%
-  group_by(approach,.id) %>% summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
+rmsse_total <- rmse_for_analysis %>%
+  filter(level == "Total") %>%
+  dplyr::select(-level) %>%
+  group_by(approach, .id) %>%
+  summarise(rmsse = sqrt(mean(error2_scale)), .groups = "drop")
 
-ggplot(rmsse_total, aes(x=fct_reorder(approach,rmsse),y=rmsse))+
-  geom_boxplot()+
+ggplot(rmsse_total, aes(x = fct_reorder(approach, rmsse), y = rmsse)) +
+  geom_boxplot() +
   ggthemes::theme_few()
 ```
 
 ## control level
 
 ```{r label, options}
-rmsse_control <- rmse_for_analysis %>% filter(level %in% c("G1/S","G1/N","G1/C")) %>%
-  group_by(level,approach,.id) %>% summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
+rmsse_control <- rmse_for_analysis %>%
+  filter(level %in% c("G1/S", "G1/N", "G1/C")) %>%
+  group_by(level, approach, .id) %>%
+  summarise(rmsse = sqrt(mean(error2_scale)), .groups = "drop")
 
-ggplot(rmsse_control, aes(x=fct_reorder(approach,rmsse),y=rmsse))+
-  geom_boxplot()+
-  facet_wrap(vars(level),ncol = 1, scales = "free_y")+
+ggplot(rmsse_control, aes(x = fct_reorder(approach, rmsse), y = rmsse)) +
+  geom_boxplot() +
+  facet_wrap(vars(level), ncol = 1, scales = "free_y") +
   ggthemes::theme_few()
 ```
 
 ```{r label, options}
-rmsse_control_h <- rmse_for_analysis %>% filter(level %in% c("G1/S","G1/N","G1/C")) %>%
-  group_by(level,approach,h) %>% summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
+rmsse_control_h <- rmse_for_analysis %>%
+  filter(level %in% c("G1/S", "G1/N", "G1/C")) %>%
+  group_by(level, approach, h) %>%
+  summarise(rmsse = sqrt(mean(error2_scale)), .groups = "drop")
 
-ggplot(rmsse_control_h, aes(x=h,y=rmsse, color=factor(approach)))+
-  geom_point()+
-  geom_line()+
-  scale_x_continuous(breaks = seq(1,35,1))+
-  facet_wrap(vars(level),ncol = 1, scales = "free_y")+
-  ggthemes::theme_few()+
+ggplot(rmsse_control_h, aes(x = h, y = rmsse, color = factor(approach))) +
+  geom_point() +
+  geom_line() +
+  scale_x_continuous(breaks = seq(1, 35, 1)) +
+  facet_wrap(vars(level), ncol = 1, scales = "free_y") +
+  ggthemes::theme_few() +
   ggthemes::scale_color_colorblind()
 ```
 
 ## Health board level
 
 ```{r label, options}
-rmsse_hb <- rmse_for_analysis %>% filter(stringr::str_detect(level, "G2/")) %>%
-  group_by(level,approach,.id) %>% summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
+rmsse_hb <- rmse_for_analysis %>%
+  filter(stringr::str_detect(level, "G2/")) %>%
+  group_by(level, approach, .id) %>%
+  summarise(rmsse = sqrt(mean(error2_scale)), .groups = "drop")
 
-ggplot(rmsse_hb, aes(x=fct_reorder(approach,rmsse),y=rmsse))+
-  geom_boxplot()+
-  facet_wrap(vars(level),ncol = 2, scales = "free_y")+
+ggplot(rmsse_hb, aes(x = fct_reorder(approach, rmsse), y = rmsse)) +
+  geom_boxplot() +
+  facet_wrap(vars(level), ncol = 2, scales = "free_y") +
   ggthemes::theme_few()
 ```
 
 ```{r label, options}
-rmsse_hb_h <- rmse_for_analysis %>% filter(stringr::str_detect(level, "G2/")) %>%
-  group_by(level,approach,h) %>% summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
+rmsse_hb_h <- rmse_for_analysis %>%
+  filter(stringr::str_detect(level, "G2/")) %>%
+  group_by(level, approach, h) %>%
+  summarise(rmsse = sqrt(mean(error2_scale)), .groups = "drop")
 
-ggplot(rmsse_hb_h, aes(x=h,y=rmsse, color=factor(approach)))+
-  geom_point()+
-  geom_line()+
-  scale_x_continuous(breaks = seq(1,35,1))+
-  facet_wrap(vars(level),ncol = 2, scales = "free_y")+
-  ggthemes::theme_few()+
+ggplot(rmsse_hb_h, aes(x = h, y = rmsse, color = factor(approach))) +
+  geom_point() +
+  geom_line() +
+  scale_x_continuous(breaks = seq(1, 35, 1)) +
+  facet_wrap(vars(level), ncol = 2, scales = "free_y") +
+  ggthemes::theme_few() +
   ggthemes::scale_color_colorblind()
 ```
 
 ## Priority
 
 ```{r label, options}
-rmsse_priority <- rmse_for_analysis %>% filter(stringr::str_detect(level, "G3/")) %>%
-  group_by(level,approach,.id) %>% summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
+rmsse_priority <- rmse_for_analysis %>%
+  filter(stringr::str_detect(level, "G3/")) %>%
+  group_by(level, approach, .id) %>%
+  summarise(rmsse = sqrt(mean(error2_scale)), .groups = "drop")
 
-ggplot(rmsse_priority, aes(x=fct_reorder(approach,rmsse),y=rmsse))+
-  geom_boxplot()+
-  facet_wrap(vars(level),ncol = 1, scales = "free_y")+
+ggplot(rmsse_priority, aes(x = fct_reorder(approach, rmsse), y = rmsse)) +
+  geom_boxplot() +
+  facet_wrap(vars(level), ncol = 1, scales = "free_y") +
   ggthemes::theme_few()
 ```
 
 ```{r label, options}
-rmsse_priority_h <- rmse_for_analysis %>% filter(stringr::str_detect(level, "G3/")) %>%
-  group_by(level,approach,h) %>% summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
+rmsse_priority_h <- rmse_for_analysis %>%
+  filter(stringr::str_detect(level, "G3/")) %>%
+  group_by(level, approach, h) %>%
+  summarise(rmsse = sqrt(mean(error2_scale)), .groups = "drop")
 
-ggplot(rmsse_priority_h, aes(x=h,y=rmsse, color=factor(approach)))+
-  geom_point()+
-  geom_line()+
-  scale_x_continuous(breaks = seq(1,35,1))+
-  facet_wrap(vars(level),ncol = 1, scales = "free_y")+
-  ggthemes::theme_few()+
+ggplot(rmsse_priority_h, aes(x = h, y = rmsse, color = factor(approach))) +
+  geom_point() +
+  geom_line() +
+  scale_x_continuous(breaks = seq(1, 35, 1)) +
+  facet_wrap(vars(level), ncol = 1, scales = "free_y") +
+  ggthemes::theme_few() +
   ggthemes::scale_color_colorblind()
 ```
 
 ## Nature of incidents
 
 ```{r label, options}
-rmsse_nature <- rmse_for_analysis %>% filter(stringr::str_detect(level, "G4/")) %>%
-  group_by(level,approach,.id) %>% summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
+rmsse_nature <- rmse_for_analysis %>%
+  filter(stringr::str_detect(level, "G4/")) %>%
+  group_by(level, approach, .id) %>%
+  summarise(rmsse = sqrt(mean(error2_scale)), .groups = "drop")
 
-rmsse_nature_all <- rmsse_nature %>% group_by(approach,level) %>% summarise(rmsse=mean(rmsse), .groups = "drop")
-rmsse_nature_all %>% pivot_wider(names_from = approach, values_from = rmsse)%>% arrange(arima_bu) %>% View()
+rmsse_nature_all <- rmsse_nature %>%
+  group_by(approach, level) %>%
+  summarise(rmsse = mean(rmsse), .groups = "drop")
+rmsse_nature_all %>%
+  pivot_wider(names_from = approach, values_from = rmsse) %>%
+  arrange(arima_bu) %>%
+  View()
 ```
 
 ```{r label, options}
-rmsse_nature_h <- rmse_for_analysis %>% filter(stringr::str_detect(level, "G4/")) %>%
-  group_by(level,approach,h) %>% summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
+rmsse_nature_h <- rmse_for_analysis %>%
+  filter(stringr::str_detect(level, "G4/")) %>%
+  group_by(level, approach, h) %>%
+  summarise(rmsse = sqrt(mean(error2_scale)), .groups = "drop")
 
-ggplot(rmsse_hb_h, aes(x=h,y=rmsse, color=factor(approach)))+
-  geom_point()+
-  geom_line()+
-  scale_x_continuous(breaks = seq(1,35,1))+
-  facet_wrap(vars(level),ncol = 2, scales = "free_y")+
-  ggthemes::theme_few()+
+ggplot(rmsse_hb_h, aes(x = h, y = rmsse, color = factor(approach))) +
+  geom_point() +
+  geom_line() +
+  scale_x_continuous(breaks = seq(1, 35, 1)) +
+  facet_wrap(vars(level), ncol = 2, scales = "free_y") +
+  ggthemes::theme_few() +
   ggthemes::scale_color_colorblind()
 ```
 
 ##
 
 ```{r label, options}
-rr <- rmsse_approach_level_id %>% group_by(approach,level) %>%
-  summarise(mean_rmsse=mean(rmsse),.groups = "drop")
-ggplot(rmsse_approach_id)+
-  geom_boxplot(aes(y=rmsse, x=approach))+
-  coord_cartesian(ylim = c(0,2))
+rr <- rmsse_approach_level_id %>%
+  group_by(approach, level) %>%
+  summarise(mean_rmsse = mean(rmsse), .groups = "drop")
+ggplot(rmsse_approach_id) +
+  geom_boxplot(aes(y = rmsse, x = approach)) +
+  coord_cartesian(ylim = c(0, 2))
 ```
 ##
 
 ```{r label, options}
-rr <- rmsse_approach_level_id %>% group_by(approach,level) %>%
-  summarise(mean_rmsse=mean(rmsse),.groups = "drop")
-ggplot(rmsse_approach_id)+
-  geom_boxplot(aes(y=rmsse, x=approach))+
-  coord_cartesian(ylim = c(0,2))
+rr <- rmsse_approach_level_id %>%
+  group_by(approach, level) %>%
+  summarise(mean_rmsse = mean(rmsse), .groups = "drop")
+ggplot(rmsse_approach_id) +
+  geom_boxplot(aes(y = rmsse, x = approach)) +
+  coord_cartesian(ylim = c(0, 2))
 ```
 
 ##
 
 ```{r label, options}
-rmsse_hd <-  rmse_for_analysis %>% group_by(h,.id,approach) %>%
-  summarise(rmsse=sqrt(mean(error2_scale)), .groups = "drop")
-ggplot(rmsse_hd)+
-  geom_boxplot(aes(y=rmsse, x=factor(h)))+
+rmsse_hd <- rmse_for_analysis %>%
+  group_by(h, .id, approach) %>%
+  summarise(rmsse = sqrt(mean(error2_scale)), .groups = "drop")
+ggplot(rmsse_hd) +
+  geom_boxplot(aes(y = rmsse, x = factor(h))) +
   facet_wrap(vars(approach))
 ```

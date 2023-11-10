@@ -35,7 +35,7 @@ create_ensembles <- function(models_to_use = "all") {
 
 create_specific_ensemble <- function(models, method, origin) {
   # Form file name for saving results
-  if(all(models == "all")) {
+  if (all(models == "all")) {
     filename <- paste0(storage_folder, "ensemble_", origin, "_sim_", method, ".rds")
   } else {
     filename <- paste0(storage_folder, "ensemble2_", origin, "_sim_", method, ".rds")
@@ -50,7 +50,7 @@ create_specific_ensemble <- function(models, method, origin) {
   files <- fs::dir_ls(storage_folder, glob = paste0("*_", origin, "_sim_", method, ".rds"))
   files <- files[!grepl("ensemble", files)]
   files <- files[!grepl("qcomb", files)]
-  if(all(models != "all")) {
+  if (all(models != "all")) {
     # Remove naive
     files <- files[!grepl("naive*", files)]
   }

@@ -43,7 +43,7 @@ incidents_tsbl <- incidents |>
   as_tsibble(index = date, key = c(lhb_code, category, nature_of_incident)) |>
   fill_gaps(incidents = 0, .full = TRUE)
 # Save as rds
-write_rds(incidents_tsbl, paste0(storage_folder, "incidents_tsbl.rds"), compress="bz2")
+write_rds(incidents_tsbl, paste0(storage_folder, "incidents_tsbl.rds"), compress = "bz2")
 
 # Small data set in gts format
 incidents_tsbl |>
@@ -52,12 +52,12 @@ incidents_tsbl |>
   select(-nature_of_incident, -lhb_code) |>
   mutate(category = recode(category, "GREEN" = "GRE", "AMBER" = "AMB")) |>
   pivot_wider(names_from = category, values_from = incidents) |>
-  #filter(date <= "2015-12-31") |>
+  # filter(date <= "2015-12-31") |>
   select(-date) |>
   mutate(BLU = 0) |>
-  ts(frequency=7) |>
+  ts(frequency = 7) |>
   hts() |>
-  write_rds(paste0(storage_folder, "incidents_test_gts.rds"), compress="bz2")
+  write_rds(paste0(storage_folder, "incidents_test_gts.rds"), compress = "bz2")
 
 # Prepare full data in gts format
 incident_modify <- incidents_tsbl |>
@@ -132,7 +132,7 @@ incident_ready <- incident_modify |>
 incident_gt <- incident_ready |>
   as_tsibble(index = date, key = c(region, lhb, category, nature)) |>
   aggregate_key((region / lhb) * category * nature, incident = sum(incident))
-write_rds(incident_gt, paste0(storage_folder, "incidents_gt.rds"), compress="bz2")
+write_rds(incident_gt, paste0(storage_folder, "incidents_gt.rds"), compress = "bz2")
 
 
 a1 <- incident_ready |>
@@ -145,14 +145,14 @@ nat <- unique(incident_ready$nature)
 region <- sort(unique(incident_ready$region))
 for (i in seq_along(hb)) {
   region <- case_when(
-      hb[i] == "CT" ~ "S",
-      hb[i] == "PO" ~ "C",
-      hb[i] == "AB" ~ "S",
-      hb[i] == "BC" ~ "N",
-      hb[i] == "CV" ~ "S",
-      hb[i] == "HD" ~ "C",
-      hb[i] == "SB" ~ "C"
-    )
+    hb[i] == "CT" ~ "S",
+    hb[i] == "PO" ~ "C",
+    hb[i] == "AB" ~ "S",
+    hb[i] == "BC" ~ "N",
+    hb[i] == "CV" ~ "S",
+    hb[i] == "HD" ~ "C",
+    hb[i] == "SB" ~ "C"
+  )
   for (j in seq_along(cat)) {
     for (k in seq_along(nat)) {
       fil <- incident_ready |>
@@ -183,7 +183,7 @@ incident_all <- incident_gts |>
 incident_all |>
   ts(frequency = 7) |>
   gts(characters = list(c(1, 2), 3, 9)) |>
-  write_rds(paste0(storage_folder, "incidents_gts.rds"), compress="bz2")
+  write_rds(paste0(storage_folder, "incidents_gts.rds"), compress = "bz2")
 
 # Covariates for gts format
 
@@ -191,4 +191,4 @@ readRDS(paste0(storage_folder, "holiday_dummy.rds")) |>
   as_tibble() |>
   select(-date) |>
   ts(frequency = 7) |>
-  write_rds(paste0(storage_folder, "holidays_ts.rds"), compress="bz2")
+  write_rds(paste0(storage_folder, "holidays_ts.rds"), compress = "bz2")

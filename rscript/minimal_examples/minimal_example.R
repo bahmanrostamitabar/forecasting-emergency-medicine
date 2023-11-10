@@ -50,7 +50,7 @@ fit_incident <- train %>%
   model(
     NAIVE = NAIVE(sqrt(incidents)),
     ETS = ETS(sqrt(incidents)),
-    TSCOUNT = fable.tscount::TSCOUNT(incidents ~ trend() + season("week") + fourier("year", 10), link = "log", model=list(past_obs=1:4))
+    TSCOUNT = fable.tscount::TSCOUNT(incidents ~ trend() + season("week") + fourier("year", 10), link = "log", model = list(past_obs = 1:4))
   ) %>%
   reconcile(
     bu_ETS = bottom_up(ETS),
@@ -60,4 +60,3 @@ fit_incident <- train %>%
   )
 
 fcst_incident <- fit_incident %>% forecast(h = f_horizon)
-

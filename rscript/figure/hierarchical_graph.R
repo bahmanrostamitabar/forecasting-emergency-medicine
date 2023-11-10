@@ -1,22 +1,26 @@
-library(collapsibleTree) 
+library(collapsibleTree)
 
 # input data must be a nested data frame:
 head(warpbreaks)
 
 # Represent this tree:
-p <- collapsibleTree( warpbreaks, 
-                      c("wool", "tension", "breaks"))
+p <- collapsibleTree(
+  warpbreaks,
+  c("wool", "tension", "breaks")
+)
 
-Total <- incident_ready %>% 
-  select(region, lhb,category,nature)
+Total <- incident_ready %>%
+  select(region, lhb, category, nature)
 
-p <- collapsibleTree( Total, 
-                      c("region","lhb","category","nature"))
+p <- collapsibleTree(
+  Total,
+  c("region", "lhb", "category", "nature")
+)
 p
 
 
 
-widgetToPng <- function(widget, file = "widget.pdf",  ...) {
+widgetToPng <- function(widget, file = "widget.pdf", ...) {
   temp <- tempfile(fileext = ".html")
   file <- R.utils::getAbsolutePath(file)
   htmlwidgets::saveWidget(widget, temp)
@@ -30,7 +34,8 @@ widgetToPng <- function(widget, file = "widget.pdf",  ...) {
 }
 
 widgetToPng(
-  collapsibleTreeSummary(warpbreaks, c("wool", "tension", "breaks"), 
-                         maxPercent = 50, collapsed = FALSE),
+  collapsibleTreeSummary(warpbreaks, c("wool", "tension", "breaks"),
+    maxPercent = 50, collapsed = FALSE
+  ),
   "collapsibleTree.png"
 )

@@ -65,18 +65,19 @@ agg_level <- tibble::tribble(
   "Control", 3,
   "Health board", 7,
   "Priority", 3,
-  "Priority * Control", 3*3,
-  "Priority * Health board", 3*7,
+  "Priority * Control", 3 * 3,
+  "Priority * Health board", 3 * 7,
   "Nature of incident", 35,
-  "Nature of incident * Control", 3*35,
-  "Nature of incident * Health board", 7*35,
-  "Priority * Nature of incident", 3*35-1,
+  "Nature of incident * Control", 3 * 35,
+  "Nature of incident * Health board", 7 * 35,
+  "Priority * Nature of incident", 3 * 35 - 1,
   "Control * Priority * Nature of incident", 306,
   "Control * Health board * Priority * Nature of incident (Bottom level)", 691,
   "Total", 1530
 )
 knitr::kable(agg_level, booktabs = TRUE, position = "left") %>%
-  kable_classic(full_width = FALSE) |> footnote(general = "Due to certain combinations of the nature of incident with other variables, there is a lack of representation in the dataset. As a result, for example, instead of the calculation 3 * 35 = 105, it would be modified to 3 * 35-1 = 104.",threeparttable = TRUE)
+  kable_classic(full_width = FALSE) |>
+  footnote(general = "Due to certain combinations of the nature of incident with other variables, there is a lack of representation in the dataset. As a result, for example, instead of the calculation 3 * 35 = 105, it would be modified to 3 * 35-1 = 104.", threeparttable = TRUE)
 ```
 
 Given the total number of time series, direct visual analysis is infeasible. Therefore, we first compute features of all 1530 time series [@m3pca] and display the strength of trend and weekly seasonality strength in @fig-feature. Each point represents one time series with the strength of trend in x-axis and the strength of seasonality in y-axis. Both measures are on a scale of [0,1].
@@ -136,7 +137,7 @@ p_control <- incident_gthf %>%
   summarise(incident = sum(incident), .groups = "drop") %>%
   ggplot(aes(x = date, y = incident, color = factor(region))) +
   geom_line() +
-  labs(y = "Incidents", color = "Control")  +
+  labs(y = "Incidents", color = "Control") +
   ggthemes::scale_color_colorblind() +
   ggthemes::theme_few() +
   no_x_axis
@@ -178,7 +179,7 @@ p_nature <- incident_gthf %>%
   summarise(incident = sum(incident), .groups = "drop") %>%
   ggplot(aes(x = date, y = incident, color = nature)) +
   geom_line() +
-  labs(x = "Date", y = "Incidents", color = "Nature of incident")+
+  labs(x = "Date", y = "Incidents", color = "Nature of incident") +
   ggthemes::scale_color_colorblind() +
   ggthemes::theme_few()
 

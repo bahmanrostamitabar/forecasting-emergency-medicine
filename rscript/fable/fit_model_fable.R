@@ -1,5 +1,5 @@
 # This script needs the "tolerant-inverse" branch of fabletools
-#remotes::install_github("tidyverts/fabletools", "tolerant-inverse")
+# remotes::install_github("tidyverts/fabletools", "tolerant-inverse")
 
 library(tidyverse)
 library(tsibble)
@@ -11,13 +11,13 @@ library(fable.tscount)
 # Read data previously processed in data folder and add aggregation levels
 incidents <- readRDS(here::here("data/incidents_tsbl.rds")) |>
   # Temporarily only consider a small part of data until everything works
-  #filter(nature_of_incident == "BREATHING PROBLEMS", lhb_code == "BC") |> 
-  #select(-nature_of_incident, -lhb_code) |> 
-  #aggregate_key(category, incidents = sum(incidents))
+  # filter(nature_of_incident == "BREATHING PROBLEMS", lhb_code == "BC") |>
+  # select(-nature_of_incident, -lhb_code) |>
+  # aggregate_key(category, incidents = sum(incidents))
   # End of temporary section of code
   # Uncomment next 3 lines when ready to scale up
   aggregate_key(
-    nature_of_incident * category * lhb_code, 
+    nature_of_incident * category * lhb_code,
     incidents = sum(incidents)
   )
 
@@ -29,9 +29,9 @@ incidents <- incidents |>
   )
 
 # First pass using a simple training/test set keeping last 6 weeks for testing
-train <- incidents |> 
-  filter(date <= max(date) - 42) 
-test <- incidents |> 
+train <- incidents |>
+  filter(date <= max(date) - 42)
+test <- incidents |>
   filter(date > max(date) - 42)
 
 # Fit some models
@@ -39,52 +39,54 @@ test <- incidents |>
 # Issue raised at https://github.com/mitchelloharawild/fable.tscount/issues/2
 # library(future)
 # plan(multisession)
-if(fs::file_exists(here::here("rscript/fable/fit_incidents.rds"))) {
-    fit_incidents <- read_rds(here::here("rscript/fable/fit_incidents.rds"))
-  } else {
-    fit_incidents <- train |> 
-      model(
-        NAIVE = NAIVE(sqrt(incidents)),
-        ETS = ETS(sqrt(incidents)),
-        TSCOUNT = TSCOUNT(incidents ~ trend() + season("week") + fourier("year", 3)
-            + public_holiday_d + school_holiday_d + xmas + new_years_day, 
-          link = "log", model = list(past_obs = 1:3))
+if (fs::file_exists(here::here("rscript/fable/fit_incidents.rds"))) {
+  fit_incidents <- read_rds(here::here("rscript/fable/fit_incidents.rds"))
+} else {
+  fit_incidents <- train |>
+    model(
+      NAIVE = NAIVE(sqrt(incidents)),
+      ETS = ETS(sqrt(incidents)),
+      TSCOUNT = TSCOUNT(
+        incidents ~ trend() + season("week") + fourier("year", 3)
+          + public_holiday_d + school_holiday_d + xmas + new_years_day,
+        link = "log", model = list(past_obs = 1:3)
       )
-    write_rds(fit_incident, here::here("rscript/fable/fit_incidents.rds"))
-  }
+    )
+  write_rds(fit_incident, here::here("rscript/fable/fit_incidents.rds"))
+}
 
 # Add reconciliation constraints and produce forecasts
 # Need to handle tscount separately so we can simulate forecast distributions
 ets_forecast <- fit_incidents |>
-  select(-TSCOUNT) |> 
+  select(-TSCOUNT) |>
   reconcile(
     bu_ETS = bottom_up(ETS),
     wls_ETS1 = min_trace(ETS, method = "wls_struct"),
     wls_ETS2 = min_trace(ETS, method = "wls_var"),
     mint_ETS = min_trace(ETS, method = "mint_shrink")
-  ) |> 
+  ) |>
   forecast(new_data = test)
-tscount_forecast <- fit_incidents |> 
-  select(TSCOUNT) |> 
+tscount_forecast <- fit_incidents |>
+  select(TSCOUNT) |>
   reconcile(
     bu_TSCOUNT = bottom_up(TSCOUNT),
     wls_TSCOUNT1 = min_trace(TSCOUNT, method = "wls_struct"),
     wls_TSCOUNT2 = min_trace(TSCOUNT, method = "wls_var"),
     mint_TSCOUNT = min_trace(TSCOUNT, method = "mint_shrink")
-  ) |> 
-  forecast(new_data = test, simulate=TRUE)
-fcst_incidents <- bind_rows(as_tibble(ets_forecast), as_tibble(tscount_forecast)) |> 
-  as_fable(index=date, key=c(.model,category), response="incidents", distribution=incidents)
+  ) |>
+  forecast(new_data = test, simulate = TRUE)
+fcst_incidents <- bind_rows(as_tibble(ets_forecast), as_tibble(tscount_forecast)) |>
+  as_fable(index = date, key = c(.model, category), response = "incidents", distribution = incidents)
 
 # Look at MASE over several levels for MinT
 fcst_accuracy <- fcst_incidents |>
-  accuracy(incidents, measures = list(crps=CRPS, rmsse = RMSSE, mase = MASE))
+  accuracy(incidents, measures = list(crps = CRPS, rmsse = RMSSE, mase = MASE))
 
 # Bottom level
 fcst_accuracy |>
-  #filter(!is_aggregated(lhb_code), !is_aggregated(category), !is_aggregated(nature_of_incident)) |>
-  group_by(.model) |> 
-  summarise(rmsse = mean(rmsse), mase = mean(mase), crps = mean(crps)) |> 
+  # filter(!is_aggregated(lhb_code), !is_aggregated(category), !is_aggregated(nature_of_incident)) |>
+  group_by(.model) |>
+  summarise(rmsse = mean(rmsse), mase = mean(mase), crps = mean(crps)) |>
   arrange(crps)
 
 

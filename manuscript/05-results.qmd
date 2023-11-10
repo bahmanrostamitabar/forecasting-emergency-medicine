@@ -22,12 +22,12 @@ The overall forecasting performance is reported in @tbl-result, in which the ave
 ```{r}
 #| label: tbl-result
 #| tbl-cap: "Average forecast performance calculated on the test sets at forecast horizons $h=43,\\dots,84$ days, with time series cross validation applied to attended incident data. The test set consists of 462 days. The best approach is highlighted in bold. Point forecast accuracy is measured using MASE and MSSE, while probabilistic forecast accuracy is measured using CRPS."
-#Set minimum in column to bold
+# Set minimum in column to bold
 set_to_bold <- function(table) {
-  for(i in 3:6) {
+  for (i in 3:6) {
     best <- which.min(table[[i]])
-    table[[i]] <- sprintf(table[[i]], fmt="%1.3f")
-    table[[i]][best] <- paste0("\\textbf{",table[[i]][best],"}")
+    table[[i]] <- sprintf(table[[i]], fmt = "%1.3f")
+    table[[i]][best] <- paste0("\\textbf{", table[[i]][best], "}")
   }
   return(table)
 }
@@ -39,9 +39,11 @@ msse1 <- rmsse |>
     h > 42,
     model != "ensemble2"
   ) |>
-  mutate(model = factor(model,
-    levels = c("naiveecdf","ets","iglm","tscount","ensemble","ensemble2"),
-    labels = c("Stationary", "ETS", "GLM", "TSGLM","Ensemble","Ensemble2")),
+  mutate(
+    model = factor(model,
+      levels = c("naiveecdf", "ets", "iglm", "tscount", "ensemble", "ensemble2"),
+      labels = c("Stationary", "ETS", "GLM", "TSGLM", "Ensemble", "Ensemble2")
+    ),
     method = factor(method, levels = c("base", "mint"), labels = c("Base", "MinT")),
   ) |>
   group_by(method, model, series) |>
@@ -58,8 +60,9 @@ mase1 <- mase |>
   ) |>
   mutate(
     model = factor(model,
-      levels = c("naiveecdf","ets","iglm","tscount","ensemble","ensemble2"),
-      labels = c("Stationary", "ETS", "GLM", "TSGLM","Ensemble","Ensemble2")),
+      levels = c("naiveecdf", "ets", "iglm", "tscount", "ensemble", "ensemble2"),
+      labels = c("Stationary", "ETS", "GLM", "TSGLM", "Ensemble", "Ensemble2")
+    ),
     method = factor(method, levels = c("base", "mint"), labels = c("Base", "MinT"))
   ) |>
   group_by(method, model, series) |>
@@ -68,14 +71,17 @@ mase1 <- mase |>
   select(Method = method, Model = model, Total, `Control areas`, `Health boards`, Bottom) |>
   set_to_bold()
 crps1 <- readr::read_rds(here::here("results/crps.rds")) |>
-  filter(method %in% c("mint", "base"),
-         model != "qcomb",
-         h > 42,
-         model != "ensemble2"
+  filter(
+    method %in% c("mint", "base"),
+    model != "qcomb",
+    h > 42,
+    model != "ensemble2"
   ) |>
-  mutate(model = factor(model,
-    levels = c("naiveecdf","ets","iglm","tscount","ensemble","ensemble2"),
-    labels = c("Stationary", "ETS", "GLM", "TSGLM","Ensemble","Ensemble2")),
+  mutate(
+    model = factor(model,
+      levels = c("naiveecdf", "ets", "iglm", "tscount", "ensemble", "ensemble2"),
+      labels = c("Stationary", "ETS", "GLM", "TSGLM", "Ensemble", "Ensemble2")
+    ),
     method = factor(method, levels = c("base", "mint"), labels = c("Base", "MinT"))
   ) |>
   group_by(method, model, series) |>
@@ -83,11 +89,11 @@ crps1 <- readr::read_rds(here::here("results/crps.rds")) |>
   pivot_wider(names_from = series, values_from = crps) |>
   select(Method = method, Model = model, Total, `Control areas`, `Health boards`, Bottom) |>
   set_to_bold()
-bind_rows(mase1, msse1, crps1) |> 
-  kable(format = "latex", booktabs = TRUE, escape = FALSE, align = "llrrrr") |> 
-  pack_rows("MSSE", 1, 10) |> 
+bind_rows(mase1, msse1, crps1) |>
+  kable(format = "latex", booktabs = TRUE, escape = FALSE, align = "llrrrr") |>
+  pack_rows("MSSE", 1, 10) |>
   pack_rows("MASE", 11, 20, hline_before = TRUE) |>
-  pack_rows("CRPS", 21, 30, hline_before = TRUE) 
+  pack_rows("CRPS", 21, 30, hline_before = TRUE)
 ```
 
 @tbl-result presents the accuracy of the forecast distributions measures by CRPS, which considers both forecasting reliability and interval sharpness. The smaller the value of CRPS, the better the comprehensive performance. We observe that forecast reconciliation results in forecast improvement for the total and health board level. CRPS is almost identical at the control area and botom levels. Base forecasts are slightly better at the control area level, while reconciliation is marginally accurate than base at the bottom level. The ensemble method is also more accurate for higher levels, but ETS performs well at the bottom level. @tbl-result also indicates that reconciliation using Mint  generates accurate *distributional* forecasts. The marginal improvement in the average probabilistic forecast accuracy at the bottom level might be due to the reconciliation method giving improved forecast accuracy in the tails of the forecast distribution, which are critical for managing risks.
@@ -120,14 +126,14 @@ acc_summary <- accuracy |>
   ) |>
   mutate(model = case_when(
     model == "naiveecdf" ~ "Stationary",
-    model == "ets" ~  "ETS",
+    model == "ets" ~ "ETS",
     model == "tscount" ~ "TSGLM",
     model == "iglm" ~ "GLM",
     model == "ensemble" ~ "Ensemble",
     model == "ensemble2" ~ "Ensemble2"
   )) |>
   mutate(
-    measure = factor(measure, levels = c("mase","msse","crps"), labels = c("MASE","MSSE","CRPS")),
+    measure = factor(measure, levels = c("mase", "msse", "crps"), labels = c("MASE", "MSSE", "CRPS")),
     series = factor(series, levels = c("Total", "Control areas", "Health boards")),
     model = factor(model, levels = c("Stationary", "ETS", "TSGLM", "GLM", "Ensemble", "Ensemble2")),
     week = factor(trunc((h - 1) / 7) + 1)
@@ -136,7 +142,8 @@ acc_summary <- accuracy |>
   summarise(accuracy = mean(accuracy), .groups = "drop")
 
 
-acc_summary |>   filter(
+acc_summary |>
+  filter(
     model != "Ensemble2"
   ) |>
   ggplot(aes(x = week, y = accuracy, group = model, col = model)) +
@@ -175,19 +182,19 @@ In addition to the overall forecast accuracy presented in @tbl-result, we also r
 #| fig-pos: "H"
 incident_gthf <- readr::read_rds(here::here("data/incidents_gt.rds"))
 
-incident_cv <- incident_gthf |> filter(lhb == "PO",is_aggregated(category),is_aggregated(nature))
+incident_cv <- incident_gthf |> filter(lhb == "PO", is_aggregated(category), is_aggregated(nature))
 fit <- incident_cv %>%
   model(
     ets = ETS(sqrt(incident))
   )
 set.seed(1)
-fcst <- fit %>% generate(h=1, times = 5000, bootstrap = TRUE)
-p1 <- ggplot(data=fcst,aes(x=.sim, y=..density..)) +
-  geom_histogram(binwidth = 1, fill="#d3d3d3", color="black")+
-  geom_vline(data=fcst,aes(xintercept = (mean(.sim))), color="black", linetype="dashed", linewidth=1)+
-  scale_x_continuous(breaks = seq(25,70,5))+
-  scale_y_continuous(labels=percent)+
-  ggthemes::theme_few()+
-    labs(y="Density", x = "Demand", title = "Probabilistic forecast of ambulance demand for 1 day ahead")
+fcst <- fit %>% generate(h = 1, times = 5000, bootstrap = TRUE)
+p1 <- ggplot(data = fcst, aes(x = .sim, y = ..density..)) +
+  geom_histogram(binwidth = 1, fill = "#d3d3d3", color = "black") +
+  geom_vline(data = fcst, aes(xintercept = (mean(.sim))), color = "black", linetype = "dashed", linewidth = 1) +
+  scale_x_continuous(breaks = seq(25, 70, 5)) +
+  scale_y_continuous(labels = percent) +
+  ggthemes::theme_few() +
+  labs(y = "Density", x = "Demand", title = "Probabilistic forecast of ambulance demand for 1 day ahead")
 p1
 ```

@@ -32,7 +32,7 @@ holiday_dummy <- holiday |>
   as_tsibble(index = date)
 
 # Save as RDS for reading in by other scripts
-write_rds(holiday_dummy, paste0(storage_folder, "holiday_dummy.rds"), compress="bz2")
+write_rds(holiday_dummy, paste0(storage_folder, "holiday_dummy.rds"), compress = "bz2")
 
 
 # Other holiday tibbles created below, no longer used (?)

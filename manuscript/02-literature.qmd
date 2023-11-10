@@ -28,10 +28,10 @@ This paper concerns the problem of hierarchical forecasting in EMS and generates
 library(kableExtra)
 readxl::read_xlsx("../literature_table/table.xlsx") |>
   knitr::kable(booktabs = T, linesep = "") |>
-  kable_styling(latex_options = "scale_down", font_size =11) |>
-  column_spec(3,"6em") |>
-  column_spec(4,"4em") |>
-  column_spec(5,"10em")  |>
-  column_spec(6,"8em") |>
+  kable_styling(latex_options = "scale_down", font_size = 11) |>
+  column_spec(3, "6em") |>
+  column_spec(4, "4em") |>
+  column_spec(5, "10em") |>
+  column_spec(6, "8em") |>
   landscape()
 ```

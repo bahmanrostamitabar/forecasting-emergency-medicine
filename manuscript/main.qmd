@@ -66,8 +66,8 @@ library(patchwork)
 library(scales)
 # Color blind color palettes
 options(
-  ggplot2.discrete.colour = c("#D55E00", "#0072B2","#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442"),
-  ggplot2.discrete.fill = c("#D55E00", "#0072B2","#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442")
+  ggplot2.discrete.colour = c("#D55E00", "#0072B2", "#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442"),
+  ggplot2.discrete.fill = c("#D55E00", "#0072B2", "#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442")
 )
 # Few theme
 ggplot2::theme_set(ggthemes::theme_few())
@@ -75,29 +75,23 @@ ggplot2::theme_set(ggthemes::theme_few())
 
 
 ```{r intro, child="01-introduction.qmd"}
-
 ```
 
 
 ```{r literature, child="02-literature.qmd"}
-
 ```
 
 
 ```{r experiment, child="03-experiment.qmd"}
-
 ```
 
 ```{r htc, child="04-htsgts.qmd"}
-
 ```
 
 ```{r results, child="05-results.qmd"}
-
 ```
 
 ```{r conclusion, child="06-conclusion.qmd"}
-
 ```
 
 # Reproducibility {.unnumbered}
