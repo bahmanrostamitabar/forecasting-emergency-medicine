@@ -96,6 +96,10 @@
 \mathtoolsset{showonlyrefs}
 \setlength{\parindent}{0cm}
 \makeatletter
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \AtBeginDocument{%
 \ifdefined\contentsname
@@ -131,10 +135,18 @@
 \newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
 \makeatother
 \makeatletter
-\makeatother
-\makeatletter
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\makeatletter
+\@ifpackageloaded{tcolorbox}{}{\usepackage[skins,breakable]{tcolorbox}}
+\makeatother
+\makeatletter
+\@ifundefined{shadecolor}{\definecolor{shadecolor}{rgb}{.97, .97, .97}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
 \makeatother
 \journal{Journal of Service Research}
 \ifLuaTeX
@@ -196,7 +208,10 @@ reconciliation \sep ambulance demand \sep
     regression
 \end{keyword}
 \end{frontmatter}
-    \section{Introduction}\label{sec-intro}
+    \ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[boxrule=0pt, interior hidden, borderline west={3pt}{0pt}{shadecolor}, breakable, sharp corners, enhanced, frame hidden]}{\end{tcolorbox}}\fi
+
+\hypertarget{sec-intro}{%
+\section{Introduction}\label{sec-intro}}
 
 A failure to match available resources to demand in Emergency Medical
 Services (EMS) results in patient flow problems, with serious
@@ -312,7 +327,8 @@ forecasts. In Section~\ref{sec-results}, we present and discuss our
 results; in Section~\ref{sec-conclusion}, we summarize our findings and
 present ideas for future research.
 
-\section{Research background}\label{sec-lit}
+\hypertarget{sec-lit}{%
+\section{Research background}\label{sec-lit}}
 
 Emergency medical services (EMS) are a critical component in the
 delivery of urgent medical care to communities. An effective service
@@ -451,36 +467,32 @@ generates and evaluates both point and probabilistic forecast across
 different levels of the hierarchy, hence addressing some important gaps
 identified in the literature.
 
-\begin{table}
-
-\caption{\label{tbl-literature}Summary of some studies on forecasting in
-Emergency Medical Services}
-
-\centering{
+\hypertarget{tbl-literature}{}
+\begin{landscape}\begin{table}
+\caption{\label{tbl-literature}Summary of some studies on forecasting in Emergency Medical Services }\tabularnewline
 
 \centering\begingroup\fontsize{11}{13}\selectfont
 
 \resizebox{\linewidth}{!}{
-\begin{tabular}{lr>{\raggedright\arraybackslash}p{6em}>{\raggedright\arraybackslash}p{4em}>{\raggedright\arraybackslash}p{10em}>{\raggedright\arraybackslash}p{8em}ll}
+\begin{tabular}{lr>{\raggedright\arraybackslash}p{6em}>{\raggedright\arraybackslash}p{4em}>{\raggedright\arraybackslash}p{10em}>{\raggedright\arraybackslash}p{8em}lll}
 \toprule
-Reference & Year & Variable & Horizon & Method & Metric & Probabilistic & Reconciliation\\
+Reference & Year & Variable & Horizon & Method & Metric & Probabilistic & Reconciliation & Reproducibility\\
 \midrule
-Current study & 2023 & Ambulance demand & 84 days & Stationary,  Exponential Smoothing State Space (ETS), Poisson regression using Generalized Linear Model (GLM) and tscount (TSGLM), a simple empirical distribution and an ensemble method & MASE, MSSE, CRPS & YES & YES\\
-Al-Azzani et al. & 2021 & Call volume & 7 , 30 ,  90 days & ARIMA, Holt Winters, Multiple Regression, and Singular Spectrum Analysis & RMSE, MAPE & NO & NO\\
-Haugsbø et al. & 2021 & Ambulance demand in Spatio-temporal & 1hour & MLP, LSTM & MAE, MSE, Cross-Entropy & YES & NO\\
-Grekousis et al. & 2019 & Locations of incidents & 1 hour & MLP and Hungarian algorithm & RMSE & NO & NO\\
-Ibrahim et al. & 2016 & Call volume & 1, 7 , 14 days & multiplicative univariate forecasting, univariate mixed-effects, bivariate mixed-effects model, and bivariate mixed-effects & RMSE, prediction interval coverage & Partial & NO\\
-Vile et al. & 2012 & Ambulance demand & 7, 14, 21,  28 day & Singular Spectrum Analysis, ARIMA,  Holt-Winters & RMSE & NO & NO\\
-Sasaki et al. & 2010 & Ambulance demand & 5 years & OLS regression & R\textasciicircum{}2 & NO & NO\\
+Current study & 2023 & Ambulance demand & 84 days & Stationary,  Exponential Smoothing State Space (ETS), Poisson regression using Generalized Linear Model (GLM) and tscount (TSGLM), a simple empirical distribution and an ensemble method & MASE, MSSE, CRPS & YES & YES & YES\\
+Al-Azzani et al. & 2021 & Call volume & 7 , 30 ,  90 days & ARIMA, Holt Winters, Multiple Regression, and Singular Spectrum Analysis & RMSE, MAPE & NO & NO & No\\
+Haugsbø et al. & 2021 & Ambulance demand in Spatio-temporal & 1hour & MLP, LSTM & MAE, MSE, Cross-Entropy & YES & NO & No\\
+Grekousis et al. & 2019 & Locations of incidents & 1 hour & MLP and Hungarian algorithm & RMSE & NO & NO & No\\
+Ibrahim et al. & 2016 & Call volume & 1, 7 , 14 days & multiplicative univariate forecasting, univariate mixed-effects, bivariate mixed-effects model, and bivariate mixed-effects & RMSE, prediction interval coverage & Partial & NO & No\\
+Vile et al. & 2012 & Ambulance demand & 7, 14, 21,  28 day & Singular Spectrum Analysis, ARIMA,  Holt-Winters & RMSE & NO & NO & No\\
+Sasaki et al. & 2010 & Ambulance demand & 5 years & OLS regression & R\textasciicircum{}2 & NO & NO & No\\
 \bottomrule
 \end{tabular}}
 \endgroup{}
+\end{table}
+\end{landscape}
 
-}
-
-\end{table}%
-
-\section{Experiment setup}\label{sec-experiment}
+\hypertarget{sec-experiment}{%
+\section{Experiment setup}\label{sec-experiment}}
 
 Planners in the ambulance service work with a planning horizon of 6
 weeks. That is, planning is generally frozen for the next 42 days, so
@@ -495,7 +507,8 @@ In the following section, we discuss the dataset, describe the
 forecasting methods used to generate base forecasts, and present the
 point and probabilistic accuracy measures.
 
-\subsection{Data}\label{sec-data}
+\hypertarget{sec-data}{%
+\subsection{Data}\label{sec-data}}
 
 The dataset used in this study is from a major ambulance service in
 Great Britain. It contains information relating to the daily number of
@@ -512,26 +525,40 @@ the nature of incident.
 
 \begin{minipage}[t]{0.56\linewidth}
 
-\centering{
+{\centering 
 
-\includegraphics[width=0.6\textwidth,height=\textheight]{main_files/figure-pdf/fig-hierarchy-1.pdf}
+\raisebox{-\height}{
+
+\includegraphics{main_files/figure-pdf/fig-hierarchy-1.pdf}
+
+}
 
 }
 
 \subcaption{\label{fig-hierarchy-1}Hierarchical structure: Attended
 incidents in the whole country are disaggregated into 3 control areas
 and then into 7 different healthboards.}
-
 \end{minipage}%
 %
 \begin{minipage}[t]{0.02\linewidth}
-~\end{minipage}%
+
+{\centering 
+
+~
+
+}
+
+\end{minipage}%
 %
 \begin{minipage}[t]{0.42\linewidth}
 
-\centering{
+{\centering 
 
-\includegraphics[width=0.6\textwidth,height=\textheight]{../img/group.png}
+\raisebox{-\height}{
+
+\includegraphics{../img/group.png}
+
+}
 
 }
 
@@ -541,13 +568,12 @@ attended incident (i.e.~there are 35 different nature of incidents
 including chest pain, breathing problems, heart attack, stroke, and so
 on). The symbol * refers to the crossed attributes between hierarchical
 and grouped levels.}
-
 \end{minipage}%
 
 \caption{\label{fig-hierarchy}The hierarchical and grouped structure of
 attended incidents (ambulance demand).}
 
-\end{figure}%
+\end{figure}
 
 Table~\ref{tbl-hierarchy} also displays the structure of data with the
 total number of series at each level. At the top level, we have the
@@ -559,12 +585,10 @@ classes of red, amber, and green. There are also 35 different nature of
 incidents such as chest pain, stroke, breathing problem, etc. In total,
 across all levels of disaggregation, there are 1530 time series.
 
+\hypertarget{tbl-hierarchy}{}
 \begin{table}
-
-\caption{\label{tbl-hierarchy}Number of time series in each level for
-the hierarchical \& grouped structure of attended incidents}
-
-\centering{
+\caption{\label{tbl-hierarchy}Number of time series in each level for the hierarchical \& grouped
+structure of attended incidents }\tabularnewline
 
 \centering
 \begin{threeparttable}
@@ -594,10 +618,7 @@ Total & 1530\\
 \item Due to certain combinations of the nature of incident with other variables, there is a lack of representation in the dataset. As a result, for example, instead of the calculation 3 * 35 = 105, it would be modified to 3 * 35-1 = 104.
 \end{tablenotes}
 \end{threeparttable}
-
-}
-
-\end{table}%
+\end{table}
 
 Given the total number of time series, direct visual analysis is
 infeasible. Therefore, we first compute features of all 1530 time series
@@ -626,9 +647,7 @@ patterns.
 
 \begin{figure}
 
-\centering{
-
-\includegraphics[width=0.7\textwidth,height=\textheight]{main_files/figure-pdf/fig-feature-1.pdf}
+{\centering \includegraphics[width=0.7\textwidth,height=\textheight]{main_files/figure-pdf/fig-feature-1.pdf}
 
 }
 
@@ -637,7 +656,7 @@ seasonality in the time series of attended incidents. The scatter plot
 shows a total of 1530 data points, with each point corresponding to a
 specific time series.}
 
-\end{figure}%
+\end{figure}
 
 In addition to displaying the trend and seasonality features, we also
 visualize a few time series at various levels of aggregation.
@@ -651,9 +670,7 @@ data set represents a diverse set of daily time series patterns.
 
 \begin{figure}
 
-\centering{
-
-\includegraphics[width=1\textwidth,height=\textheight]{main_files/figure-pdf/fig-dataviz2-1.pdf}
+{\centering \includegraphics[width=1\textwidth,height=\textheight]{main_files/figure-pdf/fig-dataviz2-1.pdf}
 
 }
 
@@ -665,7 +682,7 @@ area, by health board, by priority level, and by nature of incident.
 Only four of the 35 nature of incident categories are shown to avoid too
 much overplotting. Each time plot .}
 
-\end{figure}%
+\end{figure}
 
 We consider several forecasting models that account for the diverse
 patterns of the time series across the entire hierarchy. In developing
@@ -675,7 +692,8 @@ holidays and Christmas Day and New Year's Day as predictors of incident
 attended. These types of holidays will affect peoples' activities and
 may increase or decrease the number of attended incidents.
 
-\subsection{Forecasting methods}\label{forecasting-methods}
+\hypertarget{forecasting-methods}{%
+\subsection{Forecasting methods}\label{forecasting-methods}}
 
 Given the presence of various patterns in the past attended incidents,
 we consider three different forecasting models to generate the base
@@ -774,7 +792,8 @@ model, we will refer to this model as \texttt{TSGLM}.
 
 \textcolor{teal}{It is important to emphasize that the aim of this study is not to provide an exhaustive compilation of forecasting models, or to promote a particular model class. Instead, we have developed a flexible framework that can accommodate any forecasting models. Our primary objective is to demonstrate its practicality and effectiveness in integrating base forecasts from any model and generating coherent forecasts within a hierarchical structure.}
 
-\subsection{Performance evaluation}\label{performance-evaluation}
+\hypertarget{performance-evaluation}{%
+\subsection{Performance evaluation}\label{performance-evaluation}}
 
 To evaluate the performance of the various forecasting approaches, we
 split the data into a series of ten training and test sets. We use a
@@ -815,9 +834,9 @@ series.
 A related measure is MSSE
 \citep{hyndman2021forecasting, makridakis2022m5}, which uses squared
 errors rather than absolute errors:
-\begin{equation}\phantomsection\label{eq-RMSSE}{
+\begin{equation}\protect\hypertarget{eq-RMSSE}{}{
   \text{MSSE} = \text{mean}(q_{j}^2),
-}\end{equation} where, \[
+}\label{eq-RMSSE}\end{equation} where, \[
   q^2_{j} = \frac{ e^2_{j}}
  {\displaystyle\frac{1}{T-m}\sum_{t=m+1}^T (y_{t}-y_{t-m})^2},
 \] Again, this is scale-independent, and smaller MSSE values suggest
@@ -830,9 +849,9 @@ Continuous Rank Probability Score
 \citep{gneiting2014probabilistic, hyndman2021forecasting}. It rewards
 sharpness and penalizes miscalibration, so it measures overall
 performance of the forecast distribution.
-\begin{equation}\phantomsection\label{eq-CRPS}{
+\begin{equation}\protect\hypertarget{eq-CRPS}{}{
   \text{CRPS} = \text{mean}(p_j),
-}\end{equation} where \[
+}\label{eq-CRPS}\end{equation} where \[
   p_j = \int_{-\infty}^{\infty} \left(G_j(x) - F_j(x)\right)^2dx,
 \] where \(G_j(x)\) is the forecasted probability distribution function
 for forecast horizon \(j\), and \(F_j(x)\) is the true probability
@@ -847,8 +866,9 @@ distribution function for the same period.
 \textcolor{teal}{and thus provides an evaluation of all possible prediction intervals or quantiles.}
 \textcolor{teal}{A specific prediction interval could be evaluated using a Winkler score. Certain situations may also require assessing accuracy for a particular quantile, such as lower (e.g 5\%) or higher (e.g. 95\%) quantiles. In such cases, a percentile score becomes useful in meeting this specific requirement.}
 
+\hypertarget{sec-htc}{%
 \section{Hierarchical and grouped time series forecasting
-techniques}\label{sec-htc}
+techniques}\label{sec-htc}}
 
 There are many applications in healthcare, and in particular in EMS,
 where a collection of time series is available. These series are
@@ -861,8 +881,9 @@ arise when attributes of interest are both nested and crossed, having
 hierarchical and grouped structure. This is also the case for our
 application as discussed in Section~\ref{sec-data}.
 
+\hypertarget{independent-base-forecast}{%
 \subsection{Independent (base
-forecast)}\label{independent-base-forecast}
+forecast)}\label{independent-base-forecast}}
 
 A common practice in healthcare (and EMS) to predict hierarchical and
 grouped series relies on producing independent forecasts, also refereed
@@ -873,7 +894,8 @@ forecasts of \(y_{T+h}\) given data \(y_1,\dots,y_T\) are denoted by
 \(\hat{y}_h\) for \(h\) steps-ahead for all \(n\) series (\(n=1530\) in
 this study). Forecasts generated in this way are not coherent.
 
-\subsection{Reconciliation methods}\label{reconciliation-methods}
+\hypertarget{reconciliation-methods}{%
+\subsection{Reconciliation methods}\label{reconciliation-methods}}
 
 Traditionally, approaches to produce coherent forecasts for hierarchical
 and grouped time series involve using bottom-up and top-down methods by
@@ -889,7 +911,8 @@ first discuss some notation, and then present bottom-up and forecast
 reconciliation approaches used in this study to generate coherent
 forecasts.
 
-\subsubsection{Notations}\label{notations}
+\hypertarget{notations}{%
+\subsubsection{Notations}\label{notations}}
 
 Let \(\bm{b}_t\) be a vector of \(n_b\) \emph{bottom-level} time series
 at time \(t\), and let \(\bm{a}_t\) be a corresponding vector of
@@ -908,8 +931,9 @@ matrix given by \[
 
 \textcolor{teal}{The term "bottom-level series" relates to the most disaggregated series within the hierarchical and grouped time series structure. For instance, in Table 2, each distinct combination of values in Control area (e.g. South \& East), Health board (e.g. CV), Priority (e.g. Green), and Nature of incident (e.g. Chest pain), corresponds to one individual time series. In the dataset at hand, there are 691 unique combinations, resulting in 691 bottom level time series. The "aggregate time series" describes how these bottom-level series are combined to create higher-level series. For instance, to obtain the incidents at the national level (i.e. all country level), the time series are aggregated across all Control areas, Health boards, Priorities, and Natures of incidents. Any desired aggregation level can be achieved based on the data structure, utilizing the bottom-level series available.}
 
+\hypertarget{bottom-up-bu-and-linear-reconciliation-methods}{%
 \subsubsection{Bottom-up (BU) and linear reconciliation
-methods}\label{bottom-up-bu-and-linear-reconciliation-methods}
+methods}\label{bottom-up-bu-and-linear-reconciliation-methods}}
 
 Bottom-Up is a simple approach to generate coherent forecasts. It
 involves first creating the base forecasts for the bottom-level series
@@ -962,7 +986,8 @@ the experiment.
 \citet{pennings2017integrated} and \citet{villegas2018supply}
 \textcolor{teal}{proposed the idea of using a state space model to ensure consistent forecasts. However, when dealing with larger hierarchies, these models encounter difficulties in estimating covariance matrices. In contrast, our approach provides a clear advantage by allowing the incorporation of different forecasting methods for the base forecasts, and even accommodating distinct methods for individual series. The decoupling of time series models from the reconciliation step adds significant flexibility in exploring a wide range of models.}
 
-\section{Results and discussion}\label{sec-results}
+\hypertarget{sec-results}{%
+\section{Results and discussion}\label{sec-results}}
 
 In this section, we compare the forecasting performance of the
 Stationary, ETS, GLM, and TSGLM models along with the ensemble, using
@@ -1004,17 +1029,16 @@ remain valid for bottom series where different individual methods
 perform best, depending on the accuracy measure.
 \textcolor{teal}{While the forecast reconciliation approach aims to enhance forecast accuracy, its effectiveness is not guaranteed, especially if the bottom-level series exhibit excessive noise and lack systematic patterns. Despite this, reconciling forecasts at the bottom level can offer advantages by generating coherent forecasts that facilitate alignment in planning across various teams within an organization, promote better coordination, and prevent conflicting decisions. Moreover, even when dealing with noisy and irregular bottom-level series, reconciliation can still improve forecast accuracy at higher levels of the hierarchy by leveraging the information available across the hierarchy. Therefore, although the bottom-level forecasts may not be highly accurate on their own, reconciling them with higher-level forecasts can still provide a more consistent view of future demand and potentially yield more accurate forecasts at other levels.}
 
+\hypertarget{tbl-result}{}
 \begin{table}
+\caption{\label{tbl-result}Average forecast performance calculated on the test sets at forecast
+horizons \(h=43,\dots,84\) days, with time series cross validation
+applied to attended incident data. The test set consists of 462 days.
+The best approach is highlighted in bold. Point forecast accuracy is
+measured using MASE and MSSE, while probabilistic forecast accuracy is
+measured using CRPS. }\tabularnewline
 
-\caption{\label{tbl-result}Average forecast performance calculated on
-the test sets at forecast horizons \(h=43,\dots,84\) days, with time
-series cross validation applied to attended incident data. The test set
-consists of 462 days. The best approach is highlighted in bold. Point
-forecast accuracy is measured using MASE and MSSE, while probabilistic
-forecast accuracy is measured using CRPS.}
-
-\centering{
-
+\centering
 \begin{tabular}{llrrrr}
 \toprule
 Method & Model & Total & Control areas & Health boards & Bottom\\
@@ -1059,10 +1083,7 @@ Method & Model & Total & Control areas & Health boards & Bottom\\
 \hspace{1em}MinT & Ensemble & \textbf{12.585} & 5.728 & \textbf{3.426} & 0.247\\
 \bottomrule
 \end{tabular}
-
-}
-
-\end{table}%
+\end{table}
 
 Table~\ref{tbl-result} presents the accuracy of the forecast
 distributions measures by CRPS, which considers both forecasting
@@ -1088,9 +1109,7 @@ the tails of the distribution.
 
 \begin{figure}[H]
 
-\centering{
-
-\includegraphics[width=1\textwidth,height=\textheight]{main_files/figure-pdf/fig-accuracy-1.pdf}
+{\centering \includegraphics[width=1\textwidth,height=\textheight]{main_files/figure-pdf/fig-accuracy-1.pdf}
 
 }
 
@@ -1102,7 +1121,7 @@ CRPS is relative to a stationary Empirical Cumulative Distribution
 Function (ECDF). MASE and MSSE are relative to the corresponding values
 for the training set.}
 
-\end{figure}%
+\end{figure}
 
 In addition to the overall forecast accuracy presented in
 Table~\ref{tbl-result}, we also report the point and probabilistic
@@ -1126,8 +1145,9 @@ a benchmark for both point and probabilistic forecasts.
 
 \textcolor{teal}{Despite using Poisson regression models to create count distributions of attended incidents for the base forecasts, it is important to note that the reconciled forecast distributions do not maintain a count format. In practical scenarios, there might be a need to use integer forecasts. Count forecast reconciliation is an active area of research, and it would be interesting to explore how our approach could be adapted to generate count-reconciled probabilistic forecasts in future studies. One possible approach to address this is by rounding the forecasts. However, the impact of rounding on forecast accuracy varies depending on the level of hierarchy and the scale of the data. In situations with high-volume demand, the effects of rounding may be negligible, and forecast accuracy calculations can overlook integer effects. On the other hand, in low-volume demand settings, such as forecasts at the bottom level of the hierarchy, integer (rounding) effects may have a more noticeable influence on forecast accuracy.}
 
+\hypertarget{an-illustration-of-probabilistic-forecast-for-ems-demand}{%
 \subsection{An illustration of probabilistic forecast for EMS
-demand}\label{an-illustration-of-probabilistic-forecast-for-ems-demand}
+demand}\label{an-illustration-of-probabilistic-forecast-for-ems-demand}}
 
 Figure~\ref{fig-forecast-density}
 \textcolor{teal}{provides an illustrative example of a probabilistic forecast for future demand, one day ahead, of the total attended incidents in the PO health board. The black dashed line in the graph represents the point forecast (the mean of the distribution), which presents a single numerical estimate for the future number of attended incidents. Due to the complexity of including such plots for the entire hierarchy and 84 days ahead, only one example is presented here for 1 day ahead. However, it is feasible to generate these plots for the entire hierarchy and for any forecast horizon if necessary.}
@@ -1144,9 +1164,7 @@ Figure~\ref{fig-forecast-density},
 
 \begin{figure}[H]
 
-\centering{
-
-\includegraphics[width=1\textwidth,height=\textheight]{main_files/figure-pdf/fig-forecast-density-1.pdf}
+{\centering \includegraphics[width=1\textwidth,height=\textheight]{main_files/figure-pdf/fig-forecast-density-1.pdf}
 
 }
 
@@ -1157,9 +1175,10 @@ shows all possible outcomes that may occur, with their likelihood shown
 on the vertical axis. The dashed line indicates the mean of the
 distribution.}
 
-\end{figure}%
+\end{figure}
 
-\section{Conclusion}\label{sec-conclusion}
+\hypertarget{sec-conclusion}{%
+\section{Conclusion}\label{sec-conclusion}}
 
 Forecasting problems at Emergency Medical Services often have inherent
 hierarchical and grouped structures. For example, looking at time series
@@ -1229,7 +1248,8 @@ avenue for future research.
 \citep{dekimpe2016impact},
 \textcolor{teal}{it facilitates forecasting demand rates at state, regional, and department levels, enabling strategic pricing, capacity planning, and revenue management for hotels and other travel-related businesses. Additionally, in call centers, accurate call volume forecasting at different levels of the call center hierarchy or grouped structure is crucial for workforce management and resource allocation. Implementing our framework, call centers can generate accurate forecasts for different skill groups, shifts, and locations, ensuring efficient staffing and optimal service levels to meet customer demands.}
 
-\section*{Reproducibility}\label{reproducibility}
+\hypertarget{reproducibility}{%
+\section*{Reproducibility}\label{reproducibility}}
 \addcontentsline{toc}{section}{Reproducibility}
 
 R code to produce all results in this paper is available at
