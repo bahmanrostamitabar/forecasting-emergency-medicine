@@ -17,7 +17,7 @@ In this section, we compare the forecasting performance of the Stationary, ETS, 
 
 The overall forecasting performance is reported in @tbl-result, in which the average forecast accuracy over horizons 43--84 days (corresponding to the planning horizon) is presented per model, method, and the hierarchical level. Reported forecast accuracy is averaged across all forecast horizons, rolling origins, and series at each level. @tbl-result presents both point and probabilistic forecast accuracy at total, control area, health board and bottom-level series. Point forecast performance is reported using MASE and MSSE, while probabilistic forecast accuracy is reported using CRPS. The bold entries in each table identify a combination of method and model that performs best for the corresponding level (i.e. each column), based on the smallest values of accuracy measures.
 
-@tbl-result shows that forecast reconciliation (i.e. MinT) improves point forecast accuracy at the higher levels of the hierarchy including total, control area and health board. However, it does not result in accuracy improvement at the bottom-level series, for which base forecasts are more accurate. This might be due to the noisy structure of time series at the bottom level, and possibly due to very different patterns in the aggregated series. It is also clear from @tbl-result that the ensemble method improves forecast accuracy at total, control area and health board. However, this does not remain valid for bottom series where different individual methods perform best, depending on the accuracy measure. \textcolor{teal}{While the forecast reconciliation approach aims to enhance forecast accuracy, its effectiveness is not guaranteed, especially if the bottom-level series exhibit excessive noise and lack systematic patterns. Despite this, reconciling forecasts at the bottom level can offer advantages by generating coherent forecasts that facilitate alignment in planning across various teams within an organization, promote better coordination, and prevent conflicting decisions. Moreover, even when dealing with noisy and irregular bottom-level series, reconciliation can still improve forecast accuracy at higher levels of the hierarchy by leveraging the information available across the hierarchy. Therefore, although the bottom-level forecasts may not be highly accurate on their own, reconciling them with higher-level forecasts can still provide a more consistent view of future demand and potentially yield more accurate forecasts at other levels.}
+@tbl-result shows that forecast reconciliation (i.e. MinT) improves point forecast accuracy at the higher levels of the hierarchy including total, control area and health board. However, it does not result in accuracy improvement at the bottom-level series, for which base forecasts are more accurate. This might be due to the noisy structure of time series at the bottom level, and possibly due to very different patterns in the aggregated series. It is also clear from @tbl-result that the ensemble method improves forecast accuracy at total, control area and health board. However, this does not remain valid for bottom series where different individual methods perform best, depending on the accuracy measure. While the forecast reconciliation approach aims to enhance forecast accuracy, its effectiveness is not guaranteed, especially if the bottom-level series exhibit excessive noise and lack systematic patterns. Despite this, reconciling forecasts at the bottom level can offer advantages by generating coherent forecasts that facilitate alignment in planning across various teams within an organization, promote better coordination, and prevent conflicting decisions. Moreover, even when dealing with noisy and irregular bottom-level series, reconciliation can still improve forecast accuracy at higher levels of the hierarchy by leveraging the information available across the hierarchy. Therefore, although the bottom-level forecasts may not be highly accurate on their own, reconciling them with higher-level forecasts can still provide a more consistent view of future demand and potentially yield more accurate forecasts at other levels.
 
 ```{r}
 #| label: tbl-result
@@ -157,44 +157,72 @@ acc_summary |>
 
 In addition to the overall forecast accuracy presented in @tbl-result, we also report the point and probabilistic forecast accuracy measures for each forecast horizon in @fig-accuracy. The figure focuses on the hierarchical levels important for decision-making including total, control area, and health board; however, the accuracy could be calculated for any level. We only illustrate the results of the MinT method, given its strong performance described in @tbl-result. For illustration purposes, we report the average weekly forecast accuracy instead of the daily forecast horizon, as this reduces the visual noise in the figure. Thus, the x-axis shows horizons from week 1 ($h= 1,\dots,7$) to week 12 ($h= 78,\dots,84$). The forecast horizon from week 7 to week 12 corresponds to the upcoming planning horizon, which is used by planners and decision-makers. For both the point forecast and distributional accuracy  we can see that the ensemble approach performs best across almost all horizons, with the biggest differences at the highest levels of aggregation. It is important to highlight that, all forecasting models outperform the stationary empirical distribution that is used as a benchmark for both point and probabilistic forecasts.
 
-\textcolor{teal}{Despite using Poisson regression models to create count distributions of attended incidents for the base forecasts, it is important to note that the reconciled forecast distributions do not maintain a count format. In practical scenarios, there might be a need to use integer forecasts. Count forecast reconciliation is an active area of research, and it would be interesting to explore how our approach could be adapted to generate count-reconciled probabilistic forecasts in future studies. One possible approach to address this is by rounding the forecasts. However, the impact of rounding on forecast accuracy varies depending on the level of hierarchy and the scale of the data. In situations with high-volume demand, the effects of rounding may be negligible, and forecast accuracy calculations can overlook integer effects. On the other hand, in low-volume demand settings, such as forecasts at the bottom level of the hierarchy, integer (rounding) effects may have a more noticeable influence on forecast accuracy.}
+Despite using Poisson regression models to create count distributions of attended incidents for the base forecasts, it is important to note that the reconciled forecast distributions do not maintain a count format. In practical scenarios, there might be a need to use integer forecasts. Count forecast reconciliation is an active area of research, and it would be interesting to explore how our approach could be adapted to generate count-reconciled probabilistic forecasts in future studies. Rounding the forecasts is one possible solution to this problem. However, the impact of rounding on forecast accuracy varies depending on the level of hierarchy and the scale of the data. In situations with high volume demand, the effects of rounding may be negligible, and forecast accuracy calculations can overlook integer effects. On the other hand, in low-volume demand settings, such as forecasts at the bottom level of the hierarchy, integer (rounding) effects may have a more noticeable influence on forecast accuracy.
 
 
 ## An illustration of probabilistic forecast for EMS demand
 
 
-@fig-forecast-density \textcolor{teal}{provides an illustrative example of a probabilistic forecast for future demand, one day ahead, of the total attended incidents in the PO health board. The black dashed line in the graph represents the point forecast (the mean of the distribution), which presents a single numerical estimate for the future number of attended incidents. Due to the complexity of including such plots for the entire hierarchy and 84 days ahead, only one example is presented here for 1 day ahead. However, it is feasible to generate these plots for the entire hierarchy and for any forecast horizon if necessary.}
+In this section, we provide an illustrative example of a probabilistic forecast for future demand, of the total attended incidents in the SB health board. Due to the complexity of including such plots in the manuscript for the entire hierarchy and 84 days ahead, only one example is presented here. However, it is feasible to generate these plots for the entire hierarchy and for any forecast horizon if necessary.}
 
-\textcolor{teal}{In practice, point forecasts are commonly used, but they have limitations as they ignore the uncertainty associated with the forecast, leading to wrong decisions. In contrast, probabilistic forecasts offer an alternative approach to anticipate future demand. Rather than providing a single value, they assign likelihoods to all possible demand outcomes, acknowledging that different numbers of attended incidents are possible, but with varying likelihoods.}
+In practice, point forecasts are commonly used, but they have limitations as they ignore the uncertainty associated with the forecast. The future is inherently characterized by an irreducible level of uncertainty. Being prepared entails considering alternate courses of action. Probabilistic forecasts offer an alternative approach to anticipate future demand. Rather than providing a single value, they assign likelihoods to all possible demand outcomes, acknowledging that different numbers of attended incidents are possible, but with varying likelihoods.
 
-\textcolor{teal}{The purpose of probabilistic forecasting, as demonstrated in} @fig-forecast-density, \textcolor{teal}{is to quantify uncertainty. Decisions based on these forecasts could focus on the tails of the distribution: unexpectedly high demand leading to crowding and inefficiency, or unexpectedly low demand resulting in wasted resources. Such forecasts are valuable tools for decision-makers and planners, especially when dealing with low-probability, high-cost situations. Different EMS managements may have varying risk attitudes depending on resource availability, making it crucial to consider the entire distribution when making decisions. For instance, these forecasts enable management to calculate the probability of demand exceeding a certain threshold of available resources (e.g., 90\%), which can serve as an informative early warning measure for crowdedness.}
+The purpose of probabilistic forecasting, as demonstrated in @fig-forecast-density-hstep and @fig-forecast-density, is to quantify uncertainty. @fig-forecast-density-hstep depicts the forecast distribution of total incidents in one health board over a 7-day period. It also gives the point forecast as well as the 80\% and 90\% prediction intervals. @fig-forecast-density zooms in on the first day to show the histogram more clearly, illustrating the range of possible outcomes and their likelihood.
 
-\textcolor{teal}{It is important to note that while point forecasts and prediction intervals can be obtained from the probabilistic forecasts, the reverse is not possible. A single number cannot be used to directly derive a probabilistic forecast. Prediction intervals, although helpful in indicating possible ranges, do not provide information on the probabilities of low or high demand.}
+Decisions based on these forecasts could focus on the tails of the distribution: unexpectedly high demand leading to crowding and inefficiency, or unexpectedly low demand resulting in wasted resources. Such forecasts are valuable tools for decision-makers and planners, especially when dealing with low-probability, high-cost situations. Different EMS managements may have varying risk attitudes depending on resource availability, making it crucial to consider the entire distribution when making decisions. For instance, these forecasts enable management to calculate the probability of demand exceeding a certain threshold of available resources (e.g., 90\%), which can serve as an informative early warning measure for overcrowding.
 
-\textcolor{teal}{In EMS planning, future demand is just one aspect to consider. Other inputs, such as capacity, should also be treated as probability distributions to adopt a probabilistic approach to planning. To extract valuable insights and make informed decisions from probabilistic forecasts, specialized numerical tools are required, as the forecasts themselves are typically represented as explicit probability density functions or Monte Carlo generators.}
+It is important to note that while point forecasts and prediction intervals can be obtained from the probabilistic forecasts, the reverse is not possible. A single number cannot be used to directly derive a probabilistic forecast. Prediction intervals, although helpful in indicating possible ranges, do not provide information on the probabilities of low or high demand.
+
+In EMS planning, future demand is just one aspect to consider. Other inputs, such as capacity, should also be treated as probability distributions to adopt a probabilistic approach to planning. To extract valuable insights and make informed decisions from probabilistic forecasts, specialized numerical tools are required, as the forecasts themselves are typically represented as explicit probability density functions or Monte Carlo generators.
+
 
 ```{r}
-#| label: fig-forecast-density
-#| fig-width: 8
-#| fig-height: 5
-#| out.width: "100%"
-#| fig-cap: "An illustrative example of the forecast distribution of ambulance demand (i.e. total incidence attended) for the PO health board for 1 day ahead. The horizontal axis shows all possible outcomes that may occur, with their likelihood shown on the vertical axis. The dashed line indicates the mean of the distribution."
+#| label: fig-forecast-density-hstep
+#| out.width: "80%"
+#| fig-cap: "A graphical illustration of the forecast distribution of ambulance demand (i.e. total incidence attended) for the SB health board for a horizon of seven days. For each day, we display the point forecast (black point), the histogram, and 80% (thick line) and 90% (thin line) prediction intervals. It also shows a portion of a historical time series as well as its fitted values."
 #| fig-pos: "H"
 incident_gthf <- readr::read_rds(here::here("data/incidents_gt.rds"))
 
-incident_cv <- incident_gthf |> filter(lhb == "PO", is_aggregated(category), is_aggregated(nature))
+incident_cv <- incident_gthf |> filter(lhb == "SB", is_aggregated(category), is_aggregated(nature))
 fit <- incident_cv %>%
   model(
     ets = ETS(sqrt(incident))
   )
-set.seed(1)
-fcst <- fit %>% generate(h = 1, times = 5000, bootstrap = TRUE)
-p1 <- ggplot(data = fcst, aes(x = .sim, y = ..density..)) +
-  geom_histogram(binwidth = 1, fill = "#d3d3d3", color = "black") +
-  geom_vline(data = fcst, aes(xintercept = (mean(.sim))), color = "black", linetype = "dashed", linewidth = 1) +
-  scale_x_continuous(breaks = seq(25, 70, 5)) +
-  scale_y_continuous(labels = percent) +
-  ggthemes::theme_few() +
-  labs(y = "Density", x = "Demand", title = "Probabilistic forecast of ambulance demand for 1 day ahead")
+set.seed(2023)
+fcst <- fit %>% generate(h = 7, times = 5000, bootstrap = TRUE)
+
+fitted_ets <- fit |> augment()
+fcst_point <- fcst |> index_by(date) |> summarise(.mean=mean(.sim))
+p1 <- ggplot(data = fcst, mapping = aes(x = date, y = .sim))+
+  stat_histinterval(point_interval = "mean_qi",.width = c(0.80, 0.95),breaks=15)+
+  geom_line(data=fcst_point,aes(y=.mean, shape ="Point Forecast"))+
+  geom_line(aes(y = .fitted, shape ="Fitted"), data = filter_index(fitted_ets, "2019-07-17" ~ .))+
+  geom_point(aes(y = .fitted, shape ="Fitted"), data = filter_index(fitted_ets, "2019-07-17" ~ .))+
+  geom_line(aes(y = incident, shape ="Actual"),data = filter_index(incident_cv, "2019-07-17" ~ .))+
+  geom_point(aes(y = incident, shape ="Actual"),data = filter_index(incident_cv, "2019-07-17" ~ .))+
+  scale_shape_manual(name=NULL,
+                   breaks=c('Actual','Fitted','Point Forecast'),
+                   values=c('Actual'=17,'Fitted'=15, 'Point Forecast'=19))+
+  labs(x= "Date", y="Incidents")+
+  theme_few()+
+  theme(legend.position = "top")
 p1
 ```
+
+```{r}
+#| label: fig-forecast-density
+#| out.width: 80%
+#| fig-cap: "An illustrative example of the forecast distribution of ambulance demand (i.e. total incidence attended) for the SB health board for one day ahead. This corresponds to the first forecast distribution in Figure 5. The horizontal axis shows all possible outcomes that may occur, with their likelihood shown on the vertical axis. The point in the middle shows the point forecast. Two lines at the bottom of the distribution highlights 80% (thick line) and 90% (thin line) prediction intervals."
+#| fig-pos: "H"
+
+fcst1 <- fcst %>% filter_index("2019-08-01")
+
+p2 <- ggplot(data = fcst1, mapping = aes(x = .sim))+
+  stat_histinterval(point_interval = "mean_qi",.width = c(0.80, 0.95),breaks=40)+
+  scale_x_continuous(breaks = seq(60, 140, 5))+
+  scale_y_continuous(labels = percent)+
+  labs(y = "Density", x = "Incidents")+
+  theme_few()
+p2
+```
+

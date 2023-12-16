@@ -7,7 +7,31 @@ format:
     papersize: a4
     geometry: "margin = 2.5cm"
     include-in-header: header.tex
+execute: 
+  echo: false
+  warning: false
 ---
+
+```{r}
+#| label: setup
+#| context: setup
+#| include: false
+#| echo: false
+library(fpp3)
+library(knitr)
+library(kableExtra)
+library(ggthemes)
+library(patchwork)
+library(scales)
+library(ggdist)
+# Color blind color palettes
+options(
+  ggplot2.discrete.colour = c("#D55E00", "#0072B2", "#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442"),
+  ggplot2.discrete.fill = c("#D55E00", "#0072B2", "#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442")
+)
+# Few theme
+ggplot2::theme_set(ggthemes::theme_few())
+```
 
 Dear Professor Malthouse
 
@@ -20,9 +44,9 @@ We quote below the detailed referees’ comments that are followed by our respon
 
 *My decision on this manuscript was not easy. On the one hand, the reviewers rate the importance of the work as "important" and "very important." They also see "major" potential impact. They acknowledge that you made major changes to the first version of the MS. I personally appreciate you highlighting the changes you made to the manuscript in a blue font and see your substantial improvements to R1. On the other hand the review team feels like many comments from the first round were not addressed. R1 and the AE are asking for model details, clarifications and elaborations. They continue to find typos (R2 notes issues with subscripts and both reviewers mention formatting issues). Simple suggestions like mentioning extended application areas in the introduction, which will help in the positioning of the article for JSR readers, were ignored. They appreciate the example you have added, but suggest adding details. I see these comments as constructive in that their goal is to improve the readability of your manuscript for the JSR and other readers, which will ultimately mean that readers will understand your work so that it realizes its full potential impact. While many of our readers have strong methodological training, JSR is also read by more managerial and policy-oriented scholars; it is important that articles are written in a way to reach both audiences. This expands the reach and impact of your work.*
 
-*In order to gain final acceptance, I ask for you to go back and address the clarifications, details, etc. Please write a point-by-point response and highlight the changes in the manuscript by using a different colored font. I do not plan to send this out for review again. I reserve the right to reject the work if there is not sufficient progress made in addressing the issues identified by the review team in the next submission. (Bahman)*
+*In order to gain final acceptance, I ask for you to go back and address the clarifications, details, etc. Please write a point-by-point response and highlight the changes in the manuscript by using a different colored font. I do not plan to send this out for review again. I reserve the right to reject the work if there is not sufficient progress made in addressing the issues identified by the review team in the next submission.*
 
-Response:  
+  **Response:**  Thank you for your detailed feedback and thorough review of the manuscript. We appreciate the acknowledgement of the significance of our work as well as the improvements made in response to the initial reviews. We have supplied a point-by-point response to the individual points identified, and the revised version includes the appropriate clarifications, details, and corrections. To indicate the changes made in the revised manuscript, we use a different colored font. We have addressed specific concerns mentioned about model specifics, explanations, and elaborations, as well as identified typos, formatting issues, and ideas for improvement. We also recognize the significance of catering to readers who are methodologically trained as well as managerial or policy-oriented. We presented the material in a way that effectively communicates the importance of our work to a wide range of audiences.
 
 # Associate Editor
 
@@ -56,7 +80,7 @@ _Comment 4.I felt that the authors did not address the following concern that I 
 _Comment 5. I also had the following comments in the previous round of review: “Make sure that all tables and figures are self-contained” and “If possible, display the number of observations in all tables and figures with statistical results”. Unfortunately, Figure 1 is not self-contained (e.g., abbreviations are not explained). Figure 2 could also contain the correlation and the number of observations._
 
   **Response:** Thank you for the comment. We have anonymized the name of the health board using two letters (e.g.) that hold no meaningful association, so these are not abbreviations. We have clarified this in the caption of Figure 1.
-
+  
   With regard to Figure 2, we appreciate the interest in examining correlations. However, we would like to clarify that the purpose of the scatter plot in Figure 2 is not to show the correlation. Each point on the plot corresponds to an individual time series, and the primary objective of this plot is to facilitate a clear understanding of time series features in our dataset such as the strength of trend and seasonality. Introducing correlation values in this specific plot may not add meaningful insights due to the nature of the data representation.
 
 _Comment 6. I was also hoping for an example that not only describes the problem that the authors solve, but that allows us to better understand the basic idea behind the authors’ solution._
@@ -69,7 +93,7 @@ _Comment 6. I was also hoping for an example that not only describes the problem
 
 _**Overall Review:** _
 
-_The authors have made revisions to address some of the concerns raised in the initial review, which has improved certain aspects of the manuscript. Additions have been made to explain the trend and seasonality strength measures, provide the GLM equation, and resolve minor formatting issues. These changes are beneficial. (Bahman)_
+_The authors have made revisions to address some of the concerns raised in the initial review, which has improved certain aspects of the manuscript. Additions have been made to explain the trend and seasonality strength measures, provide the GLM equation, and resolve minor formatting issues. These changes are beneficial._
   
 _However, critical concerns around model specifics, validation methodology, results analysis, and terminology remain unclear or insufficiently addressed. Major issues persist with detailing the ETS configurations, clarifying serial dependence in TSGLM, justifying the naive method’s inclusion, explaining training/testing data splits for tuning, defining the forecast horizon, elaborating the CRPS metric, providing dataset-specific examples for hierarchical forecasting concepts, distinguishing between hierarchical forecasting approaches, validating the comparison technique, and discussing practical implications of non-integer forecasts._
 
@@ -77,93 +101,189 @@ _The lack of clarity and details in these important methodological areas continu
 
 _In summary, while I acknowledge the efforts to improve the manuscript in certain aspects, there remains a critical need for enhancing model specifics, methodology descriptions, results analysis, and terminology usage._
 
-  **Response:** 
+  **Response:** Thank you for the feedback. Wherever necessary, we responded to all comments raised in both the previous and current versions. We are confident that the current study is one of the first to publish a publication using a cutting-edge scientific report, such as Quarto, sticking to transparency and reproducibility principles. This study is completely reproducible and transparent, and the reviewer comments criticizing the research's credibility and reproducibility astound us.
 
 
+_Comment 1. The authors added brief explanations of the trend and seasonality strength measures in response to Comment #3. While this provides more context, a citation or reference for these specific definitions would further strengthen this section._
 
-_Comment 1. The authors added brief explanations of the trend and seasonality strength measures in response to Comment #3. While this provides more context, a citation or reference for these specific definitions would further strengthen this section (Bahman)._
+  **Response:** Thank you. We have included @mstl, which describes the approach to decomposing the time series used to compute the strength of trend and seasonality. Additionally, we have included @hyndman2021forecasting, which also describe the strength of trend and seasonality.
 
-  **Response:** 
+_Comment 2. The revisions partially address the lack of model detail raised in Comment #4, but some components are still unclear:_
 
-_Comment 2. The revisions partially address the lack of model detail raised in Comment #4, but some components are still unclear (Bahman):_
-
-  **Response:** 
+  **Response:** Thank you very much. Section 3.2 contains further information on all models. The section contains significantly more details than the first version of the manuscript. We have also made available the Github repository, which contains the whole manuscript written in Quarto, as well as the technical details and R codes for the forecasting methodologies used in this study. We think that the amended section, together with the Github repository, will provide readers with the information they need to understand and replicate the methodologies employed in this study.
   
-_Comment 2.1. For ETS, it is now stated that an automated algorithm selects the best configuration, but no information is given on what options are available for trend, seasonality, etc. Listing the choices would help the reader. (Bahman)._
+_Comment 2.1. For ETS, it is now stated that an automated algorithm selects the best configuration, but no information is given on what options are available for trend, seasonality, etc. Listing the choices would help the reader._
 
-  **Response:** 
+  **Response:** Thank you. This has been included in the previosu version of the paper. The papers highlights that ETS models [@hyndman2021forecasting] can combine trend, seasonality, and error components in a time series through various forms that can be additive, multiplicative or mixed. The trend component can be none ("N"), Additive ("A") or damped ("Ad"); the seasonality can be none ("N"), Additive ("A"), or multiplicative ("M"); and the error term can be additive ("A") or multiplicative ("M"). Please refer to "Exponential Smoothing State Space model (ETS)" in section 3.2..
   
-_Comment 2.2. The equation for the GLM model is now provided, but the description still does not mention monthly seasonality. This should be explicitly addressed. (Bahman)_
+_Comment 2.2. The equation for the GLM model is now provided, but the description still does not mention monthly seasonality. This should be explicitly addressed._
 
-  **Response:** 
-
-_Comment 2.3. The concept of ”serial dependence” in TSGLM needs more clarification and specificity to the EMS context. (Bahman)_
-
-  **Response:** 
+  **Response:** Thank you. The GLM model employed in this study takes account of weekly seasonality and annual seasonality. Monthly seasonality in time series data is extremely rare, and it does not exist in the ambulance demand used in this study. There is no reason for occurrences to occur more frequently at certain times of the month than others.
   
-_Comment 2.4. The rationale for including the naive method in the ensemble is still not provided. Its apparent poor performance suggests it should be excluded (Rob, Bahman)._
-
-  **Response:** 
-
-_Comment 3. The explanation of the training/validation/testing data split in Comment #5 remains unclear. The authors should explicitly state if tuning is done on the training set only or if a separate validation set is used. (Bahman)_
-
-  **Response:** 
+  We have highlighted this in the revised paper:
   
-_Comment 4. The forecast horizon explanation in Comment #6 is still ambiguous. The time unit (days, weeks, etc.) should be clearly defined. (Bahman)_
+  \textcolor{teal}{Monthly seasonality in time series data is extremely rare, and it does not exist in the ambulance demand used in this study. There is no reason for occurrences to occur more frequently at certain times of the month than others.}
 
-  **Response:** 
+_Comment 2.3. The concept of ”serial dependence” in TSGLM needs more clarification and specificity to the EMS context._
+
+  **Response:** Thank you. We have clarified the concept of serial dependence and its specificity to the EMS context in the revised manuscript. Serial dependence in the context of EMS forecasting refers to scenarios in which ambulance demand at one point in time correlates with demand at previous points in time. In other words, the time series' previous values are associated with its current values, which can be described in a variety of ways. The TSGLM model, for example, clearly accounts for serial dependence by incorporating lagged ambulance demand numbers into the model. We have included the following paragraph in the revised manuscript to address this comment:
   
-_Comment 5. Comment #7 regarding the CRPS metric lacks sufficient clarification. Explicitly defining concepts like sharpness and miscalibration would strengthen this section. Additionally, more specifics are needed on the forecast distribution derivation. (Rob)_
-
-  **Response:** 
+  \textcolor{teal}{The term serial dependence refers to instances in which the number of incidents on a current day correlates with the number of incidents on previous days.}
   
-_Comment 6. Section 4.2 still lacks concrete examples tying the hierarchical forecasting concepts to the EMS dataset, as noted in Comment #8. This example-based explanation needs enhancement. (Bahman)_
+_Comment 2.4. The rationale for including the naive method in the ensemble is still not provided. Its apparent poor performance suggests it should be excluded._
 
-  **Response:** 
+  **Response:** Thank you very much. In response to your prior comment, we re-ran the experiment, removing the naive method from the ensemble. We then produced a graph that shows the outcomes with and without the naive method. We showed that removing the naive from the ensemble worsens overall performance, thus we kept it in the ensemble and included the original plot in the revised publication.
+
+_Comment 3. The explanation of the training/validation/testing data split in Comment #5 remains unclear. The authors should explicitly state if tuning is done on the training set only or if a separate validation set is used._
+
+  **Response:** Thank you. We explicitly mentioned that we employed time series cross validation [@hyndman2021forecasting,Section 5.10] to assess the forecast accuracy. Time series cross-validation involves dividing the data into multiple training and testing sets based on the time series structure. Model development and hyper-parameter tuning is performed using the training data and the errors are assess using the corresponding test set. Each testing set consists of a number of observations equal to the forecast horizon, and the corresponding training set only includes observations that occurred before the test set. This ensures that future observations are not used in constructing the forecast, making it more robust to evaluate forecast accuracy on new data. Therefore, we believe that our methodology is appropriate for time series forecasting and provides a more robust approach for evaluating forecast accuracy on new data. This has been highlighted in the revised paper in section 3.3 :
   
-_Comment 7. Comment #9 about clarifying the differences between various hierarchical forecasting approaches does not seem to be addressed. This terminology is still confusing in Section 4.2.2 and requires revision. (Rob)_
+  \textcolor{teal}{Model development and hyper-parameter tuning is performed using the training data and the errors are assess using the corresponding test set.}
+  
+  
+_Comment 4. The forecast horizon explanation in Comment #6 is still ambiguous. The time unit (days, weeks, etc.) should be clearly defined._
 
-  **Response:** 
+  **Response:** Thank you very much. We explicitly stated in several sections of the paper, including the introduction and Section 3, that the forecasting horizon ranges from 1 to 84 days. Please see the Introduction, the beginning of section 3, and section 3.4.
+  
+_Comment 5. Comment #7 regarding the CRPS metric lacks sufficient clarification. Explicitly defining concepts like sharpness and miscalibration would strengthen this section. Additionally, more specifics are needed on the forecast distribution derivation._
+
+  **Response:** We have provided detail explanation of CRPS and cleanly elaborated on the concepts of calibration and sharpness. We have also discussed how probabilsitic forecasts are computed. We have included the following text in the revised version to address this comment:
+  
+  \textcolor{teal}{Calibration refers to the statistical consistency between the distributional forecasts and the observations. It measures how well the predicted probabilities match the actual probabilities. On the other hand, sharpness refers to the concentration of the forecast distributions --- a sharp forecast distribution results in narrow prediction intervals, indicating high confidence in the forecast. A model is well-calibrated if the predicted probabilities match the actual probabilities, and it is sharp if it is confident in its predictions. The CRPS rewards sharpness and calibration by assigning lower scores to forecasts with sharper distributions, and to forecasts that are well-calibrated. Thus, it is a metric that combines both sharpness and miscalibration into a single score, making it a useful tool for evaluating the performance of probabilistic forecasts. We chose the CRPS as one of our evaluation metrics because it provides a comprehensive assessment of the forecast quality and allows us to compare the performance of different models.}
+
+\textcolor{teal}{To generate forecast probability distributions, we did not assume a specific distribution; instead we used a form of bootstrapping, described in} @panagiotelis2023probabilistic. \textcolor{teal}{This involves simulating 1000 future sample paths from each of the model, by bootstrapping the model residuals, taking into account the cross-sectional correlations between the different aggregated and disaggregated series. In this way, we can generate an empirical distribution of forecasts for each model. The ensemble forecast distribution is a simple mixture of these empirical distributions.}
+  
+_Comment 6. Section 4.2 still lacks concrete examples tying the hierarchical forecasting concepts to the EMS dataset, as noted in Comment #8. This example-based explanation needs enhancement._
+
+  **Response:** Thank you. We have now added a more detailed but simple example in the introduction based on the ambulance data and added the following text to the revised version of the paper:
+  
+\textcolor{teal}{To illustrate the problem, let's consider a very simple example where we have an EMS provider with a national level of governance, and two regions (A and B), each with a health board and a station. There is a total national budget to be split between the regions in proportion to the forecast number of incidents in each region. The two regions have very different incident patterns, and so must be forecast using different models. However, the data are noisy at regional level, so the national forecasts are best obtained by summing the demand from the two regions. The resulting national forecasts are not equal to the sum of the regional forecasts, and so are not coherent. In fact, the national forecasts show a decreasing trend in demand, and so the national governing body decides to cut the budget for the next year. But neither of the regional forecasts shows a trend, and so the regions argue that the budget cut is unfair. In addition, Region A has much more variable demand than Region B, and so to cope with periods of peak demand, Region A needs to hold more resources in reserve. So the budget distribution needs to be made in a way that ensures the probability of each region being unable to meet demand is equal. Our solution to this problem is to use a hierarchical forecasting approach that ensures the forecasts are probabilistically coherent. Then any trends or other forecast characteristics at national level will also be reflected in the regional forecasts, and the probabilistic forecasts allow for the different levels of uncertainty in the two regions. Budget can be allocated by controlling the probability of demand exceeding available resources, rather than being simply in proportion to the expected demand.}
+  
+_Comment 7. Comment #9 about clarifying the differences between various hierarchical forecasting approaches does not seem to be addressed. This terminology is still confusing in Section 4.2.2 and requires revision._
+
+  **Response:** In the amended version, we have given a detailed overview of various hierarchical forecasting approaches, which are presented below:
+  
+
+\textcolor{teal}{The bottom-up (BU) approach is constrained by its reliance solely on base forecasts from a single level of aggregation at the bottom level. While it does result in consistent forecasts, the BU approach lacks forecast reconciliation since no reconciliation is performed.}
+
+
+\textcolor{teal}{Forecast reconciliation approaches bridge this gap by combining and reconciling all base forecasts to generate coherent forecasts. This technique utilizes all the base forecasts produced within a hierarchical structure to create consistent forecasts at every level of the hierarchy. As a result, it goes beyond relying solely on base forecasts from a single level of aggregation, and instead leverages all available information at each level to generate forecasts that minimize the total forecast variance of the set of coherent forecasts.}
+
+\textcolor{teal}{Ordinary Least Squares (OLS) is the simplest and most commonly used method for estimating the parameters in linear regression models. In this approach, the estimation of $\bm{W}$ is based on the assumption that all the errors have equal variance. Hence, $\bm{W}$ is simply defined as the identity matrix multiplied by a constant factor. The intuition behind OLS is that it minimizes the sum of squared residuals between the observed and predicted values of the dependent variable. The main weakness of this approach is that it does not take account of the different scales of the base time series; the aggregated series will usually have higher variance than the disaggregated series, simply because the values are larger, but OLS treats all series the same. A strength of the approach is that it is simple, and does not involve estimating a covariance matrix.}
+
+\textcolor{teal}{Weighted Least Squares (WLS) is an extension of OLS where the variance of the errors is assumed to be heteroscedastic, i.e., different for each series. But it assumes that the errors of each series are uncorrelated with each other. In this approach, $\bm{W}$ is defined as a diagonal matrix with the variance of the errors on the diagonal. The intuition behind WLS is that it assigns higher weight to series with smaller error variance, and thereby takes into account the different scales of the base time series. The main weakness of this approach is that it ignores the relationships between series. A strength of WLS is that it is relatively easy to compute $\bm{W}$ as it is based only on error variances which are readily estimated.}
+
+\textcolor{teal}{Minimum Trace (MinT) is a further generalization where $\bm{W}$ is defined as the covariance matrix of the base forecast errors. So it takes account of both the scale of each series, and the relationships between the series.} @WicEtAl2019 \textcolor{teal}{showed that this approach gives the optimal reconciled forecasts in the sense that the sum of the forecast variances is minimized. The main weakness of this approach is that it is difficult to estimate the full covariance matrix. In practice, we usually need to use a shrinkage estimate where the off-diagonal elements are shrunk towards zero.}
   
 _Comment 8. Comment #10 questioning the validation approach of comparing base and reconciled forecasts is not addressed. The authors should explain why this is an appropriate evaluation technique. (Rob)_
 
-  **Response:** 
+  **Response:** Thank you for the comment.
 
-_Comment 9. My concerns in Comment #11 about non-integer forecasts and rounding do not appear to be addressed. This practical issue needs to be discussed. (Bahman)_
+The forecast reconciliation approach does not aggregate lower level forecasts, instead it combines all base forecasts. The base forecasts are generated independently at each level of the hierarchy, ignoring the hierarchical/grouped structure of time series or any aggregation constraints. As a result, the base forecasts are not guaranteed to be coherent, meaning that the sum of the lower-level forecasts will not necessarily add up to the higher-level forecast. On the other hand, the forecast reconciliation approach takes the base forecasts and regenerates them in a way that ensures coherence across all levels of the hierarchy, while also considering all available information. The comparison between the base forecasts and the reconciled forecasts allows us to see the improvement in forecast accuracy that can be achieved by using the forecast reconciliation approach.
 
-  **Response:** 
+While the approach is designed to improve forecast accuracy, it may not always be successful in doing so, particularly if the bottom-level series are too noisy and lack systematic patterns. In such cases, the benefit of performing reconciliation at the bottom level may still lie in creating coherent forecasts that can help align planning across different teams in an organization, improve coordination, and avoid conflicting decisions. Additionally, even if the bottom-level series are noisy and lack systematic patterns, reconciliation can still lead to more accurate forecasts at higher levels of the hierarchy by utilizing the information available across the hierarchy. Therefore, even if the bottom-level forecasts might not be very accurate on their own, reconciling them with higher-level forecasts can still provide a more consistent view of future demand and possibly more accurate forecasts at other levels.
+
+We have added the following paragraph in the revised version of the manuscript to address this comment:
+
+\textcolor{teal}{While the forecast reconciliation approach aims to enhance forecast accuracy, its effectiveness is not guaranteed, especially if the bottom-level series exhibit excessive noise and lack systematic patterns. Despite this, reconciling forecasts at the bottom level can offer advantages by generating coherent forecasts that facilitate alignment in planning across various teams within an organization, promote better coordination, and prevent conflicting decisions. Moreover, even when dealing with noisy and irregular bottom-level series, reconciliation can still improve forecast accuracy at higher levels of the hierarchy by leveraging the information available across the hierarchy. Therefore, although the bottom-level forecasts may not be highly accurate on their own, reconciling them with higher-level forecasts can still provide a more consistent view of future demand and potentially yield more accurate forecasts at other levels.}
+
+_Comment 9. My concerns in Comment #11 about non-integer forecasts and rounding do not appear to be addressed. This practical issue needs to be discussed._
+
+  **Response:** Thank you for highlighting this point, we have now included a paragraph at the end of the result section to acknowledge this point.
+
+Rounding forecasts up or down and its effect on the forecast accuracy depends on the level of hierarchy and scale of data. For some situations, with high volume demand, forecast accuracy calculations can ignore integer effects as rounding becomes negligible. However, low volume demand settings, such as forecasts at the bottom level of the hierarchy, may be more susceptible to integer (rounding) effects. In practice, we may need to use integer forecasts, especially when the forecasts are relatively small. Count forecast reconciliation is an active area of research, and it would be interesting to explore in future research how our approach could be adapted to generate count reconciled probabilistic forecasts.
+
+
+\textcolor{teal}{Despite using Poisson regression models to create count distributions of attended incidents for the base forecasts, it is important to note that the reconciled forecast distributions do not maintain a count format. In practical scenarios, there might be a need to use integer forecasts. Count forecast reconciliation is an active area of research, and it would be interesting to explore how our approach could be adapted to generate count-reconciled probabilistic forecasts in future studies. Rounding the forecasts is one possible solution to this problem. However, the impact of rounding on forecast accuracy varies depending on the level of hierarchy and the scale of the data. In situations with high volume demand, the effects of rounding may be negligible, and forecast accuracy calculations can overlook integer effects. On the other hand, in low-volume demand settings, such as forecasts at the bottom level of the hierarchy, integer (rounding) effects may have a more noticeable influence on forecast accuracy.}
   
 # Reviewer 2
 
-_General comment: The author revised the manuscript upon the review comments and I appreciate the detailed introductions added to the body of the paper.I provide some follow-up comments below for consideration and reference. (Bahman)_
+_General comment: The author revised the manuscript upon the review comments and I appreciate the detailed introductions added to the body of the paper.I provide some follow-up comments below for consideration and reference._
 
-  **Response:** 
+  **Response:** Thank you for your positive feedback and appreciation of the detailed added to the paper. We have carefully reviewed your follow-up comments and take them into consideration as we continue to refine the manuscript.
 
+_Comment 1. Might be good to at least briefly mention the extended applicability of the idea early in the introduction section._
 
-_Comment 1. Might be good to at least briefly mention the extended applicability of the idea early in the introduction section. (Bahman)_
-
-  **Response:** 
+  **Response:** Thank you for the suggestion. We have included the following paragraph in the introduction to address this comment.
   
-_Comment 2. It is confusing to have the abbreviations BME1 and BME2 listed with the same full name while no explanations or references are given. This is at Section 2, Page 7. (Bahman)_
-
-  **Response:** 
+  \textcolor{teal}{While our research focuses on emergency medical services, it is important to emphasize the suggested framework's adaptability, which expands its relevance to a variety of service sectors such as supply chains, tourism, finance, and call centers. Our approach can be generalized in cases with hierarchically structured and/or grouped time series data, which is common in many sectors.}
   
-_Comment 3. The author added great details to the methods mentioned in Section 3.2, such as the well-explained model specifications of GLM and TSGLM. Make sure typos are corrected, especially notation-wise such as subscripts. (Bahman)_
+_Comment 2. It is confusing to have the abbreviations BME1 and BME2 listed with the same full name while no explanations or references are given. This is at Section 2, Page 7._
 
-  **Response:** 
+  **Response:** Thank you for the feedback. We used the notation mentioned in the literature study. However, since it appears that this could be confusing, we have changed the wording to refer to these models as versions of bivariate mixed-effects models. We included a reference to the study that contains details regarding these variations.
   
-_Comment 4. It may be good to consider an alternatively way of providing details to the linear reconciliation method. For instance, the main equation \tilde{y}_h is still missing important reasoning about how it is derived. With some better descriptions of how it is derived, such as an objective function, the follow-up paragraphs for the three methods can be more concisely summarised with better readability. (Rob)_
+_Comment 3. The author added great details to the methods mentioned in Section 3.2, such as the well-explained model specifications of GLM and TSGLM. Make sure typos are corrected, especially notation-wise such as subscripts._
 
-We have now reworded this section, and added some more details about the objective function which is optimized.
+  **Response:** Thank you for your suggestions. The document has been proofread thoroughly. We carefully corrected all typos, including punctuation and those relating to notation and subscripts, to ensure the manuscript's correctness and clarity.
 
-  **Response:** 
+_Comment 4. It may be good to consider an alternatively way of providing details to the linear reconciliation method. For instance, the main equation tilde{y}_h is still missing important reasoning about how it is derived. With some better descriptions of how it is derived, such as an objective function, the follow-up paragraphs for the three methods can be more concisely summarised with better readability._
+
+  **Response:** Thank you for the comment. We have now reworded this section, and added some more details about the objective function which is optimized. We have included the following text in the section 4.2.2 of the revised manuscript:
   
-_Comment 5. The new Section 5.1 provided details about how to obtain and understand the distributional forecasts of the method. Indeed, this can be considered a major selling point of the work, and hence I would always appreciate further addressing and discussions about the probabilistic outperformance of the idea. For example, it might be good to include figures with fitting coverage of the training data, as well as some additional appendix figures for other example series probably at different hierarchy levels. It is not necessary to refer them in the main paper, but some self-explanatory captions should suffice. Besides, comparison with competing methods regarding the same aspect would be a plus. (Bahman)_
+  \textcolor{teal}{When $\bm{W}_h$ is the covariance matrix of $\hat{\bm{y}}_h$, the resulting forecasts are optimal in the sense that the sum of the variances of the reconciled forecasts is minimized, provided the base forecasts $\hat{\bm{y}}_h$ are unbiased. However, $\bm{W}_h$ is difficult to estimate, and so there have been various suggested approximations to $\bm{W}_h$, leading to different types of reconciliation such as Ordinary Least Squares (OLS), Weighted Least Squares (WLS) and Minimum Trace (MinT).}
+  
+_Comment 5. The new Section 5.1 provided details about how to obtain and understand the distributional forecasts of the method. Indeed, this can be considered a major selling point of the work, and hence I would always appreciate further addressing and discussions about the probabilistic outperformance of the idea. For example, it might be good to include figures with fitting coverage of the training data, as well as some additional appendix figures for other example series probably at different hierarchy levels. It is not necessary to refer them in the main paper, but some self-explanatory captions should suffice. Besides, comparison with competing methods regarding the same aspect would be a plus._
 
-  **Response:** 
+  **Response:** Thank you for your feedback. Although the distribution is generated for the whole 84-day prediction and all 1530 time series across the hierarchy, visualizing each of these distributions and forecast horizons to fit into the manuscript is not feasible. As a result, we've given a sample example at the total country level that illustrates the probability distribution over a 7-day period. This gives readers a clear understanding that can be accommodated within the constraints of the manuscript. The code is available on our GitHub repository for those interested in investigating additional time series or forecast horizons, allowing readers to reproduce the plot for any chosen time series and forecast length.
 
-_Comment 6. There are still formatting issues in the included tables. (Bahman)_
+We have included the following plots in the revised version of the paper:
 
-  **Response:** 
+@fig-forecast-density-hstep \textcolor{teal}{depicts the forecast distribution of total incidents in one health board over a 7-day period. It also gives the point forecast as well as the 80\% and 90\% prediction intervals.} @fig-forecast-density \textcolor{teal}{zooms in on the first day to show the histogram more clearly, illustrating the range of possible outcomes and their likelihood.}
+
+```{r}
+#| label: fig-forecast-density-hstep
+#| echo: false
+#| out.width: "85%"
+#| fig-cap: "A graphical illustration of the forecast distribution of ambulance demand (i.e. total incidence attended) for the SB health board for a horizon of seven days. For each day, we display the point forecast (black point), the histogram, and 80% (thick line) and 90% (thin line) prediction intervals. It also shows a portion of a historical time series as well as its fitted values."
+#| fig-pos: "H"
+incident_gthf <- readr::read_rds(here::here("data/incidents_gt.rds"))
+
+incident_cv <- incident_gthf |> filter(lhb == "SB", is_aggregated(category), is_aggregated(nature))
+fit <- incident_cv %>%
+  model(
+    ets = ETS(sqrt(incident))
+  )
+set.seed(2023)
+fcst <- fit %>% generate(h = 7, times = 5000, bootstrap = TRUE)
+
+fitted_ets <- fit |> augment()
+fcst_point <- fcst |> index_by(date) |> summarise(.mean=mean(.sim))
+p1 <- ggplot(data = fcst, mapping = aes(x = date, y = .sim))+
+  stat_histinterval(point_interval = "mean_qi",.width = c(0.80, 0.95),breaks=15)+
+  geom_line(data=fcst_point,aes(y=.mean, shape ="Point Forecast"))+
+  geom_line(aes(y = .fitted, shape ="Fitted"), data = filter_index(fitted_ets, "2019-07-17" ~ .))+
+  geom_point(aes(y = .fitted, shape ="Fitted"), data = filter_index(fitted_ets, "2019-07-17" ~ .))+
+  geom_line(aes(y = incident, shape ="Actual"),data = filter_index(incident_cv, "2019-07-17" ~ .))+
+  geom_point(aes(y = incident, shape ="Actual"),data = filter_index(incident_cv, "2019-07-17" ~ .))+
+  scale_shape_manual(name=NULL,
+                   breaks=c('Actual','Fitted','Point Forecast'),
+                   values=c('Actual'=17,'Fitted'=15, 'Point Forecast'=19))+
+  labs(x= "Date", y="Incidents")+
+  theme_few()+
+  theme(legend.position = "top")
+p1
+```
+
+```{r}
+#| label: fig-forecast-density
+#| out.width: 85%
+#| fig-cap: "An illustrative example of the forecast distribution of ambulance demand (i.e. total incidence attended) for the SB health board for one day ahead. This corresponds to the first forecast distribution in Figure 5. The horizontal axis shows all possible outcomes that may occur, with their likelihood shown on the vertical axis. The point in the middle shows the point forecast. Two lines at the bottom of the distribution highlights 80% (thick line) and 90% (thin line) prediction intervals."
+#| fig-pos: "H"
+
+fcst1 <- fcst %>% filter_index("2019-08-01")
+
+p2 <- ggplot(data = fcst1, mapping = aes(x = .sim))+
+  stat_histinterval(point_interval = "mean_qi",.width = c(0.80, 0.95),breaks=40)+
+  scale_x_continuous(breaks = seq(60, 140, 5))+
+  scale_y_continuous(labels = percent)+
+  labs(y = "Density", x = "Incidents")+
+  theme_few()
+p2
+```
+
+
+_Comment 6. There are still formatting issues in the included tables._
+
+  **Response:**  Thank you very much. We have now reviewed the format of all tables and resolved any issues that occurred. For more information, refer to Tables 1, 2, and 3.
 
 # References {#references .unnumbered}

@@ -64,6 +64,7 @@ library(kableExtra)
 library(ggthemes)
 library(patchwork)
 library(scales)
+library(ggdist)
 # Color blind color palettes
 options(
   ggplot2.discrete.colour = c("#D55E00", "#0072B2", "#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442"),
@@ -84,6 +85,8 @@ ggplot2::theme_set(ggthemes::theme_few())
 
 ```{r experiment, child="03-experiment.qmd"}
 ```
+
+
 
 ```{r htc, child="04-htsgts.qmd"}
 ```
